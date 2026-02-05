@@ -25,13 +25,24 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
 
   const query = useQuery({
     queryKey: ['vehicles', selectedCoordinations],
-    queryFn: async (): Promise<VehicleWithDetails[]> => {
-      // Fetch vehicle_data
+    queryFn: async (): Promise<{ vehicles: VehicleWithDetails[]; lastUpdated: Date | null }> => {
+      // Fetch vehicle_data with updated_at for tracking last update
       const { data: vehicleData, error: vehicleError } = await supabase
         .from('vehicle_data')
-        .select('plate, model, fleet_type, balance, manufacturer, fleet_number, location, responsible_name');
+        .select('plate, model, fleet_type, balance, manufacturer, fleet_number, location, responsible_name, updated_at');
 
       if (vehicleError) throw vehicleError;
+
+      // Get the most recent updated_at timestamp
+      let lastUpdated: Date | null = null;
+      if (vehicleData && vehicleData.length > 0) {
+        const timestamps = vehicleData
+          .map(v => new Date(v.updated_at))
+          .filter(d => !isNaN(d.getTime()));
+        if (timestamps.length > 0) {
+          lastUpdated = new Date(Math.max(...timestamps.map(d => d.getTime())));
+        }
+      }
 
       // Fetch vehicles with coordinations
       const { data: vehicles, error: vehiclesError } = await supabase
@@ -75,7 +86,14 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
       let combined: VehicleWithDetails[] = (vehicleData || []).map(vd => {
         const vehicle = vehicleMap.get(vd.plate);
         return {
-          ...vd,
+          plate: vd.plate,
+          model: vd.model,
+          fleet_type: vd.fleet_type,
+          balance: vd.balance,
+          manufacturer: vd.manufacturer,
+          fleet_number: vd.fleet_number,
+          location: vd.location,
+          responsible_name: vd.responsible_name,
           vehicle_id: vehicle?.id || null,
           coordination: vehicle?.coordination || null,
           image_url: vehicle?.id ? imageMap.get(vehicle.id) || null : null,
@@ -89,7 +107,7 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
         );
       }
 
-      return combined;
+      return { vehicles: combined, lastUpdated };
     },
     staleTime: 30 * 1000, // 30 seconds
   });
@@ -117,5 +135,9 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
     };
   }, [queryClient]);
 
-  return query;
+  return {
+    ...query,
+    data: query.data?.vehicles ?? [],
+    lastUpdated: query.data?.lastUpdated ?? null,
+  };
 }
