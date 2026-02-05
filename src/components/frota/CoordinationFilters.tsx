@@ -1,9 +1,10 @@
-import { Check, ChevronDown, X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { Coordination } from '@/types/vehicle';
@@ -13,6 +14,7 @@ interface CoordinationFiltersProps {
   selectedIds: string[];
   onToggle: (id: string) => void;
   onClear: () => void;
+  onSelectAll?: (ids: string[]) => void;
 }
 
 export function CoordinationFilters({
@@ -20,9 +22,11 @@ export function CoordinationFilters({
   selectedIds,
   onToggle,
   onClear,
+  onSelectAll,
 }: CoordinationFiltersProps) {
   const hasSelection = selectedIds.length > 0;
   const selectedCount = selectedIds.length;
+  const allSelected = selectedCount === coordinations.length && coordinations.length > 0;
   
   const getButtonLabel = () => {
     if (selectedCount === 0) {
@@ -32,7 +36,18 @@ export function CoordinationFilters({
       const selected = coordinations.find(c => c.id === selectedIds[0]);
       return selected?.name || '1 coordenação';
     }
+    if (allSelected) {
+      return 'Todas selecionadas';
+    }
     return `${selectedCount} coordenações`;
+  };
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      onClear();
+    } else {
+      onSelectAll?.(coordinations.map(c => c.id));
+    }
   };
 
   return (
@@ -53,6 +68,14 @@ export function CoordinationFilters({
             align="start" 
             className="z-50 w-56 bg-popover"
           >
+            <DropdownMenuCheckboxItem
+              checked={allSelected}
+              onCheckedChange={handleSelectAll}
+              className="cursor-pointer font-medium"
+            >
+              Selecionar todas
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuSeparator />
             {coordinations.map((coord) => {
               const isSelected = selectedIds.includes(coord.id);
               return (
