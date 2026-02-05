@@ -15,7 +15,8 @@ const Index = () => {
     preferences, 
     setViewMode, 
     toggleCoordination, 
-    clearFilters 
+    clearFilters,
+    setSelectedCoordinations,
   } = useUserPreferences();
 
   const { data: coordinations = [], isLoading: loadingCoordinations } = useCoordinations();
@@ -76,6 +77,7 @@ const Index = () => {
         selectedIds={preferences.selectedCoordinations}
         onToggle={toggleCoordination}
         onClear={clearFilters}
+        onSelectAll={setSelectedCoordinations}
       />
       
       <ViewModeToggle
