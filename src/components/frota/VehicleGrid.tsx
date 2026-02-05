@@ -16,9 +16,9 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
   }
 
   return (
-    <div className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 p-4 md:grid-cols-3 lg:grid-cols-4">
       {vehicles.map((vehicle) => (
-        <VehicleCard key={vehicle.plate} vehicle={vehicle} />
+        <VehicleCard key={vehicle.plate} vehicle={vehicle} compact />
       ))}
     </div>
   );
