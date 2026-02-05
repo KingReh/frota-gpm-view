@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { AppHeader } from '@/components/frota/AppHeader';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
+import { BalanceStats } from '@/components/frota/BalanceStats';
 import { ViewModeToggle } from '@/components/frota/ViewModeToggle';
 import { VehicleGrid } from '@/components/frota/VehicleGrid';
 import { VehicleTable } from '@/components/frota/VehicleTable';
@@ -79,6 +80,8 @@ const Index = () => {
         onClear={clearFilters}
         onSelectAll={setSelectedCoordinations}
       />
+      
+      <BalanceStats vehicles={vehicles} />
       
       <ViewModeToggle
         value={preferences.viewMode}
