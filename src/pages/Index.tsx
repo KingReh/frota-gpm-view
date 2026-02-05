@@ -26,6 +26,7 @@ const Index = () => {
     data: vehicles = [], 
     isLoading: loadingVehicles,
     isFetching,
+    lastUpdated,
   } = useVehicles({ 
     selectedCoordinations: preferences.selectedCoordinations 
   });
@@ -71,7 +72,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader isSynced={isSynced} />
+      <AppHeader isSynced={isSynced} lastUpdated={lastUpdated} />
       
       <CoordinationFilters
         coordinations={coordinations}
