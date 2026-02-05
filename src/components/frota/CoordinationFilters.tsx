@@ -1,7 +1,11 @@
-import { X } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { Coordination } from '@/types/vehicle';
 
 interface CoordinationFiltersProps {
@@ -18,44 +22,69 @@ export function CoordinationFilters({
   onClear,
 }: CoordinationFiltersProps) {
   const hasSelection = selectedIds.length > 0;
+  const selectedCount = selectedIds.length;
+  
+  const getButtonLabel = () => {
+    if (selectedCount === 0) {
+      return 'Todas as coordenações';
+    }
+    if (selectedCount === 1) {
+      const selected = coordinations.find(c => c.id === selectedIds[0]);
+      return selected?.name || '1 coordenação';
+    }
+    return `${selectedCount} coordenações`;
+  };
 
   return (
     <div className="border-b bg-background">
-      <ScrollArea className="w-full whitespace-nowrap">
-        <div className="flex items-center gap-2 px-4 py-3">
-          {hasSelection && (
+      <div className="flex items-center gap-2 px-4 py-3">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              onClick={onClear}
-              className="h-8 shrink-0 gap-1 px-2 text-xs"
+              className="h-9 gap-2 px-3 text-sm font-medium"
             >
-              <X className="h-3 w-3" />
-              Limpar
+              {getButtonLabel()}
+              <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
-          )}
-          
-          {coordinations.map((coord) => {
-            const isSelected = selectedIds.includes(coord.id);
-            return (
-              <Badge
-                key={coord.id}
-                variant="outline"
-                onClick={() => onToggle(coord.id)}
-                className="shrink-0 cursor-pointer select-none px-3 py-1.5 text-xs font-medium transition-all hover:opacity-80"
-                style={{
-                  backgroundColor: isSelected ? coord.color : 'transparent',
-                  color: isSelected ? coord.font_color : 'inherit',
-                  borderColor: coord.color,
-                }}
-              >
-                {coord.name}
-              </Badge>
-            );
-          })}
-        </div>
-        <ScrollBar orientation="horizontal" className="invisible" />
-      </ScrollArea>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            align="start" 
+            className="z-50 w-56 bg-popover"
+          >
+            {coordinations.map((coord) => {
+              const isSelected = selectedIds.includes(coord.id);
+              return (
+                <DropdownMenuCheckboxItem
+                  key={coord.id}
+                  checked={isSelected}
+                  onCheckedChange={() => onToggle(coord.id)}
+                  className="cursor-pointer gap-2"
+                >
+                  <span
+                    className="h-3 w-3 shrink-0 rounded-full"
+                    style={{ backgroundColor: coord.color }}
+                  />
+                  <span className="truncate">{coord.name}</span>
+                </DropdownMenuCheckboxItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {hasSelection && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClear}
+            className="h-9 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-3 w-3" />
+            Limpar
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
