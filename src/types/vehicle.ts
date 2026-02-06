@@ -15,6 +15,13 @@ export interface VehicleData {
   fleet_number: string | null;
   location: string | null;
   responsible_name: string | null;
+  card_number: string | null;
+  cost_center: string | null;
+  current_limit: string | null;
+  next_period_limit: string | null;
+  used_value: string | null;
+  reserved_value: string | null;
+  limit_value: string | null;
 }
 
 export interface Vehicle {
