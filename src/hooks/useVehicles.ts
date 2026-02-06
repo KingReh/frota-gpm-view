@@ -23,6 +23,7 @@ interface UseVehiclesOptions {
 
 export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions = {}) {
   const queryClient = useQueryClient();
+  const hasLoadedRef = useRef(false);
 
   const query = useQuery({
     queryKey: ['vehicles', selectedCoordinations],
@@ -112,9 +113,6 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
     },
     staleTime: 30 * 1000, // 30 seconds
   });
-
-  // Track if initial load has completed to avoid toast on first fetch
-  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
     if (!query.isLoading && query.data) {
