@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
 
 interface VehicleWithCoordination {
@@ -112,6 +113,15 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
     staleTime: 30 * 1000, // 30 seconds
   });
 
+  // Track if initial load has completed to avoid toast on first fetch
+  const hasLoadedRef = useRef(false);
+
+  useEffect(() => {
+    if (!query.isLoading && query.data) {
+      hasLoadedRef.current = true;
+    }
+  }, [query.isLoading, query.data]);
+
   // Realtime subscription for vehicle_data updates
   useEffect(() => {
     const channel = supabase
@@ -126,6 +136,14 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
         () => {
           // Invalidate and refetch on any change
           queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+
+          // Show toast only after initial load
+          if (hasLoadedRef.current) {
+            toast.success('Saldos atualizados', {
+              description: `Dados recebidos às ${new Date().toLocaleTimeString('pt-BR')}`,
+              duration: 4000,
+            });
+          }
         }
       )
       .subscribe();
