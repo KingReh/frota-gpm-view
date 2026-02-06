@@ -8,6 +8,7 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel';
 import { VehicleCard } from './VehicleCard';
+import { VehicleDetailModal } from './VehicleDetailModal';
 import type { VehicleWithDetails } from '@/types/vehicle';
 
 interface VehicleCarouselProps {
@@ -18,6 +19,7 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
 
   useEffect(() => {
     if (!api) return;
@@ -40,30 +42,41 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
   }
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <Carousel
-        setApi={setApi}
-        className="w-full max-w-md"
-        opts={{
-          align: 'center',
-          loop: true,
-        }}
-      >
-        <CarouselContent>
-          {vehicles.map((vehicle) => (
-            <CarouselItem key={vehicle.plate}>
-              <VehicleCard vehicle={vehicle} size="large" />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="hidden sm:flex" />
-        <CarouselNext className="hidden sm:flex" />
-      </Carousel>
+    <>
+      <div className="flex flex-col items-center p-4">
+        <Carousel
+          setApi={setApi}
+          className="w-full max-w-md"
+          opts={{
+            align: 'center',
+            loop: true,
+          }}
+        >
+          <CarouselContent>
+            {vehicles.map((vehicle) => (
+              <CarouselItem key={vehicle.plate}>
+                <VehicleCard
+                  vehicle={vehicle}
+                  size="large"
+                  onClick={() => setSelectedVehicle(vehicle)}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden sm:flex" />
+          <CarouselNext className="hidden sm:flex" />
+        </Carousel>
 
-      {/* Counter */}
-      <div className="mt-4 text-sm text-muted-foreground">
-        {current} de {count}
+        {/* Counter */}
+        <div className="mt-4 text-sm text-muted-foreground">
+          {current} de {count}
+        </div>
       </div>
-    </div>
+      <VehicleDetailModal
+        vehicle={selectedVehicle}
+        open={!!selectedVehicle}
+        onOpenChange={(open) => !open && setSelectedVehicle(null)}
+      />
+    </>
   );
 }

@@ -31,7 +31,7 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
       // Fetch vehicle_data with updated_at for tracking last update
       const { data: vehicleData, error: vehicleError } = await supabase
         .from('vehicle_data')
-        .select('plate, model, fleet_type, balance, manufacturer, fleet_number, location, responsible_name, updated_at');
+        .select('plate, model, fleet_type, balance, manufacturer, fleet_number, location, responsible_name, card_number, cost_center, current_limit, next_period_limit, used_value, reserved_value, limit_value, updated_at');
 
       if (vehicleError) throw vehicleError;
 
@@ -96,6 +96,13 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
           fleet_number: vd.fleet_number,
           location: vd.location,
           responsible_name: vd.responsible_name,
+          card_number: vd.card_number,
+          cost_center: vd.cost_center,
+          current_limit: vd.current_limit,
+          next_period_limit: vd.next_period_limit,
+          used_value: vd.used_value,
+          reserved_value: vd.reserved_value,
+          limit_value: vd.limit_value,
           vehicle_id: vehicle?.id || null,
           coordination: vehicle?.coordination || null,
           image_url: vehicle?.id ? imageMap.get(vehicle.id) || null : null,

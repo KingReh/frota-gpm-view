@@ -9,16 +9,21 @@ interface VehicleCardProps {
   vehicle: VehicleWithDetails;
   size?: 'normal' | 'large';
   compact?: boolean;
+  onClick?: () => void;
 }
 
-export function VehicleCard({ vehicle, size = 'normal', compact = false }: VehicleCardProps) {
+export function VehicleCard({ vehicle, size = 'normal', compact = false, onClick }: VehicleCardProps) {
   const isLarge = size === 'large';
   
   return (
-    <Card className={cn(
-      "overflow-hidden transition-shadow hover:shadow-lg",
-      isLarge && "h-full"
-    )}>
+    <Card 
+      className={cn(
+        "overflow-hidden transition-shadow hover:shadow-lg",
+        isLarge && "h-full",
+        onClick && "cursor-pointer"
+      )}
+      onClick={onClick}
+    >
       {/* Vehicle Image */}
       <div className={cn(
         "relative bg-muted",
