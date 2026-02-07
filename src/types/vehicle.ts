@@ -44,12 +44,16 @@ export interface VehicleWithDetails extends VehicleData {
 
 export type ViewMode = 'table' | 'card' | 'carousel';
 
+export type FleetTab = 'fleet' | 'undefined';
+
 export interface UserPreferences {
   viewMode: ViewMode;
   selectedCoordinations: string[];
+  activeTab: FleetTab;
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   viewMode: 'card',
   selectedCoordinations: [],
+  activeTab: 'fleet',
 };

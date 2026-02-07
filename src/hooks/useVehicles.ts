@@ -27,7 +27,7 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
 
   const query = useQuery({
     queryKey: ['vehicles', selectedCoordinations],
-    queryFn: async (): Promise<{ vehicles: VehicleWithDetails[]; lastUpdated: Date | null }> => {
+    queryFn: async (): Promise<{ vehicles: VehicleWithDetails[]; undefinedVehicles: VehicleWithDetails[]; lastUpdated: Date | null }> => {
       // Fetch vehicle_data with updated_at for tracking last update
       const { data: vehicleData, error: vehicleError } = await supabase
         .from('vehicle_data')
@@ -85,7 +85,7 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
       );
 
       // Combine data
-      let combined: VehicleWithDetails[] = (vehicleData || []).map(vd => {
+      const allCombined: VehicleWithDetails[] = (vehicleData || []).map(vd => {
         const vehicle = vehicleMap.get(vd.plate);
         return {
           plate: vd.plate,
@@ -109,14 +109,18 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
         };
       });
 
-      // Filter by coordinations if any selected
+      // Separate: undefined = no coordination
+      const undefinedVehicles = allCombined.filter(v => !v.coordination);
+
+      // Fleet vehicles = have coordination, then apply filter
+      let fleetVehicles = allCombined.filter(v => !!v.coordination);
       if (selectedCoordinations.length > 0) {
-        combined = combined.filter(v => 
+        fleetVehicles = fleetVehicles.filter(v => 
           v.coordination && selectedCoordinations.includes(v.coordination.id)
         );
       }
 
-      return { vehicles: combined, lastUpdated };
+      return { vehicles: fleetVehicles, undefinedVehicles, lastUpdated };
     },
     staleTime: 30 * 1000, // 30 seconds
   });
@@ -161,6 +165,7 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
   return {
     ...query,
     data: query.data?.vehicles ?? [],
+    undefinedVehicles: query.data?.undefinedVehicles ?? [],
     lastUpdated: query.data?.lastUpdated ?? null,
   };
 }
