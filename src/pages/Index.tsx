@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { AppHeader } from '@/components/frota/AppHeader';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
 import { BalanceStats } from '@/components/frota/BalanceStats';
@@ -7,15 +7,26 @@ import { VehicleGrid } from '@/components/frota/VehicleGrid';
 import { VehicleTable } from '@/components/frota/VehicleTable';
 import { VehicleCarousel } from '@/components/frota/VehicleCarousel';
 import { VehicleGridSkeleton, VehicleTableSkeleton } from '@/components/frota/VehicleSkeletons';
+import { SearchBar } from '@/components/frota/SearchBar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useCoordinations } from '@/hooks/useCoordinations';
 import { useVehicles } from '@/hooks/useVehicles';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
-import type { FleetTab } from '@/types/vehicle';
-import type { VehicleWithDetails } from '@/types/vehicle';
+import type { FleetTab, VehicleWithDetails } from '@/types/vehicle';
+
+function filterBySearch(vehicles: VehicleWithDetails[], search: string): VehicleWithDetails[] {
+  if (!search.trim()) return vehicles;
+  const term = search.trim().toLowerCase();
+  return vehicles.filter(v =>
+    v.plate.toLowerCase().includes(term) ||
+    (v.model && v.model.toLowerCase().includes(term))
+  );
+}
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { 
     preferences, 
     setViewMode, 
@@ -39,6 +50,16 @@ const Index = () => {
 
   const isSynced = !isFetching;
   const isLoading = loadingCoordinations || loadingVehicles;
+
+  const filteredVehicles = useMemo(
+    () => filterBySearch(vehicles, searchQuery),
+    [vehicles, searchQuery]
+  );
+
+  const filteredUndefined = useMemo(
+    () => filterBySearch(undefinedVehicles, searchQuery),
+    [undefinedVehicles, searchQuery]
+  );
 
   // Apply theme based on system preference
   useEffect(() => {
@@ -106,6 +127,8 @@ const Index = () => {
           </TabsList>
         </div>
 
+        <SearchBar value={searchQuery} onChange={setSearchQuery} />
+
         <TabsContent value="fleet" className="mt-0">
           <CoordinationFilters
             coordinations={coordinations}
@@ -115,7 +138,7 @@ const Index = () => {
             onSelectAll={setSelectedCoordinations}
           />
           
-          <BalanceStats vehicles={vehicles} />
+          <BalanceStats vehicles={filteredVehicles} />
           
           <ViewModeToggle
             value={preferences.viewMode}
@@ -123,12 +146,12 @@ const Index = () => {
           />
 
           <main className="pb-safe">
-            {renderVehicleContent(vehicles)}
+            {renderVehicleContent(filteredVehicles)}
           </main>
         </TabsContent>
 
         <TabsContent value="undefined" className="mt-0">
-          <BalanceStats vehicles={undefinedVehicles} />
+          <BalanceStats vehicles={filteredUndefined} />
           
           <ViewModeToggle
             value={preferences.viewMode}
@@ -136,7 +159,7 @@ const Index = () => {
           />
 
           <main className="pb-safe">
-            {renderVehicleContent(undefinedVehicles)}
+            {renderVehicleContent(filteredUndefined)}
           </main>
         </TabsContent>
       </Tabs>
