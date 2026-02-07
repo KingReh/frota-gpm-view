@@ -1,124 +1,72 @@
 
 
-# 📱 Frota GPM - Plano de Implementação
+# Aba "Veiculos Indefinidos"
 
-## Visão Geral
+## Resumo
 
-Criar um **PWA mobile-first** para condutores da COMPESA consultarem informações de veículos e saldo de combustível em tempo real, com **acesso 100% read-only** ao banco de dados em produção.
+Adicionar um sistema de abas na pagina principal separando os veiculos em duas categorias:
+- **Frota** -- veiculos com coordenacao definida (comportamento atual)
+- **Indefinidos** -- veiculos sem coordenacao (novos ou reservas)
 
----
-
-## 🏗️ Estrutura da Aplicação
-
-### Páginas
-1. **Home (Dashboard Principal)**
-   - Header fixo com logo COMPESA
-   - Barra de filtros por coordenação
-   - Toggle de visualização (Tabela/Card/Carrossel)
-   - Listagem de veículos no modo selecionado
-
-2. **Splash Screen / Loading**
-   - Tela de carregamento inicial com branding
+Atualmente existem 6 veiculos no banco sem coordenacao atribuida. Eles ficam invisiveis quando filtros de coordenacao sao aplicados. Com essa mudanca, passam a ter visibilidade dedicada.
 
 ---
 
-## 🎨 Funcionalidades Principais
+## Como vai funcionar
 
-### 1. Sistema de Filtros
-- Chips de seleção múltipla por coordenação
-- Cada coordenação exibida com sua cor identificadora
-- Opção "Limpar filtros" sempre visível
-- Preferências salvas automaticamente no localStorage
+A pagina principal ganha duas abas no topo, logo abaixo do header:
 
-### 2. Três Modos de Visualização
+```text
++-------------------------------+
+|  [ Frota ]  [ Indefinidos(6) ]|
++-------------------------------+
+```
 
-**📊 Modo Tabela**
-- Colunas: Placa, Modelo, Tipo, Coordenação, Saldo
-- Rolagem horizontal em telas pequenas
-- Linhas compactas para máxima densidade
+- **Aba Frota**: Exibe o conteudo atual (filtros de coordenacao, estatisticas de saldo, toggle de visualizacao, grid/tabela/carrossel)
+- **Aba Indefinidos**: Exibe apenas veiculos sem coordenacao, com suas proprias estatisticas de saldo e o mesmo toggle de visualizacao (grid/tabela/carrossel). Sem filtro de coordenacao (nao faz sentido).
 
-**🎴 Modo Card**
-- Grid responsivo (1 coluna mobile / 2-3 desktop)
-- Foto do veículo em destaque
-- Badge colorido da coordenação
-- Saldo com indicador visual (verde/amarelo/vermelho)
-
-**🔄 Modo Carrossel**
-- Navegação por swipe (touch gestures)
-- Um card grande por vez
-- Setas de navegação em desktop
-- Contador de posição
-
-### 3. Indicadores Visuais de Saldo
-- 🟢 **Verde**: Saldo acima de R$ 200
-- 🟡 **Amarelo**: Saldo entre R$ 100 e R$ 200
-- 🔴 **Vermelho**: Saldo abaixo de R$ 100
-
-### 4. Atualizações em Tempo Real
-- Supabase Realtime subscriptions
-- Atualização automática quando gestores modificam saldos
-- Indicador visual discreto de "Sincronizado"
+O contador ao lado de "Indefinidos" mostra quantos veiculos estao nessa situacao, dando visibilidade imediata ao gestor.
 
 ---
 
-## 📱 Configuração PWA
+## Detalhes Tecnicos
 
-### Recursos
-- Manifest.json com ícones para instalação
-- Service Worker para cache de assets
-- Tema auto (claro/escuro baseado no sistema)
-- Meta tags para fullscreen no mobile
+### 1. Alterar o hook `useVehicles` para separar veiculos indefinidos
 
-### Experiência Offline
-- Cache das últimas consultas
-- Mensagem amigável quando offline
-- Tentativa automática de reconexão
+O hook atualmente filtra veiculos por coordenacao selecionada. Sera modificado para retornar tambem a lista de veiculos indefinidos (sem coordenacao) como um campo separado:
 
----
+- `data` -- veiculos com coordenacao (filtrados, como hoje)
+- `undefinedVehicles` -- veiculos sem coordenacao (sem filtro)
 
-## 🗂️ Persistência de Preferências
+A logica de separacao sera feita no `queryFn`, onde veiculos com `coordination === null` sao colocados em uma lista separada em vez de serem descartados pelo filtro.
 
-Usando localStorage para salvar:
-- Último modo de visualização usado
-- Filtros de coordenação selecionados
-- Preferência de tema (se alterado manualmente)
+### 2. Adicionar tipo de aba nas preferencias do usuario
 
----
+No arquivo `src/types/vehicle.ts`, adicionar um novo tipo para controlar a aba ativa:
 
-## 🔒 Garantias de Segurança
+```
+type FleetTab = 'fleet' | 'undefined';
+```
 
-### Acesso Read-Only
-- Utilização exclusiva do cliente Supabase já configurado
-- Apenas queries SELECT nas tabelas:
-  - `vehicle_data` (dados de combustível)
-  - `vehicles` (vinculação com coordenações)
-  - `vehicle_images` (fotos)
-  - `coordinations` (cores e nomes)
-- Zero impacto no sistema administrativo existente
+Adicionar ao `UserPreferences` para persistir a aba selecionada via localStorage.
 
----
+### 3. Modificar a pagina `Index.tsx`
 
-## 📐 Design Responsivo
+Usar o componente `Tabs` do Radix UI (ja disponivel em `src/components/ui/tabs.tsx`) para criar as duas abas:
 
-### Mobile (320px - 768px)
-- Header compacto
-- Filtros em linha horizontal scrollável
-- Cards em coluna única
-- Botões de ação no tamanho touch-friendly (44px mínimo)
+- Aba "Frota": renderiza os componentes atuais (CoordinationFilters, BalanceStats, ViewModeToggle, conteudo)
+- Aba "Indefinidos": renderiza BalanceStats e ViewModeToggle com os veiculos indefinidos, sem CoordinationFilters
 
-### Tablet/Desktop (768px+)
-- Layout mais espaçado
-- Grid de 2-3 cards
-- Tabela com mais colunas visíveis
+A contagem de indefinidos sera exibida como badge no trigger da aba.
 
----
+### 4. Arquivos modificados
 
-## 🎯 Resultado Esperado
+| Arquivo | Alteracao |
+|---|---|
+| `src/types/vehicle.ts` | Adicionar tipo `FleetTab`, atualizar `UserPreferences` |
+| `src/hooks/useVehicles.ts` | Retornar `undefinedVehicles` separadamente |
+| `src/hooks/useUserPreferences.ts` | Adicionar `setActiveTab` |
+| `src/pages/Index.tsx` | Implementar sistema de abas com `Tabs`/`TabsContent` |
 
-Um aplicativo instalável que permite aos condutores:
-1. Abrir rapidamente pelo ícone na home do celular
-2. Filtrar veículos por sua coordenação
-3. Visualizar saldo de combustível em tempo real
-4. Trocar entre modos de visualização conforme preferência
-5. Funcionar mesmo com conexão instável
+Nenhum componente novo precisa ser criado. Os componentes existentes (`VehicleGrid`, `VehicleTable`, `VehicleCarousel`, `BalanceStats`, `VehicleDetailModal`) ja recebem `vehicles[]` como prop e funcionarao normalmente com a lista de indefinidos.
 
