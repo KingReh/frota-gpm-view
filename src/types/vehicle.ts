@@ -46,14 +46,18 @@ export type ViewMode = 'table' | 'card' | 'carousel';
 
 export type FleetTab = 'fleet' | 'undefined';
 
+export type SortOption = 'plate-asc' | 'plate-desc' | 'balance-asc' | 'balance-desc' | 'coordination-asc' | 'coordination-desc';
+
 export interface UserPreferences {
   viewMode: ViewMode;
   selectedCoordinations: string[];
   activeTab: FleetTab;
+  sortBy: SortOption;
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
   viewMode: 'card',
   selectedCoordinations: [],
   activeTab: 'fleet',
+  sortBy: 'plate-asc',
 };
