@@ -1,5 +1,5 @@
 import { useLocalStorage } from './useLocalStorage';
-import { DEFAULT_PREFERENCES, type UserPreferences, type ViewMode, type FleetTab } from '@/types/vehicle';
+import { DEFAULT_PREFERENCES, type UserPreferences, type ViewMode, type FleetTab, type SortOption } from '@/types/vehicle';
 import { useCallback } from 'react';
 
 const STORAGE_KEY = 'frota-gpm-preferences';
@@ -38,6 +38,10 @@ export function useUserPreferences() {
     setPreferences(prev => ({ ...prev, activeTab }));
   }, [setPreferences]);
 
+  const setSortBy = useCallback((sortBy: SortOption) => {
+    setPreferences(prev => ({ ...prev, sortBy }));
+  }, [setPreferences]);
+
   return {
     preferences,
     setViewMode,
@@ -45,5 +49,6 @@ export function useUserPreferences() {
     toggleCoordination,
     clearFilters,
     setActiveTab,
+    setSortBy,
   };
 }

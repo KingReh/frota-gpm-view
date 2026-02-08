@@ -13,7 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { useCoordinations } from '@/hooks/useCoordinations';
 import { useVehicles } from '@/hooks/useVehicles';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
-import type { FleetTab, VehicleWithDetails } from '@/types/vehicle';
+import { parseBalance } from '@/lib/balance';
+import type { FleetTab, VehicleWithDetails, SortOption } from '@/types/vehicle';
 
 function filterBySearch(vehicles: VehicleWithDetails[], search: string): VehicleWithDetails[] {
   if (!search.trim()) return vehicles;
@@ -22,6 +23,26 @@ function filterBySearch(vehicles: VehicleWithDetails[], search: string): Vehicle
     v.plate.toLowerCase().includes(term) ||
     (v.model && v.model.toLowerCase().includes(term))
   );
+}
+
+function sortVehicles(vehicles: VehicleWithDetails[], sortBy: SortOption): VehicleWithDetails[] {
+  const sorted = [...vehicles];
+  switch (sortBy) {
+    case 'plate-asc':
+      return sorted.sort((a, b) => a.plate.localeCompare(b.plate));
+    case 'plate-desc':
+      return sorted.sort((a, b) => b.plate.localeCompare(a.plate));
+    case 'balance-asc':
+      return sorted.sort((a, b) => parseBalance(a.balance) - parseBalance(b.balance));
+    case 'balance-desc':
+      return sorted.sort((a, b) => parseBalance(b.balance) - parseBalance(a.balance));
+    case 'coordination-asc':
+      return sorted.sort((a, b) => (a.coordination?.name ?? '').localeCompare(b.coordination?.name ?? ''));
+    case 'coordination-desc':
+      return sorted.sort((a, b) => (b.coordination?.name ?? '').localeCompare(a.coordination?.name ?? ''));
+    default:
+      return sorted;
+  }
 }
 
 const Index = () => {
@@ -34,6 +55,7 @@ const Index = () => {
     clearFilters,
     setSelectedCoordinations,
     setActiveTab,
+    setSortBy,
   } = useUserPreferences();
 
   const { data: coordinations = [], isLoading: loadingCoordinations } = useCoordinations();
@@ -52,13 +74,13 @@ const Index = () => {
   const isLoading = loadingCoordinations || loadingVehicles;
 
   const filteredVehicles = useMemo(
-    () => filterBySearch(vehicles, searchQuery),
-    [vehicles, searchQuery]
+    () => sortVehicles(filterBySearch(vehicles, searchQuery), preferences.sortBy),
+    [vehicles, searchQuery, preferences.sortBy]
   );
 
   const filteredUndefined = useMemo(
-    () => filterBySearch(undefinedVehicles, searchQuery),
-    [undefinedVehicles, searchQuery]
+    () => sortVehicles(filterBySearch(undefinedVehicles, searchQuery), preferences.sortBy),
+    [undefinedVehicles, searchQuery, preferences.sortBy]
   );
 
   // Apply theme based on system preference
@@ -143,6 +165,8 @@ const Index = () => {
           <ViewModeToggle
             value={preferences.viewMode}
             onChange={setViewMode}
+            sortBy={preferences.sortBy}
+            onSortChange={setSortBy}
           />
 
           <main className="pb-safe">
@@ -156,6 +180,8 @@ const Index = () => {
           <ViewModeToggle
             value={preferences.viewMode}
             onChange={setViewMode}
+            sortBy={preferences.sortBy}
+            onSortChange={setSortBy}
           />
 
           <main className="pb-safe">

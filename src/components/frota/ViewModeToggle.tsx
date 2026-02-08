@@ -1,15 +1,18 @@
 import { LayoutGrid, Table2, Layers } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import type { ViewMode } from '@/types/vehicle';
+import { SortDropdown } from '@/components/frota/SortDropdown';
+import type { ViewMode, SortOption } from '@/types/vehicle';
 
 interface ViewModeToggleProps {
   value: ViewMode;
   onChange: (value: ViewMode) => void;
+  sortBy: SortOption;
+  onSortChange: (value: SortOption) => void;
 }
 
-export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
+export function ViewModeToggle({ value, onChange, sortBy, onSortChange }: ViewModeToggleProps) {
   return (
-    <div className="flex items-center justify-center border-b bg-background px-4 py-2">
+    <div className="flex items-center justify-between border-b bg-background px-4 py-2">
       <ToggleGroup
         type="single"
         value={value}
@@ -29,6 +32,7 @@ export function ViewModeToggle({ value, onChange }: ViewModeToggleProps) {
           <span className="hidden sm:inline text-xs">Carrossel</span>
         </ToggleGroupItem>
       </ToggleGroup>
+      <SortDropdown value={sortBy} onChange={onSortChange} />
     </div>
   );
 }
