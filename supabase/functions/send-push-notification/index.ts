@@ -24,11 +24,25 @@ async function generateVapidAuthHeader(
   const payloadB64 = base64UrlEncode(encoder.encode(JSON.stringify(payload)));
   const unsignedToken = `${headerB64}.${payloadB64}`;
 
-  // Import private key
+  // Import private key as JWK (works reliably in Deno)
   const privateKeyBytes = base64UrlDecode(privateKeyBase64);
+  const publicKeyBytes = base64UrlDecode(publicKeyBase64);
+  
+  // The public key is 65 bytes (uncompressed point: 0x04 + 32 bytes X + 32 bytes Y)
+  const x = publicKeyBytes.slice(1, 33);
+  const y = publicKeyBytes.slice(33, 65);
+  
+  const jwk = {
+    kty: "EC",
+    crv: "P-256",
+    x: base64UrlEncode(x),
+    y: base64UrlEncode(y),
+    d: base64UrlEncode(privateKeyBytes),
+  };
+  
   const key = await crypto.subtle.importKey(
-    "pkcs8",
-    convertRawKeyToPKCS8(privateKeyBytes),
+    "jwk",
+    jwk,
     { name: "ECDSA", namedCurve: "P-256" },
     false,
     ["sign"]
@@ -64,38 +78,7 @@ function base64UrlDecode(str: string): Uint8Array {
   return bytes;
 }
 
-function convertRawKeyToPKCS8(rawKey: Uint8Array): ArrayBuffer {
-  // PKCS8 wrapper for EC P-256 private key
-  const pkcs8Header = new Uint8Array([
-    0x30, 0x81, 0x87, 0x02, 0x01, 0x00, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86,
-    0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d,
-    0x03, 0x01, 0x07, 0x04, 0x6d, 0x30, 0x6b, 0x02, 0x01, 0x01, 0x04, 0x20,
-  ]);
-  const pkcs8Footer = new Uint8Array([
-    0xa1, 0x44, 0x03, 0x42, 0x00,
-  ]);
-
-  // If raw key is 32 bytes, it's just the private scalar
-  if (rawKey.length === 32) {
-    // We need the public key too, but we'll derive it
-    const result = new Uint8Array(pkcs8Header.length + 32 + pkcs8Footer.length + 65);
-    result.set(pkcs8Header);
-    result.set(rawKey, pkcs8Header.length);
-    // Without public key part - try simpler PKCS8
-    const simplePkcs8 = new Uint8Array([
-      0x30, 0x41, 0x02, 0x01, 0x00, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86,
-      0x48, 0xce, 0x3d, 0x02, 0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce,
-      0x3d, 0x03, 0x01, 0x07, 0x04, 0x27, 0x30, 0x25, 0x02, 0x01, 0x01,
-      0x04, 0x20,
-    ]);
-    const pkcs8 = new Uint8Array(simplePkcs8.length + 32);
-    pkcs8.set(simplePkcs8);
-    pkcs8.set(rawKey, simplePkcs8.length);
-    return pkcs8.buffer;
-  }
-
-  return rawKey.buffer;
-}
+// convertRawKeyToPKCS8 removed — using JWK import instead
 
 function convertDERToRaw(der: Uint8Array): Uint8Array {
   // ECDSA signature: DER to raw (r || s, each 32 bytes)
