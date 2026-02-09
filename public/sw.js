@@ -93,6 +93,49 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
+// Push notification handler
+self.addEventListener('push', (event) => {
+  let data = { title: 'Aviso', body: 'Saldo de combustível atualizado pela GPM!' };
+  try {
+    if (event.data) {
+      data = event.data.json();
+    }
+  } catch (e) {
+    // Use default message
+  }
+
+  const options = {
+    body: data.body,
+    icon: data.icon || '/icons/icon-192.png',
+    badge: data.badge || '/icons/icon-192.png',
+    vibrate: [200, 100, 200],
+    tag: 'fuel-balance-update',
+    renotify: true,
+    requireInteraction: false,
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Aviso', options)
+  );
+});
+
+// Notification click handler
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // Focus existing tab if open
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // Otherwise open new tab
+      return clients.openWindow('/');
+    })
+  );
+});
+
 // Listen for skipWaiting message
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
