@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
 import { VehicleGrid } from '@/components/frota/VehicleGrid';
@@ -15,6 +15,7 @@ import { parseBalance } from '@/lib/balance';
 import { useCoordinations } from '@/hooks/useCoordinations';
 import { useVehicles } from '@/hooks/useVehicles';
 import { useToast } from '@/hooks/use-toast';
+import { useBalanceUpdateAlert } from '@/hooks/useBalanceUpdateAlert';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { SortControl } from '@/components/frota/SortControl';
 import type { FleetTab, VehicleWithDetails, SortOption } from '@/types/vehicle';
@@ -63,6 +64,11 @@ const Index = () => {
   } = useUserPreferences();
 
   const { toast } = useToast();
+  const { recentlyUpdated, triggerAlert } = useBalanceUpdateAlert();
+
+  const onRealtimeUpdate = useCallback(() => {
+    triggerAlert();
+  }, [triggerAlert]);
 
   const { data: coordinations = [], isLoading: loadingCoordinations } = useCoordinations();
 
@@ -74,7 +80,8 @@ const Index = () => {
     lastUpdated,
     totalFleetBalance = 0,
   } = useVehicles({
-    selectedCoordinations: preferences.selectedCoordinations
+    selectedCoordinations: preferences.selectedCoordinations,
+    onRealtimeUpdate,
   });
 
   const isSynced = !isFetching;
@@ -225,6 +232,7 @@ const Index = () => {
       setViewMode={setViewMode}
       isSynced={isSynced}
       lastUpdated={lastUpdated ? new Date(lastUpdated) : null}
+      recentlyUpdated={recentlyUpdated}
     >
       <div className="space-y-8">
         {/* 1. Global Filters (Centered at Top) */}

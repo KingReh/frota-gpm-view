@@ -6,6 +6,7 @@ import { ptBR } from 'date-fns/locale';
 interface AppHeaderProps {
   isSynced: boolean;
   lastUpdated?: Date | null;
+  recentlyUpdated?: boolean;
 }
 
 function formatLastUpdated(date: Date | null | undefined): { relative: string; full: string } | null {
@@ -17,15 +18,21 @@ function formatLastUpdated(date: Date | null | undefined): { relative: string; f
   };
 }
 
-export function AppHeader({ isSynced, lastUpdated }: AppHeaderProps) {
+export function AppHeader({ isSynced, lastUpdated, recentlyUpdated }: AppHeaderProps) {
   const formattedDate = formatLastUpdated(lastUpdated);
   
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <span className="text-sm font-bold text-primary-foreground">GPM</span>
+            {recentlyUpdated && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+              </span>
+            )}
           </div>
           <div>
             <h1 className="text-lg font-semibold leading-none">Frota GPM</h1>
