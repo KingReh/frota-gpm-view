@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 
 import InstallPrompt from "./components/pwa/InstallPrompt";
 import UpdatePrompt from "./components/pwa/UpdatePrompt";
+import PushNotificationManager from "./components/pwa/PushNotificationManager";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
       <Sonner />
       <InstallPrompt />
       <UpdatePrompt />
+      <PushNotificationManager />
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<Index />} />
