@@ -62,6 +62,57 @@ export type Database = {
         }
         Relationships: []
       }
+      push_notifications_log: {
+        Row: {
+          affected_rows: number | null
+          id: string
+          status: string | null
+          triggered_at: string | null
+        }
+        Insert: {
+          affected_rows?: number | null
+          id?: string
+          status?: string | null
+          triggered_at?: string | null
+        }
+        Update: {
+          affected_rows?: number | null
+          id?: string
+          status?: string | null
+          triggered_at?: string | null
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string | null
+          endpoint: string
+          id: string
+          last_used_at: string | null
+          p256dh: string
+          user_agent: string | null
+        }
+        Insert: {
+          auth: string
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          last_used_at?: string | null
+          p256dh: string
+          user_agent?: string | null
+        }
+        Update: {
+          auth?: string
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          last_used_at?: string | null
+          p256dh?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           created_at: string

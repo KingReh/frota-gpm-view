@@ -5,10 +5,13 @@ import { useCallback } from 'react';
 const STORAGE_KEY = 'frota-gpm-preferences';
 
 export function useUserPreferences() {
-  const [preferences, setPreferences] = useLocalStorage<UserPreferences>(
+  const [rawPreferences, setPreferences] = useLocalStorage<UserPreferences>(
     STORAGE_KEY,
     DEFAULT_PREFERENCES
   );
+
+  // Merge with defaults to handle missing fields from older stored versions
+  const preferences: UserPreferences = { ...DEFAULT_PREFERENCES, ...rawPreferences };
 
   const setViewMode = useCallback((viewMode: ViewMode) => {
     setPreferences(prev => ({ ...prev, viewMode }));
