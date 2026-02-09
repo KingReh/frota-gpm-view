@@ -1,9 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { useSwipeDismiss } from '@/hooks/useSwipeDismiss';
 
 const VAPID_PUBLIC_KEY = 'BDmJmOmMPkGhjMOaMf39yNFInoqCPRFMsyjV48vkjI0TQ4FLEkBvIxuPIwlPLaBEZ0TCRA4MvBwQ_BwuPZMExd8';
 
@@ -22,23 +21,29 @@ export default function PushNotificationManager() {
   const [showBanner, setShowBanner] = useState(false);
   const [isSubscribing, setIsSubscribing] = useState(false);
 
-  const handleDismiss = useCallback(() => {
-    setShowBanner(false);
-    localStorage.setItem('push_dismissed', Date.now().toString());
-  }, []);
-
-  const { ref: swipeRef, handlers } = useSwipeDismiss({ onDismiss: handleDismiss, direction: 'down' });
-
   useEffect(() => {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return;
-    if (localStorage.getItem('push_subscribed') === 'true') return;
-    if (Notification.permission === 'denied') return;
+    // Check support
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+      return;
+    }
+
+    // Already subscribed
+    if (localStorage.getItem('push_subscribed') === 'true') {
+      return;
+    }
+
+    // Already granted or denied - don't show banner
+    if (Notification.permission === 'denied') {
+      return;
+    }
 
     if (Notification.permission === 'granted') {
+      // Auto-subscribe silently
       subscribeUser();
       return;
     }
 
+    // Show banner after delay
     const timer = setTimeout(() => setShowBanner(true), 5000);
     return () => clearTimeout(timer);
   }, []);
@@ -47,14 +52,18 @@ export default function PushNotificationManager() {
     setIsSubscribing(true);
     try {
       const registration = await navigator.serviceWorker.ready;
+
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
       });
 
       const subJson = subscription.toJSON();
-      if (!subJson.endpoint || !subJson.keys) throw new Error('Invalid subscription');
+      if (!subJson.endpoint || !subJson.keys) {
+        throw new Error('Invalid subscription');
+      }
 
+      // Upsert to Supabase
       await supabase.from('push_subscriptions').upsert(
         {
           endpoint: subJson.endpoint,
@@ -84,22 +93,21 @@ export default function PushNotificationManager() {
     }
   };
 
+  const handleDismiss = () => {
+    setShowBanner(false);
+    localStorage.setItem('push_dismissed', Date.now().toString());
+  };
+
   if (!showBanner) return null;
 
   return (
     <AnimatePresence>
       <motion.div
-        ref={swipeRef}
-        {...handlers}
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:w-96 touch-pan-x cursor-grab active:cursor-grabbing"
+        className="fixed bottom-4 left-4 right-4 z-50 md:left-auto md:right-4 md:w-96"
       >
-        {/* Swipe hint */}
-        <div className="flex justify-center mb-1 md:hidden">
-          <div className="w-8 h-1 rounded-full bg-white/20" />
-        </div>
         <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl flex flex-col gap-4">
           <div className="flex items-start justify-between">
             <div className="flex gap-3">
@@ -113,7 +121,7 @@ export default function PushNotificationManager() {
                 </p>
               </div>
             </div>
-            <button onClick={handleDismiss} className="text-zinc-500 hover:text-white transition-colors active:bg-white/10 rounded-md p-1">
+            <button onClick={handleDismiss} className="text-zinc-500 hover:text-white transition-colors">
               <X size={20} />
             </button>
           </div>
@@ -121,7 +129,7 @@ export default function PushNotificationManager() {
           <Button
             onClick={handleEnable}
             disabled={isSubscribing}
-            className="w-full bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-medium shadow-lg shadow-amber-500/25"
+            className="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium shadow-lg shadow-amber-500/25"
           >
             {isSubscribing ? 'Ativando...' : 'Ativar Notificações'}
           </Button>

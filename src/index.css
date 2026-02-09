@@ -45,16 +45,10 @@
 @layer base {
   * {
     @apply border-border;
-    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-  }
-  button, a, [role="button"], input, select, textarea {
-    touch-action: manipulation;
   }
 }
 
