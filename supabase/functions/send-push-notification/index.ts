@@ -323,8 +323,10 @@ Deno.serve(async (req: Request) => {
               .from("push_subscriptions")
               .update({ last_used_at: new Date().toISOString() })
               .eq("endpoint", sub.endpoint);
-          } else if (response.status === 404 || response.status === 410) {
-            // Subscription expired - mark for removal
+          } else if (response.status === 404 || response.status === 410 || response.status === 403) {
+            // Subscription expired, gone, or VAPID mismatch - mark for removal
+            const body = await response.text();
+            console.log(`Removing invalid subscription (${response.status}): ${sub.endpoint} - ${body}`);
             expiredEndpoints.push(sub.endpoint);
             failCount++;
           } else {
