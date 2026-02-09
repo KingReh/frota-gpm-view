@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Info, X } from "lucide-react";
+import { Zap, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSwipeDismiss } from "@/hooks/useSwipeDismiss";
 
 const DRIVING_TIPS = [
   "Mantenha sempre a distância de segurança do veículo à frente.",
@@ -29,25 +30,19 @@ export const DrivingTipsToast = () => {
   const [hasPwaPrompt, setHasPwaPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
 
+  const handleDismiss = useCallback(() => setIsVisible(false), []);
+  const { ref: swipeRef, handlers } = useSwipeDismiss({ onDismiss: handleDismiss, direction: 'down' });
+
   useEffect(() => {
-    // Select a random tip on mount
     const randomTip = DRIVING_TIPS[Math.floor(Math.random() * DRIVING_TIPS.length)];
     setTip(randomTip);
 
-    // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-    setIsIOS(isIosDevice);
+    setIsIOS(/iphone|ipad|ipod/.test(userAgent));
 
-    // Delay appearance slightly for better UX
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 1000);
+    const timer = setTimeout(() => setIsVisible(true), 1000);
 
-    const handlePwaVisibility = (e: CustomEvent) => {
-      setHasPwaPrompt(e.detail);
-    };
-
+    const handlePwaVisibility = (e: CustomEvent) => setHasPwaPrompt(e.detail);
     window.addEventListener('pwa-prompt-visibility', handlePwaVisibility as EventListener);
 
     return () => {
@@ -70,30 +65,28 @@ export const DrivingTipsToast = () => {
           )}
         >
           <motion.div
+            ref={swipeRef}
+            {...handlers}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{
-              type: "spring",
-              stiffness: 400,
-              damping: 30
-            }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             className={cn(
-              "pointer-events-auto relative overflow-hidden",
+              "pointer-events-auto relative overflow-hidden touch-pan-x",
               "bg-black/40 backdrop-blur-xl border border-white/10",
               "p-4 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
-              "flex items-start gap-4 group"
+              "flex items-start gap-4 group cursor-grab active:cursor-grabbing"
             )}
           >
-            {/* Ambient Glow */}
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary/5 to-transparent opacity-50 pointer-events-none" />
 
-            {/* Icon */}
+            {/* Swipe hint indicator */}
+            <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-white/20 md:hidden" />
+
             <div className="shrink-0 p-2 rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.3)]">
               <Zap className="w-5 h-5" />
             </div>
 
-            {/* Content */}
             <div className="flex-1 pt-1">
               <div className="flex items-center justify-between gap-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 flex items-center gap-2">
@@ -101,18 +94,15 @@ export const DrivingTipsToast = () => {
                   <span className="w-1 h-1 rounded-full bg-primary/50 animate-pulse" />
                 </h4>
                 <button
-                  onClick={() => setIsVisible(false)}
-                  className="text-white/40 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
+                  onClick={handleDismiss}
+                  className="text-white/40 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10 active:bg-white/20"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-sm text-gray-200 leading-relaxed font-medium">
-                {tip}
-              </p>
+              <p className="text-sm text-gray-200 leading-relaxed font-medium">{tip}</p>
             </div>
 
-            {/* Bottom Progress/Border Accent */}
             <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           </motion.div>
         </div>
