@@ -1,9 +1,8 @@
-import { useState, useRef, useCallback } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useState } from 'react';
 import { VehicleCard } from './VehicleCard';
 import { VehicleDetailModal } from './VehicleDetailModal';
 import type { VehicleWithDetails } from '@/types/vehicle';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { motion } from 'framer-motion';
 
 interface VehicleGridProps {
   vehicles: VehicleWithDetails[];
@@ -11,28 +10,6 @@ interface VehicleGridProps {
 
 export function VehicleGrid({ vehicles }: VehicleGridProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
-  const parentRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-
-  // Determine columns based on viewport
-  const getColumns = useCallback(() => {
-    if (typeof window === 'undefined') return 1;
-    const w = window.innerWidth;
-    if (w < 768) return 1;
-    if (w < 1024) return 2;
-    if (w < 1280) return 3;
-    return 4;
-  }, []);
-
-  const columns = getColumns();
-  const rowCount = Math.ceil(vehicles.length / columns);
-
-  const virtualizer = useVirtualizer({
-    count: rowCount,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => isMobile ? 340 : 420,
-    overscan: 3,
-  });
 
   if (vehicles.length === 0) {
     return (
@@ -45,52 +22,27 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
 
   return (
     <>
-      <div
-        ref={parentRef}
-        className="h-[calc(100vh-220px)] overflow-y-auto scrollbar-hide"
-        style={{ contain: 'strict' }}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6"
       >
-        <div
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
-          }}
-        >
-          {virtualizer.getVirtualItems().map((virtualRow) => {
-            const startIndex = virtualRow.index * columns;
-            const rowVehicles = vehicles.slice(startIndex, startIndex + columns);
-
-            return (
-              <div
-                key={virtualRow.key}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-                  gap: '1.5rem',
-                  paddingBottom: '1.5rem',
-                }}
-              >
-                {rowVehicles.map((vehicle) => (
-                  <div key={vehicle.plate}>
-                    <VehicleCard
-                      vehicle={vehicle}
-                      compact
-                      onClick={() => setSelectedVehicle(vehicle)}
-                    />
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      </div>
+        {vehicles.map((vehicle, index) => (
+          <motion.div
+            key={vehicle.plate}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+          >
+            <VehicleCard
+              vehicle={vehicle}
+              compact
+              onClick={() => setSelectedVehicle(vehicle)}
+            />
+          </motion.div>
+        ))}
+      </motion.div>
       <VehicleDetailModal
         vehicle={selectedVehicle}
         open={!!selectedVehicle}
