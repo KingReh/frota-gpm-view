@@ -20,9 +20,10 @@ interface VehicleWithCoordination {
 
 interface UseVehiclesOptions {
   selectedCoordinations?: string[];
+  onRealtimeUpdate?: () => void;
 }
 
-export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions = {}) {
+export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: UseVehiclesOptions = {}) {
   const queryClient = useQueryClient();
   const hasLoadedRef = useRef(false);
 
@@ -146,13 +147,14 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
           // Invalidate and refetch on any change
           queryClient.invalidateQueries({ queryKey: ['vehicles'] });
 
-          // Show toast only after initial load
+          // Show toast and trigger alert only after initial load
           if (hasLoadedRef.current) {
             toast.success('Saldos da frota atualizados', {
               description: 'Novos dados recebidos via satélite.',
               duration: 3000,
               icon: '📡',
             });
+            onRealtimeUpdate?.();
           }
         }
       )
@@ -161,7 +163,7 @@ export function useVehicles({ selectedCoordinations = [] }: UseVehiclesOptions =
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, onRealtimeUpdate]);
 
   return {
     ...query,

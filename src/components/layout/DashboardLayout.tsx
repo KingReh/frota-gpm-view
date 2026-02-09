@@ -8,6 +8,7 @@ interface DashboardLayoutProps {
     setViewMode: (mode: "table" | "card" | "carousel") => void;
     isSynced?: boolean;
     lastUpdated?: Date | null;
+    recentlyUpdated?: boolean;
 }
 
 export const DashboardLayout = ({
@@ -15,7 +16,8 @@ export const DashboardLayout = ({
     viewMode,
     setViewMode,
     isSynced,
-    lastUpdated
+    lastUpdated,
+    recentlyUpdated
 }: DashboardLayoutProps) => {
     return (
         <div className="relative min-h-screen overflow-hidden bg-background text-foreground font-sans selection:bg-primary/20">
@@ -33,6 +35,7 @@ export const DashboardLayout = ({
                     setViewMode={setViewMode}
                     isSynced={isSynced}
                     lastUpdated={lastUpdated}
+                    recentlyUpdated={recentlyUpdated}
                 />
 
                 <DrivingTipsToast />

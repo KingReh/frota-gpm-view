@@ -8,15 +8,22 @@ interface HeaderProps {
     setViewMode: (mode: "table" | "card" | "carousel") => void;
     isSynced?: boolean;
     lastUpdated?: Date | null;
+    recentlyUpdated?: boolean;
 }
 
-export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated }: HeaderProps) => {
+export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, recentlyUpdated }: HeaderProps) => {
     return (
         <header className="fixed top-0 left-0 right-0 h-16 z-50 px-2 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
             {/* Brand Identity */}
             <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
+                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
                     <Car className="w-6 h-6 text-white" />
+                    {recentlyUpdated && (
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+                        </span>
+                    )}
                 </div>
                 <div className="flex flex-col">
                     <h1 className="text-lg font-bold tracking-tight leading-none text-white">
