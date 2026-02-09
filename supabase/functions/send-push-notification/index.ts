@@ -271,6 +271,16 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Validate the request is from an authorized source (DB trigger via pg_net sends the anon key)
+    const authHeader = req.headers.get("Authorization");
+    const expectedAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!authHeader || !expectedAnonKey || authHeader !== `Bearer ${expectedAnonKey}`) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
