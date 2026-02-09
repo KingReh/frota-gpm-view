@@ -303,6 +303,8 @@ Deno.serve(async (req: Request) => {
     const expiredEndpoints: string[] = [];
 
     // Send push to each subscription
+    const detailedResults: Array<{ endpoint: string; status: string; detail?: string }> = [];
+
     const results = await Promise.allSettled(
       subscriptions.map(async (sub) => {
         try {
@@ -318,25 +320,28 @@ Deno.serve(async (req: Request) => {
 
           if (response.status === 201 || response.status === 200) {
             successCount++;
-            // Update last_used_at
             await supabase
               .from("push_subscriptions")
               .update({ last_used_at: new Date().toISOString() })
               .eq("endpoint", sub.endpoint);
+            detailedResults.push({ endpoint: sub.endpoint, status: "sent" });
           } else if (response.status === 404 || response.status === 410 || response.status === 403) {
-            // Subscription expired, gone, or VAPID mismatch - mark for removal
             const body = await response.text();
-            console.log(`Removing invalid subscription (${response.status}): ${sub.endpoint} - ${body}`);
+            const reason = response.status === 403 ? "VAPID mismatch" : response.status === 410 ? "gone" : "not found";
+            console.log(`Removing invalid subscription (${response.status} ${reason}): ${sub.endpoint}`);
             expiredEndpoints.push(sub.endpoint);
             failCount++;
+            detailedResults.push({ endpoint: sub.endpoint, status: "removed", detail: `${response.status} ${reason}: ${body.slice(0, 200)}` });
           } else {
             const body = await response.text();
             console.error(`Push failed for ${sub.endpoint}: ${response.status} - ${body}`);
             failCount++;
+            detailedResults.push({ endpoint: sub.endpoint, status: "failed", detail: `${response.status}: ${body.slice(0, 200)}` });
           }
         } catch (err) {
           console.error(`Error sending push to ${sub.endpoint}:`, err);
           failCount++;
+          detailedResults.push({ endpoint: sub.endpoint, status: "error", detail: String(err).slice(0, 200) });
         }
       })
     );
@@ -361,7 +366,8 @@ Deno.serve(async (req: Request) => {
       .order("triggered_at", { ascending: false })
       .limit(1);
 
-    console.log(`Push sent: ${successCount} success, ${failCount} failed, ${expiredEndpoints.length} expired`);
+    console.log(`Push summary: ${successCount} sent, ${failCount} failed, ${expiredEndpoints.length} removed`);
+    console.log("Details:", JSON.stringify(detailedResults, null, 2));
 
     return new Response(
       JSON.stringify({
@@ -369,6 +375,7 @@ Deno.serve(async (req: Request) => {
         sent: successCount,
         failed: failCount,
         expired: expiredEndpoints.length,
+        details: detailedResults,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
