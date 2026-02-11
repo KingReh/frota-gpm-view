@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Car, Building2, Info, Gauge as GaugeIcon, Fuel, Zap, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,68 +23,26 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
   const balanceValue = parseBalance(vehicle.balance);
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
 
-  // Digital Cockpit variants for Framer Motion
-  const cockpitVariants = {
-    initial: { opacity: 0, scale: 0.92, y: 15 },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 150,
-        damping: 15
-      }
-    },
-    hover: {
-      y: -8,
-      scale: 1.02,
-      transition: {
-        type: "spring" as const,
-        stiffness: 200,
-        damping: 10
-      }
-    }
-  };
-
   return (
-    <motion.div
-      variants={cockpitVariants}
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      className="relative"
-    >
+    <div className="relative transition-opacity duration-300">
       <Card
         className={cn(
-          "relative overflow-hidden group border border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl transition-colors duration-500",
-          "rounded-[24px] overflow-hidden", // 8px * 3
+          "relative overflow-hidden group border border-white/10 bg-zinc-900/90 shadow-lg transition-colors duration-500",
+          "rounded-[24px] overflow-hidden",
           isLarge ? "h-full" : compact ? "min-h-[160px]" : "min-h-[320px]"
         )}
       >
         {/* Cinematic Header / Image Container */}
         <div className={cn(
           "relative w-full overflow-hidden bg-zinc-950/50 flex items-center justify-center",
-          isLarge ? "h-64" : compact ? "h-32" : "h-48" // Multiples of 8: 64=512px (wait, tailwind units h-64=16rem=256px), h-48=192px, h-32=128px
+          isLarge ? "h-64" : compact ? "h-32" : "h-48"
         )}>
-          {/* Blurred Backdrop for contained images */}
-          {vehicle.image_url && (
-            <div
-              className="absolute inset-0 opacity-20 blur-3xl scale-125 pointer-events-none"
-              style={{
-                backgroundImage: `url(${vehicle.image_url})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            />
-          )}
-
           {/* Dynamic Mesh Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-transparent to-primary/5 z-0" />
 
           {/* Branding / Badge Slot (Top Left) */}
           {vehicle.coordination && (
-            <div className="absolute left-6 top-6 z-20"> {/* 8px * 3 = 24px = p-6 */}
+            <div className="absolute left-6 top-6 z-20">
               <CoordinationBadge
                 coordination={vehicle.coordination}
                 compact={compact}
@@ -100,10 +57,10 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               size="icon"
               variant="ghost"
               className={cn(
-                "h-10 w-10 rounded-xl backdrop-blur-md border transition-all duration-300",
+                "h-10 w-10 rounded-xl bg-zinc-800/90 border transition-all duration-300",
                 isFavorite
-                  ? "bg-yellow-500/10 border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20"
-                  : "bg-white/5 border-white/15 text-white/40 hover:text-yellow-400 hover:bg-white/10 hover:border-yellow-500/30"
+                  ? "border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/20"
+                  : "border-white/15 text-white/40 hover:text-yellow-400 hover:bg-white/10 hover:border-yellow-500/30"
               )}
               onClick={(e) => {
                 e.stopPropagation();
@@ -117,7 +74,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-10 w-10 rounded-xl bg-white/5 backdrop-blur-md border border-white/15 text-white hover:bg-primary hover:text-white hover:border-primary hover:shadow-[0_0_20px_rgba(255,45,32,0.4)] transition-all duration-300"
+                className="h-10 w-10 rounded-xl bg-zinc-800/90 border border-white/15 text-white hover:bg-primary hover:text-white hover:border-primary hover:shadow-[0_0_20px_rgba(255,45,32,0.4)] transition-all duration-300"
                 onClick={(e) => {
                   e.stopPropagation();
                   onClick();
@@ -128,13 +85,13 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
             )}
           </div>
 
-          {/* Main Vehicle Image - PIXEL PERFECT CONTAINMENT */}
+          {/* Main Vehicle Image */}
           <div className="relative z-10 w-full h-full p-4 flex items-center justify-center">
             {vehicle.image_url ? (
               <img
                 src={vehicle.image_url}
                 alt={`Veículo ${vehicle.plate}`}
-                className="max-h-full max-w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-transform duration-700 group-hover:scale-105"
+                className="max-h-full max-w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
                 loading="lazy"
               />
             ) : (
@@ -149,9 +106,8 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
         </div>
 
-        {/* Content Section - 8px Grid Applied */}
-        <div className="p-8 space-y-8 relative z-20"> {/* 8px * 4 = 32px padding */}
-
+        {/* Content Section */}
+        <div className="p-8 space-y-8 relative z-20">
           {/* Main Info Row */}
           <div className="flex flex-col gap-6">
             <div className="flex items-end justify-between gap-4">
@@ -160,7 +116,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                   <span className="h-1 w-4 bg-primary rounded-full" />
                   <span className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] font-black">Identificação</span>
                 </div>
-                <div className="bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-lg text-white font-mono font-bold tracking-[0.2em] text-2xl shadow-inner group-hover:border-primary/40 transition-colors">
+                <div className="bg-zinc-900/80 border border-white/10 px-4 py-2 rounded-lg text-white font-mono font-bold tracking-[0.2em] text-2xl shadow-inner group-hover:border-primary/40 transition-colors">
                   {vehicle.plate}
                 </div>
                 <h3 className="text-white text-lg font-bold tracking-tight line-clamp-1 opacity-90">
@@ -168,7 +124,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 </h3>
               </div>
 
-              {/* Technical Badges - More prominent now */}
+              {/* Technical Badges */}
               <div className="flex flex-col items-end gap-3">
                 <div className="flex flex-col items-end">
                   <span className="text-[8px] text-zinc-500 uppercase font-black tracking-widest mb-1">Concessionária</span>
@@ -222,7 +178,6 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 "flex relative transition-all duration-500",
                 hideTelemetry ? "justify-center scale-125 py-4" : "justify-end"
               )}>
-                <div className="absolute -inset-8 bg-primary/10 blur-[60px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                 <Gauge
                   value={balanceValue}
                   max={parseBalance(vehicle.next_period_limit)}
@@ -233,7 +188,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
             </div>
           )}
 
-          {/* Compact View Stats - Now enriched with info */}
+          {/* Compact View Stats */}
           {compact && (
             <div className="space-y-4 pt-4 border-t border-white/5">
               <div className="flex items-center justify-between gap-2">
@@ -250,21 +205,18 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 <div className="font-mono font-black text-lg bg-gradient-to-r from-white to-zinc-500 bg-clip-text text-transparent">
                   {balanceValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </div>
-                <GaugeIcon className="w-4 h-4 text-primary animate-pulse" />
+                <GaugeIcon className="w-4 h-4 text-primary" />
               </div>
             </div>
           )}
         </div>
 
-        {/* Highlight Ring (8px border radius compatible) */}
+        {/* Highlight Ring */}
         <div className="absolute inset-0 rounded-[24px] ring-1 ring-white/10 group-hover:ring-primary/40 transition-all duration-700 pointer-events-none z-30" />
 
         {/* Subtle Bottom Glow */}
         <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
       </Card>
-    </motion.div>
+    </div>
   );
 }
-
-
-

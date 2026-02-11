@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface GaugeProps {
@@ -51,16 +50,15 @@ export function Gauge({ value, max = 1000, label, size = 'md', className }: Gaug
                     />
 
                     {/* Progress Arc */}
-                    <motion.path
+                    <path
                         d="M 20 80 A 40 40 0 1 1 80 80"
                         fill="none"
                         stroke="url(#gauge-gradient)"
                         strokeWidth={sizeMetrics.stroke}
                         strokeLinecap="round"
                         strokeDasharray="200"
-                        initial={{ strokeDashoffset: 200 }}
-                        animate={{ strokeDashoffset: 200 - (percentage / 100) * 188 }}
-                        transition={{ type: "spring", stiffness: 120, damping: 18 }}
+                        strokeDashoffset={200 - (percentage / 100) * 188}
+                        style={{ transition: 'stroke-dashoffset 0.5s ease' }}
                     />
 
                     <defs>

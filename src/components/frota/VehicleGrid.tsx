@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { VehicleCard } from './VehicleCard';
 import { VehicleDetailModal } from './VehicleDetailModal';
 import type { VehicleWithDetails } from '@/types/vehicle';
-import { motion } from 'framer-motion';
+
 
 interface VehicleGridProps {
   vehicles: VehicleWithDetails[];
@@ -22,27 +22,17 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6"
-      >
-        {vehicles.map((vehicle, index) => (
-          <motion.div
-            key={vehicle.plate}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-          >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6">
+        {vehicles.map((vehicle) => (
+          <div key={vehicle.plate}>
             <VehicleCard
               vehicle={vehicle}
               compact
               onClick={() => setSelectedVehicle(vehicle)}
             />
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
       <VehicleDetailModal
         vehicle={selectedVehicle}
         open={!!selectedVehicle}
