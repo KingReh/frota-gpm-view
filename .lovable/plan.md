@@ -1,132 +1,123 @@
 
-# Notificacao Push -- Plano de Implementacao Seguro
+# Otimizacao de Performance: Remocao de Efeitos Pesados
 
-## Principio fundamental
-
-**Nenhuma tabela existente sera alterada.** As tabelas `push_subscriptions`, `push_notifications_log` e `vehicle_data` permanecem intactas. Apenas recursos novos serao criados (trigger, edge function, componente frontend).
-
----
-
-## O que ja existe no projeto
-
-| Recurso | Status |
-|---|---|
-| Tabela `push_subscriptions` | Existe, pronta para uso |
-| Tabela `push_notifications_log` | Existe, pronta para uso |
-| Funcao DB `notify_fuel_balance_update()` | Existe, chama a edge function via `pg_net` |
-| Secrets `VAPID_PUBLIC_KEY` e `VAPID_PRIVATE_KEY` | Configurados |
-| Trigger na tabela `vehicle_data` | **NAO existe** (precisa ser criado) |
-| Edge Function `send-push-notification` | **NAO existe** (precisa ser criada) |
-| Service Worker push handler | **NAO existe** (precisa ser adicionado) |
-| Componente frontend de subscricao | **NAO existe** (precisa ser criado) |
+## Resumo
+Simplificar ou remover animacoes e efeitos visuais que consomem muitos recursos de GPU/CPU, mantendo o visual escuro e moderno do app mas tornando-o fluido em dispositivos com baixo processamento.
 
 ---
 
-## O que sera feito
+## Alteracoes por Arquivo
 
-### 1. Criar trigger na tabela `vehicle_data` (migracao SQL)
+### 1. DashboardLayout.tsx
+**Remover:** Os 2 blobs pulsantes com `blur-[120px] animate-pulse` (linhas 27-28)
+**Manter:** O gradiente radial estatico (linha 26) que e leve
+**Resultado:** Fundo ambient sem custo de GPU
 
-Um trigger `AFTER INSERT OR UPDATE ... FOR EACH STATEMENT` sera adicionado a tabela `vehicle_data`. Isso:
-- Nao altera a estrutura da tabela (nenhuma coluna adicionada/removida)
-- Nao afeta operacoes de leitura ou escrita existentes
-- Apenas dispara a funcao `notify_fuel_balance_update()` que ja existe
-- Usa `FOR EACH STATEMENT` para enviar apenas uma notificacao por upload em lote
+### 2. VehicleCard.tsx
+**Simplificar Framer Motion:**
+- Remover `whileHover` com spring animation (hover com scale/translate)
+- Simplificar `initial/animate` de spring para uma transicao CSS simples com `opacity` e `transition`
+- Converter o `motion.div` wrapper para `div` simples com classe CSS `transition-opacity duration-300`
 
-```sql
-CREATE TRIGGER on_vehicle_data_update
-  AFTER INSERT OR UPDATE ON vehicle_data
-  FOR EACH STATEMENT
-  EXECUTE FUNCTION notify_fuel_balance_update();
-```
+**Remover backdrop-blur:**
+- Linha 61: `backdrop-blur-xl` no Card -> substituir por `bg-zinc-900/90` (cor solida semi-transparente)
+- Linha 103: `backdrop-blur-md` nos botoes -> substituir por `bg-zinc-800/90`
+- Linha 120: `backdrop-blur-md` no botao info -> substituir por `bg-zinc-800/90`
+- Linha 163: `backdrop-blur-md` na placa -> substituir por `bg-zinc-900/80`
 
-### 2. Criar Edge Function `send-push-notification`
+**Remover blur decorativo:**
+- Linhas 73-80: Blurred backdrop da imagem (`blur-3xl scale-125`) -> remover div inteira
+- Linha 225: Glow hover `blur-[60px]` no gauge -> remover div inteira
 
-Novo arquivo: `supabase/functions/send-push-notification/index.ts`
+**Remover shadow pesado:**
+- Linha 61: `shadow-2xl` -> substituir por `shadow-lg`
 
-Responsabilidades:
-- Receber o evento disparado pela funcao DB
-- Buscar todas as subscricoes na tabela `push_subscriptions`
-- Enviar push notification para cada subscricao usando a lib `web-push`
-- Remover subscricoes invalidas (endpoint expirado / 410 Gone)
-- Atualizar `last_used_at` nas subscricoes validas
-- Registrar resultado em `push_notifications_log`
+**Simplificar hover de imagem:**
+- Linha 137: `transition-transform duration-700 group-hover:scale-105` -> remover o group-hover:scale-105 (evita recomposicao de camada)
 
-Mensagem fixa:
-- Titulo: "Aviso"
-- Corpo: "Saldo de combustivel atualizado pela GPM!"
+### 3. VehicleGrid.tsx
+**Remover staggered animations:**
+- Converter `motion.div` do grid (linha 25) para `div` simples
+- Converter `motion.div` de cada card (linha 32) para `div` simples, removendo o `delay: index * 0.05` que cria dezenas de animacoes simultaneas
+- Resultado: Cards aparecem imediatamente sem delay cascata
 
-### 3. Adicionar handlers de push ao Service Worker (`public/sw.js`)
+### 4. VehicleCarousel.tsx
+**Remover blob de fundo:**
+- Linha 55: `blur-[120px]` blob de 800px -> remover div inteira
 
-Dois novos event listeners:
-- `push`: exibe a notificacao nativa com titulo, corpo e icone do app
-- `notificationclick`: abre/foca a aba do app ao clicar na notificacao
+**Simplificar backdrop-blur:**
+- Linha 40: estado vazio `backdrop-blur-xl` -> `bg-zinc-900/90`
+- Linhas 84-85: botoes do carousel `backdrop-blur-md` -> `bg-zinc-800/90`
 
-### 4. Criar componente `PushNotificationManager`
+**Simplificar indicadores de pagina:**
+- Linhas 92-103: Converter `motion.div` dos dots para `div` com CSS transitions simples
+- Remover `shadow-[0_0_20px_...]` glow dos dots ativos
 
-Novo arquivo: `src/components/pwa/PushNotificationManager.tsx`
+### 5. TotalBalanceStats.tsx
+**Remover staggered Framer Motion:**
+- Linha 55: `motion.div` do grid -> converter para `div` simples
+- Linhas 123-133: `AnimatePresence` + `motion.div` com spring staggered nos cards de coordenacao -> converter para `div` simples
+- Remover `whileHover={{ y: -4 }}` dos cards
 
-Responsabilidades:
-- Verificar se o navegador suporta push notifications
-- Solicitar permissao do usuario (via banner amigavel, mesmo estilo do `InstallPrompt`)
-- Gerar a subscricao push com a VAPID public key
-- Salvar a subscricao na tabela `push_subscriptions` (upsert por endpoint)
-- Persistir no `localStorage` que o usuario ja configurou push
-- Funcionar sem autenticacao (subscricao anonima por dispositivo)
+**Remover decorativos pulsantes:**
+- Linha 142: `animate-pulse` no indicador de cor -> remover
+- Linha 143: `blur-sm` glow do indicador -> remover
 
-### 5. Integrar no `App.tsx`
+**Simplificar glass-panel:**
+- Linha 61: `shadow-2xl` -> `shadow-lg`
 
-Adicionar `<PushNotificationManager />` ao lado dos demais componentes PWA.
+### 6. VehicleDetailModal.tsx
+**Simplificar:**
+- Linha 67: `backdrop-blur-xl` no modal -> `bg-gray-950/95` (quase opaco, sem blur)
+- Linha 76: `backdrop-blur-md` no botao fechar -> `bg-zinc-800/90`
+- Linha 102: `backdrop-blur-md` no badge -> remover
+
+### 7. Gauge.tsx
+**Simplificar:**
+- Linha 54-63: `motion.path` com spring -> converter para `path` com CSS transition (`transition: stroke-dashoffset 0.5s ease`)
+
+### 8. Header.tsx (layout)
+**Manter como esta** - o `glass-panel` do header e aceitavel por ser um unico elemento fixo
+
+### 9. index.css
+**Simplificar glass-panel:**
+- Remover `backdrop-blur-xl` da classe utilitaria `glass-panel` -> substituir por `bg-zinc-950/90` sem blur
+- Manter border e shadow
 
 ---
 
-## Impacto no banco de dados
+## Resumo do Impacto
 
-| Operacao | Tabela | Tipo de alteracao |
+| Efeito Removido | Ocorrencias | Impacto na GPU |
 |---|---|---|
-| Criar trigger | `vehicle_data` | Adicionar trigger (nao altera schema) |
-| Nenhuma | `push_subscriptions` | Nenhuma -- ja existe |
-| Nenhuma | `push_notifications_log` | Nenhuma -- ja existe |
+| `backdrop-blur-xl/md` | ~8 locais | Alto - cada blur forca composicao de camada |
+| `blur-[120px]` blobs | 3 locais | Muito Alto - areas enormes com blur continuo |
+| `blur-[60px]` glow hover | 1 local | Alto |
+| `blur-3xl` imagem backdrop | 1 por card | Alto - multiplica por quantidade de cards |
+| Framer Motion staggered | 2 grids | Medio - dezenas de timers simultaneos |
+| `whileHover` spring | ~3 locais | Medio - calculo fisico por frame |
+| `animate-pulse` continuo | ~4 locais | Baixo-Medio |
+| `shadow-2xl` | ~3 locais | Baixo |
 
-**Nenhuma coluna, tabela ou politica RLS sera criada, alterada ou removida.**
-
----
-
-## Fluxo completo
-
-```text
-Gestor faz upload no sistema gestor
-            |
-            v
-vehicle_data recebe INSERT/UPDATE
-            |
-            v
-Trigger dispara notify_fuel_balance_update()
-            |
-            v
-pg_net chama Edge Function send-push-notification
-            |
-            v
-Edge Function busca push_subscriptions
-            |
-            v
-Envia push para todos os dispositivos
-            |
-            v
-Service Worker exibe notificacao nativa
-            |
-            v
-Condutor ve "Saldo de combustivel atualizado pela GPM!"
-```
+## O que sera mantido
+- Gradientes CSS estaticos (custo zero)
+- Cores e bordas do tema escuro
+- Transicoes simples de `transition-colors` e `transition-opacity`
+- Layout e estrutura visual identica
+- Carousel funcional (sem efeitos extras)
 
 ---
 
-## Arquivos criados/modificados
+## Secao Tecnica
 
-| Arquivo | Acao |
-|---|---|
-| `supabase/functions/send-push-notification/index.ts` | **Criar** |
-| `supabase/config.toml` | **Modificar** (adicionar config da edge function) |
-| `public/sw.js` | **Modificar** (adicionar handlers push e notificationclick) |
-| `src/components/pwa/PushNotificationManager.tsx` | **Criar** |
-| `src/App.tsx` | **Modificar** (adicionar PushNotificationManager) |
-| Migracao SQL | **Criar trigger** (nao altera tabelas) |
+**Estrategia geral:** Substituir `backdrop-blur` por backgrounds opacos/semi-transparentes (`bg-zinc-900/90`), remover blobs decorativos com blur gigante, e converter Framer Motion para CSS transitions ou divs estaticas.
+
+**Arquivos modificados:** 8 arquivos
+- `src/components/layout/DashboardLayout.tsx`
+- `src/components/frota/VehicleCard.tsx`
+- `src/components/frota/VehicleGrid.tsx`
+- `src/components/frota/VehicleCarousel.tsx`
+- `src/components/frota/TotalBalanceStats.tsx`
+- `src/components/frota/VehicleDetailModal.tsx`
+- `src/components/frota/Gauge.tsx`
+- `src/index.css`
