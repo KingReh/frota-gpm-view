@@ -64,7 +64,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden glass-panel border-white/10 shadow-2xl bg-gray-950/90 backdrop-blur-xl [&>button]:hidden">
+      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden glass-panel border-white/10 shadow-lg bg-gray-950/95 [&>button]:hidden">
 
         {/* Header / Hero Section */}
         <div className="relative h-48 w-full overflow-hidden">
@@ -73,7 +73,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full bg-black/20 hover:bg-black/40 text-white border border-white/10 backdrop-blur-md transition-all hover:scale-105 active:scale-95"
+              className="rounded-full bg-zinc-800/90 hover:bg-black/40 text-white border border-white/10 transition-all hover:scale-105 active:scale-95"
               onClick={() => onOpenChange(false)}
             >
               <X className="h-4 w-4" />
@@ -99,7 +99,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
                 {vehicle.coordination && (
                   <CoordinationBadge
                     coordination={vehicle.coordination}
-                    className="mb-2 backdrop-blur-md"
+                    className="mb-2"
                   />
                 )}
                 <div className="flex items-center gap-3 mb-1">
