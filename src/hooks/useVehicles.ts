@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
@@ -132,6 +132,26 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
     }
   }, [query.isLoading, query.data]);
 
+  // Debounced realtime handler – collapses multiple row events into a single toast/alert
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleRealtimeChange = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+
+    if (!hasLoadedRef.current) return;
+
+    // Debounce: only fire toast once per batch (500ms window)
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      toast.success('Saldos da frota atualizados', {
+        description: 'Novos dados recebidos via satélite.',
+        duration: 3000,
+        icon: '📡',
+      });
+      onRealtimeUpdate?.();
+    }, 500);
+  }, [queryClient, onRealtimeUpdate]);
+
   // Realtime subscription for vehicle_data updates
   useEffect(() => {
     const channel = supabase
@@ -143,27 +163,15 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
           schema: 'public',
           table: 'vehicle_data',
         },
-        () => {
-          // Invalidate and refetch on any change
-          queryClient.invalidateQueries({ queryKey: ['vehicles'] });
-
-          // Show toast and trigger alert only after initial load
-          if (hasLoadedRef.current) {
-            toast.success('Saldos da frota atualizados', {
-              description: 'Novos dados recebidos via satélite.',
-              duration: 3000,
-              icon: '📡',
-            });
-            onRealtimeUpdate?.();
-          }
-        }
+        handleRealtimeChange
       )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [queryClient, onRealtimeUpdate]);
+  }, [queryClient, handleRealtimeChange]);
 
   return {
     ...query,
