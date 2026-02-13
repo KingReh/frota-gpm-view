@@ -23,7 +23,7 @@ export const DashboardLayout = ({
         <div className="relative min-h-screen overflow-hidden bg-background text-foreground font-sans selection:bg-primary/20">
             {/* Ambient Background Effects */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900/90 via-background to-background" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-muted/50 via-background to-background" />
             </div>
 
             {/* Content */}
