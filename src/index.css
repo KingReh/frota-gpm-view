@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    /* Automotive Dark Mode Default */
-    --background: 222.2 84% 4.9%; /* #0F1115 */
+    /* Premium Dark Mode - Brightened */
+    --background: 220 20% 10%; /* #161A21 - lighter base */
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 220 18% 13%; /* #1C2028 - lighter cards */
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 220 18% 13%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 0 100% 56%; /* #FF2D20 Racing Red */
@@ -20,17 +20,17 @@
     --secondary: 190 100% 50%; /* #00D4FF Electric Blue */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 16% 22%; /* brighter muted */
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 220 16% 22%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 220 14% 25%; /* more visible borders */
+    --input: 220 14% 25%;
     --ring: 0 100% 56%;
 
     --radius: 0.75rem;
@@ -54,7 +54,7 @@
 
 @layer utilities {
   .glass-panel {
-    @apply bg-zinc-950/90 border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)];
+    @apply bg-card border border-border shadow-lg;
   }
   
   .text-glow {
@@ -63,7 +63,7 @@
 
   .mesh-bg {
     background-image: 
-      radial-gradient(at 0% 0%, rgba(255, 45, 32, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(0, 212, 255, 0.15) 0px, transparent 50%);
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.1) 0px, transparent 50%);
   }
 }
