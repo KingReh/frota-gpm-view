@@ -26,6 +26,7 @@ interface UseVehiclesOptions {
 export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: UseVehiclesOptions = {}) {
   const queryClient = useQueryClient();
   const hasLoadedRef = useRef(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const query = useQuery({
     queryKey: ['vehicles', selectedCoordinations],
@@ -133,7 +134,6 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
   }, [query.isLoading, query.data]);
 
   // Debounced realtime handler – collapses multiple row events into a single toast/alert
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleRealtimeChange = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['vehicles'] });
