@@ -56,12 +56,14 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
           opts={{
             align: 'center',
             loop: true,
+            dragFree: false,
+            containScroll: 'trimSnaps',
           }}
         >
-          <CarouselContent className="-ml-8"> {/* 32px gap */}
+          <CarouselContent className="-ml-4 md:-ml-8">
             {vehicles.map((vehicle) => (
-              <CarouselItem key={vehicle.plate} className="pl-8 md:basis-1/2 lg:basis-[60%]">
-                <div className="py-8"> {/* 32px vertical padding */}
+              <CarouselItem key={vehicle.plate} className="pl-4 md:pl-8 basis-[85%] md:basis-1/2 lg:basis-[60%]">
+                <div className="py-4 md:py-8">
                   <VehicleCard
                     vehicle={vehicle}
                     size="large"
@@ -75,8 +77,8 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
 
           {/* Custom Controls */}
           <div className="flex justify-center gap-4 mt-8">
-            <CarouselPrevious className="static translate-y-0 bg-zinc-800/90 border-white/10 text-white hover:bg-primary hover:border-primary h-14 w-14 rounded-2xl transition-all duration-300" />
-            <CarouselNext className="static translate-y-0 bg-zinc-800/90 border-white/10 text-white hover:bg-primary hover:border-primary h-14 w-14 rounded-2xl transition-all duration-300" />
+            <CarouselPrevious className="static translate-y-0 bg-zinc-800/90 border-white/10 text-white hover:bg-primary hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200" />
+            <CarouselNext className="static translate-y-0 bg-zinc-800/90 border-white/10 text-white hover:bg-primary hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200" />
           </div>
         </Carousel>
 
@@ -85,7 +87,7 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
           {Array.from({ length: Math.min(count, 12) }).map((_, i) => (
             <div
               key={i}
-              className="h-2 rounded-full transition-all duration-500"
+              className="h-1.5 rounded-full transition-[width,background-color] duration-200"
               style={{
                 width: current === i + 1 ? 40 : 12,
                 backgroundColor: current === i + 1 ? "rgba(255, 45, 32, 1)" : "rgba(255, 255, 255, 0.1)"
