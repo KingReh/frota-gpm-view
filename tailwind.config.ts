@@ -52,6 +52,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        surface: {
+          elevated: "hsl(var(--surface-elevated))",
+          overlay: "hsl(var(--surface-overlay))",
+          interactive: "hsl(var(--surface-interactive))",
+        },
+        "accent-fuel": "hsl(var(--accent-fuel))",
+        "accent-status": "hsl(var(--accent-status))",
+        "accent-favorite": "hsl(var(--accent-favorite))",
       },
       borderRadius: {
         lg: "var(--radius)",
