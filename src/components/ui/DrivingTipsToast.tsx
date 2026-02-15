@@ -72,11 +72,19 @@ export const DrivingTipsToast = () => {
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            exit={{ opacity: 0, x: 200, scale: 0.95 }}
             transition={{
               type: "spring",
               stiffness: 400,
               damping: 30
+            }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.6}
+            onDragEnd={(_e, info) => {
+              if (Math.abs(info.offset.x) > 100) {
+                setIsVisible(false);
+              }
             }}
             className={cn(
               "pointer-events-auto relative overflow-hidden",
