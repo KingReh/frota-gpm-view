@@ -1,28 +1,28 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, FileText, MapPin, Key, ArrowLeftRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { TransferRequestModal } from './TransferRequestModal';
-import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, FileText, MapPin, Key, ArrowLeftRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { TransferRequestModal } from "./TransferRequestModal";
+import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
 
 const links = [
   {
     label: "CRLV's",
-    href: 'https://bi-frota.lovable.app/regularizacao-documentos',
+    href: "https://bi-frota.lovable.app/regularizacao-documentos",
     icon: FileText,
-    description: 'Regularização de documentos',
+    description: "Regularização de documentos",
   },
   {
-    label: 'Postos Credenciados',
-    href: 'https://bi-frota.lovable.app/postos',
+    label: "Postos Credenciados",
+    href: "https://bi-frota.lovable.app/postos",
     icon: MapPin,
-    description: 'Rede de postos',
+    description: "Rede de postos",
   },
   {
-    label: 'Instruções iButtons',
-    href: 'http://bi-frota.lovable.app/procedimento-ligar-veiculo',
+    label: "Instruções iButtons",
+    href: "http://bi-frota.lovable.app/procedimento-ligar-veiculo",
     icon: Key,
-    description: 'Como ligar o veículo',
+    description: "Como ligar o veículo",
   },
 ];
 
@@ -52,17 +52,29 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
             "w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-primary/30",
             "bg-primary text-primary-foreground",
             "border border-white/10 transition-colors duration-300",
-            isOpen && "bg-muted text-foreground shadow-black/40"
+            isOpen && "bg-muted text-foreground shadow-black/40",
           )}
-          aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
         >
           <AnimatePresence mode="wait" initial={false}>
             {isOpen ? (
-              <motion.span key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
+              <motion.span
+                key="close"
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
                 <X className="w-6 h-6" />
               </motion.span>
             ) : (
-              <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}>
+              <motion.span
+                key="menu"
+                initial={{ rotate: 90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: -90, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
                 <Menu className="w-6 h-6" />
               </motion.span>
             )}
@@ -76,7 +88,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
               initial={{ opacity: 0, scale: 0.85, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.85, y: 20 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              transition={{ type: "spring", stiffness: 400, damping: 26 }}
               className="flex flex-col gap-2 p-3 rounded-2xl bg-card/90 backdrop-blur-xl border border-border shadow-2xl shadow-black/50 min-w-[220px]"
             >
               <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground px-2 pb-1">
@@ -92,7 +104,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-left",
                   "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
-                  "border border-transparent transition-all duration-200 group"
+                  "border border-transparent transition-all duration-200 group",
                 )}
               >
                 <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
@@ -102,9 +114,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                   <span className="text-sm font-semibold text-foreground leading-tight truncate">
                     Solicitar Transferência
                   </span>
-                  <span className="text-[10px] text-muted-foreground truncate">
-                    Saldo entre veículos
-                  </span>
+                  <span className="text-[10px] text-muted-foreground truncate">Saldo entre veículos ou saldo novo</span>
                 </div>
               </motion.button>
 
@@ -120,19 +130,15 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-xl",
                     "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
-                    "border border-transparent transition-all duration-200 group"
+                    "border border-transparent transition-all duration-200 group",
                   )}
                 >
                   <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <link.icon className="w-4 h-4 text-primary" />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-semibold text-foreground leading-tight truncate">
-                      {link.label}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground truncate">
-                      {link.description}
-                    </span>
+                    <span className="text-sm font-semibold text-foreground leading-tight truncate">{link.label}</span>
+                    <span className="text-[10px] text-muted-foreground truncate">{link.description}</span>
                   </div>
                 </motion.a>
               ))}
