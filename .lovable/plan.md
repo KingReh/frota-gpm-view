@@ -1,123 +1,114 @@
 
-# Otimizacao de Performance: Remocao de Efeitos Pesados
+
+# Solicitar Transferencia - Plano de Implementacao (v3)
 
 ## Resumo
-Simplificar ou remover animacoes e efeitos visuais que consomem muitos recursos de GPU/CPU, mantendo o visual escuro e moderno do app mas tornando-o fluido em dispositivos com baixo processamento.
 
----
+Adicionar ao FAB Menu uma nova opcao "Solicitar Transferencia" que abre um modal multi-etapas (wizard) permitindo ao usuario montar uma solicitacao de transferencia de saldo entre veiculos e/ou requisicao de novos recursos, gerando uma mensagem formatada enviada automaticamente via WhatsApp ou e-mail ao gestor da frota.
 
-## Alteracoes por Arquivo
+## Regra de Prioridade de Canal
 
-### 1. DashboardLayout.tsx
-**Remover:** Os 2 blobs pulsantes com `blur-[120px] animate-pulse` (linhas 27-28)
-**Manter:** O gradiente radial estatico (linha 26) que e leve
-**Resultado:** Fundo ambient sem custo de GPU
+```text
+1. Se status_telefone = true  --> WhatsApp (mesmo que status_email tambem seja true)
+2. Se status_telefone = false E status_email = true  --> E-mail
+3. Se ambos false  --> Alerta de canal indisponivel
+```
 
-### 2. VehicleCard.tsx
-**Simplificar Framer Motion:**
-- Remover `whileHover` com spring animation (hover com scale/translate)
-- Simplificar `initial/animate` de spring para uma transicao CSS simples com `opacity` e `transition`
-- Converter o `motion.div` wrapper para `div` simples com classe CSS `transition-opacity duration-300`
+## Arquitetura
 
-**Remover backdrop-blur:**
-- Linha 61: `backdrop-blur-xl` no Card -> substituir por `bg-zinc-900/90` (cor solida semi-transparente)
-- Linha 103: `backdrop-blur-md` nos botoes -> substituir por `bg-zinc-800/90`
-- Linha 120: `backdrop-blur-md` no botao info -> substituir por `bg-zinc-800/90`
-- Linha 163: `backdrop-blur-md` na placa -> substituir por `bg-zinc-900/80`
+```text
+FAB Menu
+  |
+  v
+[Etapa 1] Selecao de tipo + veiculos/valores
+  |
+  v
+[Etapa 2] Nome do usuario + preview da mensagem + acoes (Copiar / Enviar)
+```
 
-**Remover blur decorativo:**
-- Linhas 73-80: Blurred backdrop da imagem (`blur-3xl scale-125`) -> remover div inteira
-- Linha 225: Glow hover `blur-[60px]` no gauge -> remover div inteira
+## Arquivos a Criar
 
-**Remover shadow pesado:**
-- Linha 61: `shadow-2xl` -> substituir por `shadow-lg`
+### 1. `src/lib/whatsapp.ts`
+Utilitarios isolados:
+- `formatPhoneForWhatsApp(telefone: string): string` - converte "(81) 98594-2139" para "5581985942139"
+- `detectPlatform(): 'desktop' | 'mobile'`
+- `getGreeting(): string` - saudacao baseada na hora do dia
+- `openWhatsApp(phone: string, message: string): void` - desktop usa `https://web.whatsapp.com/send`, mobile usa `https://api.whatsapp.com/send`
+- `openEmail(email: string, subject: string, body: string): void` - abre mailto
 
-**Simplificar hover de imagem:**
-- Linha 137: `transition-transform duration-700 group-hover:scale-105` -> remover o group-hover:scale-105 (evita recomposicao de camada)
+### 2. `src/hooks/useGestorFrota.ts`
+Hook com `useQuery`:
+- Query: `supabase.from('gestor_frota').select('name, telefone, email, status_telefone, status_email').limit(1).maybeSingle()`
+- staleTime: 5 minutos
 
-### 3. VehicleGrid.tsx
-**Remover staggered animations:**
-- Converter `motion.div` do grid (linha 25) para `div` simples
-- Converter `motion.div` de cada card (linha 32) para `div` simples, removendo o `delay: index * 0.05` que cria dezenas de animacoes simultaneas
-- Resultado: Cards aparecem imediatamente sem delay cascata
+### 3. `src/components/frota/TransferRequestModal.tsx`
+Modal com 2 etapas:
 
-### 4. VehicleCarousel.tsx
-**Remover blob de fundo:**
-- Linha 55: `blur-[120px]` blob de 800px -> remover div inteira
+**Etapa 1 - Formulario:**
+- Checkboxes para tipo (transferencia / novo recurso)
+- Lista dinamica de transferencias: selects origem/destino + valor monetario + adicionar/remover
+- Lista dinamica de solicitacoes de saldo: select veiculo + valor + adicionar/remover
+- Veiculos filtrados conforme coordenacoes do filtro central
+- Validacoes: pelo menos uma opcao, pelo menos um item, origem != destino, valor > 0
 
-**Simplificar backdrop-blur:**
-- Linha 40: estado vazio `backdrop-blur-xl` -> `bg-zinc-900/90`
-- Linhas 84-85: botoes do carousel `backdrop-blur-md` -> `bg-zinc-800/90`
+**Etapa 2 - Confirmacao:**
+- Input "Digite seu nome"
+- Preview da mensagem formatada (somente leitura com scroll)
+- Coordenacao: nome da primeira coordenacao selecionada, fallback "GPM"
+- Botao "Copiar" - clipboard + toast
+- Botao "Enviar" com logica de prioridade WhatsApp > Email
 
-**Simplificar indicadores de pagina:**
-- Linhas 92-103: Converter `motion.div` dos dots para `div` com CSS transitions simples
-- Remover `shadow-[0_0_20px_...]` glow dos dots ativos
+### 4. Modificar `src/components/frota/FabMenu.tsx`
+- Novo item "Solicitar Transferencia" com icone `ArrowLeftRight`
 
-### 5. TotalBalanceStats.tsx
-**Remover staggered Framer Motion:**
-- Linha 55: `motion.div` do grid -> converter para `div` simples
-- Linhas 123-133: `AnimatePresence` + `motion.div` com spring staggered nos cards de coordenacao -> converter para `div` simples
-- Remover `whileHover={{ y: -4 }}` dos cards
+### 5. Modificar `src/components/layout/DashboardLayout.tsx`
+- Repassar vehicles, coordinations, selectedCoordinations para FabMenu
 
-**Remover decorativos pulsantes:**
-- Linha 142: `animate-pulse` no indicador de cor -> remover
-- Linha 143: `blur-sm` glow do indicador -> remover
+### 6. Modificar `src/pages/Index.tsx`
+- Passar dados para DashboardLayout
 
-**Simplificar glass-panel:**
-- Linha 61: `shadow-2xl` -> `shadow-lg`
+## Formato da Mensagem (Atualizado)
 
-### 6. VehicleDetailModal.tsx
-**Simplificar:**
-- Linha 67: `backdrop-blur-xl` no modal -> `bg-gray-950/95` (quase opaco, sem blur)
-- Linha 76: `backdrop-blur-md` no botao fechar -> `bg-zinc-800/90`
-- Linha 102: `backdrop-blur-md` no badge -> remover
+As placas sao exibidas sem hifen (como armazenadas no banco) e os valores sem o prefixo "R$":
 
-### 7. Gauge.tsx
-**Simplificar:**
-- Linha 54-63: `motion.path` com spring -> converter para `path` com CSS transition (`transition: stroke-dashoffset 0.5s ease`)
+```text
+Bom dia, Renato!
 
-### 8. Header.tsx (layout)
-**Manter como esta** - o `glass-panel` do header e aceitavel por ser um unico elemento fixo
+Me chamo {nome} da coordenacao {coord} e gostaria de solicitar uma transferencia de combustivel para minha frota da seguinte forma:
 
-### 9. index.css
-**Simplificar glass-panel:**
-- Remover `backdrop-blur-xl` da classe utilitaria `glass-panel` -> substituir por `bg-zinc-950/90` sem blur
-- Manter border e shadow
+Transferencia entre veiculos:
+(ABC1234 = 150,00) para DEF5678
 
----
+Solicitacao de Saldo:
+GHI9012 = 200,00
+```
 
-## Resumo do Impacto
+- Placas: exibidas exatamente como vem do banco (sem hifen, ex: `ABC1234`)
+- Valores: formato brasileiro com virgula decimal e ponto de milhar, sem prefixo "R$" (ex: `1.500,00`)
+- Funcao de formatacao: `new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(valor)` (sem `style: 'currency'`)
 
-| Efeito Removido | Ocorrencias | Impacto na GPU |
-|---|---|---|
-| `backdrop-blur-xl/md` | ~8 locais | Alto - cada blur forca composicao de camada |
-| `blur-[120px]` blobs | 3 locais | Muito Alto - areas enormes com blur continuo |
-| `blur-[60px]` glow hover | 1 local | Alto |
-| `blur-3xl` imagem backdrop | 1 por card | Alto - multiplica por quantidade de cards |
-| Framer Motion staggered | 2 grids | Medio - dezenas de timers simultaneos |
-| `whileHover` spring | ~3 locais | Medio - calculo fisico por frame |
-| `animate-pulse` continuo | ~4 locais | Baixo-Medio |
-| `shadow-2xl` | ~3 locais | Baixo |
+## Logica de Envio
 
-## O que sera mantido
-- Gradientes CSS estaticos (custo zero)
-- Cores e bordas do tema escuro
-- Transicoes simples de `transition-colors` e `transition-opacity`
-- Layout e estrutura visual identica
-- Carousel funcional (sem efeitos extras)
+```text
+if (!gestor) -> alerta "gestor indisponivel"
+else if (gestor.status_telefone) -> WhatsApp  // PRIORIDADE
+else if (gestor.status_email) -> Email
+else -> alerta "nenhum canal disponivel"
+```
 
----
+## Seguranca
+- Zero escritas no banco (apenas SELECT em gestor_frota)
+- URLs construidas com `encodeURIComponent`
+- Input sanitizado (trim, max length)
 
-## Secao Tecnica
+## Resumo de Alteracoes
 
-**Estrategia geral:** Substituir `backdrop-blur` por backgrounds opacos/semi-transparentes (`bg-zinc-900/90`), remover blobs decorativos com blur gigante, e converter Framer Motion para CSS transitions ou divs estaticas.
+| Arquivo | Acao |
+|---|---|
+| `src/lib/whatsapp.ts` | Criar |
+| `src/hooks/useGestorFrota.ts` | Criar |
+| `src/components/frota/TransferRequestModal.tsx` | Criar |
+| `src/components/frota/FabMenu.tsx` | Modificar |
+| `src/components/layout/DashboardLayout.tsx` | Modificar |
+| `src/pages/Index.tsx` | Modificar |
 
-**Arquivos modificados:** 8 arquivos
-- `src/components/layout/DashboardLayout.tsx`
-- `src/components/frota/VehicleCard.tsx`
-- `src/components/frota/VehicleGrid.tsx`
-- `src/components/frota/VehicleCarousel.tsx`
-- `src/components/frota/TotalBalanceStats.tsx`
-- `src/components/frota/VehicleDetailModal.tsx`
-- `src/components/frota/Gauge.tsx`
-- `src/index.css`
