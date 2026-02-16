@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Header } from "./Header";
 import { DrivingTipsToast } from "@/components/ui/DrivingTipsToast";
 import { FabMenu } from "@/components/frota/FabMenu";
+import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
 
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -10,6 +11,9 @@ interface DashboardLayoutProps {
     isSynced?: boolean;
     lastUpdated?: Date | null;
     recentlyUpdated?: boolean;
+    vehicles?: VehicleWithDetails[];
+    coordinations?: Coordination[];
+    selectedCoordinations?: string[];
 }
 
 export const DashboardLayout = ({
@@ -18,7 +22,10 @@ export const DashboardLayout = ({
     setViewMode,
     isSynced,
     lastUpdated,
-    recentlyUpdated
+    recentlyUpdated,
+    vehicles = [],
+    coordinations = [],
+    selectedCoordinations = [],
 }: DashboardLayoutProps) => {
     return (
         <div className="relative min-h-screen overflow-hidden bg-background text-foreground font-sans selection:bg-primary/20">
@@ -38,7 +45,11 @@ export const DashboardLayout = ({
                 />
 
                 <DrivingTipsToast />
-                <FabMenu />
+                <FabMenu
+                    vehicles={vehicles}
+                    coordinations={coordinations}
+                    selectedCoordinations={selectedCoordinations}
+                />
 
                 <main className="pt-20 px-2 md:px-4 lg:px-8 pb-12 max-w-[1920px] mx-auto animate-in fade-in zoom-in-95 duration-500">
                     {children}
