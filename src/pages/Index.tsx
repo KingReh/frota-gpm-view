@@ -233,6 +233,9 @@ const Index = () => {
       isSynced={isSynced}
       lastUpdated={lastUpdated ? new Date(lastUpdated) : null}
       recentlyUpdated={recentlyUpdated}
+      vehicles={[...vehicles, ...undefinedVehicles]}
+      coordinations={coordinations}
+      selectedCoordinations={preferences.selectedCoordinations}
     >
       <div className="space-y-8">
         {/* 1. Global Filters (Centered at Top) */}

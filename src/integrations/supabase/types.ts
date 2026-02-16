@@ -62,6 +62,36 @@ export type Database = {
         }
         Relationships: []
       }
+      gestor_frota: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          status_email: boolean | null
+          status_telefone: boolean | null
+          telefone: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          status_email?: boolean | null
+          status_telefone?: boolean | null
+          telefone: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          status_email?: boolean | null
+          status_telefone?: boolean | null
+          telefone?: string
+        }
+        Relationships: []
+      }
       push_notifications_log: {
         Row: {
           affected_rows: number | null
