@@ -19,6 +19,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useGestorFrota } from '@/hooks/useGestorFrota';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import {
   formatPhoneForWhatsApp,
   openWhatsApp,
@@ -81,7 +82,7 @@ export function TransferRequestModal({
   const [wantBalance, setWantBalance] = useState(false);
   const [transfers, setTransfers] = useState<TransferItem[]>([emptyTransfer()]);
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequestItem[]>([emptyBalanceRequest()]);
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useLocalStorage<string>('frota-gpm-requester-name', '');
   const { toast } = useToast();
   const { data: gestor } = useGestorFrota();
   const isMobile = useIsMobile();
@@ -103,7 +104,6 @@ export function TransferRequestModal({
     setWantBalance(false);
     setTransfers([emptyTransfer()]);
     setBalanceRequests([emptyBalanceRequest()]);
-    setUserName('');
   }, []);
 
   const handleOpenChange = (val: boolean) => {
