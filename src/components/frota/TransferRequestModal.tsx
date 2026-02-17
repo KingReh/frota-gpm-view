@@ -293,7 +293,7 @@ export function TransferRequestModal({
                           value={t.fromPlate}
                           onChange={(v) => updateTransfer(idx, 'fromPlate', v)}
                           plates={plates}
-                          placeholder="Selecione a placa"
+                          placeholder="Selecione..."
                         />
                       ) : (
                         <Select value={t.fromPlate} onValueChange={(v) => updateTransfer(idx, 'fromPlate', v)}>
@@ -325,7 +325,7 @@ export function TransferRequestModal({
                           value={t.toPlate}
                           onChange={(v) => updateTransfer(idx, 'toPlate', v)}
                           plates={plates.filter((p) => p !== t.fromPlate)}
-                          placeholder="Selecione a placa"
+                          placeholder="Selecione..."
                           className={cn(t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && 'border-destructive')}
                         />
                       ) : (
@@ -373,7 +373,7 @@ export function TransferRequestModal({
                           value={b.plate}
                           onChange={(v) => updateBalanceReq(idx, 'plate', v)}
                           plates={plates}
-                          placeholder="Selecione a placa"
+                          placeholder="Selecione..."
                         />
                       ) : (
                         <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
