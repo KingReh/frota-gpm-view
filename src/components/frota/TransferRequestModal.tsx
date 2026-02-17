@@ -285,8 +285,8 @@ export function TransferRequestModal({
                   Transferências
                 </p>
                 {transfers.map((t, idx) => (
-                  <div key={idx} className="space-y-2 sm:space-y-0 sm:flex sm:flex-row sm:gap-2 sm:items-end">
-                    <div className="sm:flex-1 sm:min-w-0">
+                  <div key={idx} className="flex flex-row gap-1.5 items-end">
+                    <div className="flex-1 min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Origem</Label>
                       {isMobile ? (
                         <NativePlateSelect
@@ -308,17 +308,17 @@ export function TransferRequestModal({
                         </Select>
                       )}
                     </div>
-                    <div className="sm:w-24">
+                    <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
                       <Input
-                        className="h-10 sm:h-9 text-sm sm:text-xs bg-background"
+                        className="h-9 text-xs bg-background"
                         placeholder="0,00"
                         inputMode="decimal"
                         value={t.value}
                         onChange={(e) => updateTransfer(idx, 'value', e.target.value)}
                       />
                     </div>
-                    <div className="sm:flex-1 sm:min-w-0">
+                    <div className="flex-1 min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Destino</Label>
                       {isMobile ? (
                         <NativePlateSelect
@@ -365,8 +365,8 @@ export function TransferRequestModal({
                   Solicitações de Saldo
                 </p>
                 {balanceRequests.map((b, idx) => (
-                  <div key={idx} className="space-y-2 sm:space-y-0 sm:flex sm:flex-row sm:gap-2 sm:items-end">
-                    <div className="sm:flex-1 sm:min-w-0">
+                  <div key={idx} className="flex flex-row gap-1.5 items-end">
+                    <div className="flex-1 min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Veículo</Label>
                       {isMobile ? (
                         <NativePlateSelect
@@ -388,10 +388,10 @@ export function TransferRequestModal({
                         </Select>
                       )}
                     </div>
-                    <div className="sm:w-24">
+                    <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
                       <Input
-                        className="h-10 sm:h-9 text-sm sm:text-xs bg-background"
+                        className="h-9 text-xs bg-background"
                         placeholder="0,00"
                         inputMode="decimal"
                         value={b.value}
