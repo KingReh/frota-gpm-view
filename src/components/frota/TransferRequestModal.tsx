@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useGestorFrota } from '@/hooks/useGestorFrota';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   formatPhoneForWhatsApp,
   openWhatsApp,
@@ -26,6 +27,7 @@ import {
   formatValueBR,
 } from '@/lib/whatsapp';
 import { parseBalance } from '@/lib/balance';
+import { NativePlateSelect } from './NativePlateSelect';
 import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
 import {
   ArrowRight,
@@ -82,6 +84,7 @@ export function TransferRequestModal({
   const [userName, setUserName] = useState('');
   const { toast } = useToast();
   const { data: gestor } = useGestorFrota();
+  const isMobile = useIsMobile();
 
   const plates = useMemo(
     () => vehicles.map((v) => v.plate).sort(),
@@ -239,7 +242,7 @@ export function TransferRequestModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-card border-border">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-card border-border sm:max-w-lg w-[calc(100%-2rem)] rounded-xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-foreground">
             {step === 1 ? 'Solicitar Transferência' : 'Confirmar Solicitação'}
@@ -282,50 +285,66 @@ export function TransferRequestModal({
                   Transferências
                 </p>
                 {transfers.map((t, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
-                    <div className="flex-1 min-w-0">
+                  <div key={idx} className="space-y-2 sm:space-y-0 sm:flex sm:flex-row sm:gap-2 sm:items-end">
+                    <div className="sm:flex-1 sm:min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Origem</Label>
-                      <Select value={t.fromPlate} onValueChange={(v) => updateTransfer(idx, 'fromPlate', v)}>
-                        <SelectTrigger className="h-9 text-xs bg-background">
-                          <SelectValue placeholder="Placa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {plates.map((p) => (
-                            <SelectItem key={p} value={p} className="text-xs">
-                              {p}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {isMobile ? (
+                        <NativePlateSelect
+                          value={t.fromPlate}
+                          onChange={(v) => updateTransfer(idx, 'fromPlate', v)}
+                          plates={plates}
+                          placeholder="Selecione a placa"
+                        />
+                      ) : (
+                        <Select value={t.fromPlate} onValueChange={(v) => updateTransfer(idx, 'fromPlate', v)}>
+                          <SelectTrigger className="h-9 text-xs bg-background">
+                            <SelectValue placeholder="Placa" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {plates.map((p) => (
+                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
-                    <div className="w-24">
+                    <div className="sm:w-24">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
                       <Input
-                        className="h-9 text-xs bg-background"
+                        className="h-10 sm:h-9 text-sm sm:text-xs bg-background"
                         placeholder="0,00"
+                        inputMode="decimal"
                         value={t.value}
                         onChange={(e) => updateTransfer(idx, 'value', e.target.value)}
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="sm:flex-1 sm:min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Destino</Label>
-                      <Select value={t.toPlate} onValueChange={(v) => updateTransfer(idx, 'toPlate', v)}>
-                        <SelectTrigger className={cn("h-9 text-xs bg-background", t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && "border-destructive")}>
-                          <SelectValue placeholder="Placa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {plates.filter((p) => p !== t.fromPlate).map((p) => (
-                            <SelectItem key={p} value={p} className="text-xs">
-                              {p}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {isMobile ? (
+                        <NativePlateSelect
+                          value={t.toPlate}
+                          onChange={(v) => updateTransfer(idx, 'toPlate', v)}
+                          plates={plates.filter((p) => p !== t.fromPlate)}
+                          placeholder="Selecione a placa"
+                          className={cn(t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && 'border-destructive')}
+                        />
+                      ) : (
+                        <Select value={t.toPlate} onValueChange={(v) => updateTransfer(idx, 'toPlate', v)}>
+                          <SelectTrigger className={cn("h-9 text-xs bg-background", t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && "border-destructive")}>
+                            <SelectValue placeholder="Placa" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {plates.filter((p) => p !== t.fromPlate).map((p) => (
+                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive self-end"
                       onClick={() => removeTransfer(idx)}
                       disabled={transfers.length <= 1}
                     >
@@ -346,27 +365,35 @@ export function TransferRequestModal({
                   Solicitações de Saldo
                 </p>
                 {balanceRequests.map((b, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row gap-2 items-start sm:items-end">
-                    <div className="flex-1 min-w-0">
+                  <div key={idx} className="space-y-2 sm:space-y-0 sm:flex sm:flex-row sm:gap-2 sm:items-end">
+                    <div className="sm:flex-1 sm:min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Veículo</Label>
-                      <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
-                        <SelectTrigger className="h-9 text-xs bg-background">
-                          <SelectValue placeholder="Placa" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {plates.map((p) => (
-                            <SelectItem key={p} value={p} className="text-xs">
-                              {p}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      {isMobile ? (
+                        <NativePlateSelect
+                          value={b.plate}
+                          onChange={(v) => updateBalanceReq(idx, 'plate', v)}
+                          plates={plates}
+                          placeholder="Selecione a placa"
+                        />
+                      ) : (
+                        <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
+                          <SelectTrigger className="h-9 text-xs bg-background">
+                            <SelectValue placeholder="Placa" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {plates.map((p) => (
+                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                     </div>
-                    <div className="w-24">
+                    <div className="sm:w-24">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
                       <Input
-                        className="h-9 text-xs bg-background"
+                        className="h-10 sm:h-9 text-sm sm:text-xs bg-background"
                         placeholder="0,00"
+                        inputMode="decimal"
                         value={b.value}
                         onChange={(e) => updateBalanceReq(idx, 'value', e.target.value)}
                       />
@@ -374,7 +401,7 @@ export function TransferRequestModal({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive"
+                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive self-end"
                       onClick={() => removeBalanceReq(idx)}
                       disabled={balanceRequests.length <= 1}
                     >
@@ -421,7 +448,7 @@ export function TransferRequestModal({
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button variant="outline" className="flex-1 gap-2" onClick={() => setStep(1)}>
                 <ArrowLeft className="w-4 h-4" /> Voltar
               </Button>
