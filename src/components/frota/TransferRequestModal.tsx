@@ -289,6 +289,30 @@ export function TransferRequestModal({
 
   // --- Transfer list helpers ---
   const updateTransfer = (idx: number, field: keyof TransferItem, value: string) => {
+    if (field === 'value') {
+      const numVal = parseMonetaryInput(value);
+      const currentTransfer = transfers[idx];
+      if (numVal > 0 && currentTransfer.fromPlate) {
+        const vehicle = vehicles.find((v) => v.plate === currentTransfer.fromPlate);
+        const currentBalance = vehicle ? parseBalance(vehicle.balance) : 0;
+        // Calculate other transfers already subtracting from this plate (excluding current row)
+        const otherDeltas = transfers.reduce((acc, t, i) => {
+          if (i === idx) return acc;
+          const v = parseMonetaryInput(t.value);
+          if (v > 0 && t.fromPlate === currentTransfer.fromPlate) return acc - v;
+          if (v > 0 && t.toPlate === currentTransfer.fromPlate) return acc + v;
+          return acc;
+        }, 0);
+        if (currentBalance + otherDeltas - numVal < 0) {
+          toast({
+            title: 'Valor inválido',
+            description: `O veículo ${currentTransfer.fromPlate} ficaria com saldo negativo. Saldo disponível: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(currentBalance + otherDeltas)}`,
+            variant: 'destructive',
+          });
+          return;
+        }
+      }
+    }
     setTransfers((prev) => prev.map((t, i) => (i === idx ? { ...t, [field]: value } : t)));
   };
 
@@ -383,8 +407,7 @@ export function TransferRequestModal({
                         value={t.value}
                         onChange={(e) => updateTransfer(idx, 'value', e.target.value)}
                       />
-                      {/* Spacer to align with balance feedback below selects */}
-                      {(t.fromPlate || t.toPlate) && <div className="h-[18px]" />}
+                      <div className="h-[18px]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Destino</Label>
@@ -410,15 +433,18 @@ export function TransferRequestModal({
                       )}
                       <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={transferDeltas[t.toPlate] || 0} />
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive self-end"
-                      onClick={() => removeTransfer(idx)}
-                      disabled={transfers.length <= 1}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                        onClick={() => removeTransfer(idx)}
+                        disabled={transfers.length <= 1}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <div className="h-[18px]" />
+                    </div>
                   </div>
                 ))}
                 <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addTransfer}>
@@ -467,16 +493,20 @@ export function TransferRequestModal({
                         value={b.value}
                         onChange={(e) => updateBalanceReq(idx, 'value', e.target.value)}
                       />
+                      <div className="h-[18px]" />
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 shrink-0 text-muted-foreground hover:text-destructive self-end"
-                      onClick={() => removeBalanceReq(idx)}
-                      disabled={balanceRequests.length <= 1}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                        onClick={() => removeBalanceReq(idx)}
+                        disabled={balanceRequests.length <= 1}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <div className="h-[18px]" />
+                    </div>
                   </div>
                 ))}
                 <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addBalanceReq}>
