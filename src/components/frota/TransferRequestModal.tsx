@@ -137,30 +137,31 @@ export function TransferRequestModal({
     return coord?.name || 'GPM';
   }, [coordinations, selectedCoordinations]);
 
-  // Net delta per plate from all transfers and balance requests
-  const plateDeltas = useMemo(() => {
+  // Separate deltas per section so they don't interfere
+  const transferDeltas = useMemo(() => {
     const deltas: Record<string, number> = {};
-    if (wantTransfer) {
-      transfers.forEach((t) => {
-        const val = parseMonetaryInput(t.value);
-        if (val > 0 && t.fromPlate) {
-          deltas[t.fromPlate] = (deltas[t.fromPlate] || 0) - val;
-        }
-        if (val > 0 && t.toPlate) {
-          deltas[t.toPlate] = (deltas[t.toPlate] || 0) + val;
-        }
-      });
-    }
-    if (wantBalance) {
-      balanceRequests.forEach((b) => {
-        const val = parseMonetaryInput(b.value);
-        if (val > 0 && b.plate) {
-          deltas[b.plate] = (deltas[b.plate] || 0) + val;
-        }
-      });
-    }
+    transfers.forEach((t) => {
+      const val = parseMonetaryInput(t.value);
+      if (val > 0 && t.fromPlate) {
+        deltas[t.fromPlate] = (deltas[t.fromPlate] || 0) - val;
+      }
+      if (val > 0 && t.toPlate) {
+        deltas[t.toPlate] = (deltas[t.toPlate] || 0) + val;
+      }
+    });
     return deltas;
-  }, [wantTransfer, wantBalance, transfers, balanceRequests]);
+  }, [transfers]);
+
+  const balanceDeltas = useMemo(() => {
+    const deltas: Record<string, number> = {};
+    balanceRequests.forEach((b) => {
+      const val = parseMonetaryInput(b.value);
+      if (val > 0 && b.plate) {
+        deltas[b.plate] = (deltas[b.plate] || 0) + val;
+      }
+    });
+    return deltas;
+  }, [balanceRequests]);
 
   const resetForm = useCallback(() => {
     setStep(1);
@@ -371,7 +372,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={plateDeltas[t.fromPlate] || 0} />
+                      <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={transferDeltas[t.fromPlate] || 0} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
@@ -382,6 +383,8 @@ export function TransferRequestModal({
                         value={t.value}
                         onChange={(e) => updateTransfer(idx, 'value', e.target.value)}
                       />
+                      {/* Spacer to align with balance feedback below selects */}
+                      {(t.fromPlate || t.toPlate) && <div className="h-[18px]" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <Label className="text-[10px] text-muted-foreground">Destino</Label>
@@ -405,7 +408,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={plateDeltas[t.toPlate] || 0} />
+                      <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={transferDeltas[t.toPlate] || 0} />
                     </div>
                     <Button
                       variant="ghost"
@@ -453,7 +456,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={plateDeltas[b.plate] || 0} />
+                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={balanceDeltas[b.plate] || 0} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
