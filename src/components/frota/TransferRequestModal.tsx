@@ -70,6 +70,45 @@ function parseMonetaryInput(raw: string): number {
   return isNaN(val) ? 0 : val;
 }
 
+/** Tiny inline component showing current → projected balance */
+function BalanceFeedback({
+  plate,
+  vehicles,
+  delta,
+}: {
+  plate: string;
+  vehicles: VehicleWithDetails[];
+  delta: number;
+}) {
+  if (!plate) return null;
+  const vehicle = vehicles.find((v) => v.plate === plate);
+  const current = vehicle ? parseBalance(vehicle.balance) : 0;
+  const projected = current + delta;
+  const fmt = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
+  const projectedStr = fmt(projected);
+  const currentStr = fmt(current);
+  const status = projected >= 200 ? 'high' : projected >= 100 ? 'medium' : 'low';
+  const statusColor = {
+    high: 'text-[hsl(var(--balance-high))]',
+    medium: 'text-[hsl(var(--balance-medium))]',
+    low: 'text-[hsl(var(--balance-low))]',
+  };
+
+  return (
+    <div className="flex items-center gap-1 mt-0.5">
+      <span className="text-[10px] text-muted-foreground">{currentStr}</span>
+      {delta !== 0 && (
+        <>
+          <span className="text-[10px] text-muted-foreground">→</span>
+          <span className={cn('text-[10px] font-semibold', statusColor[status])}>
+            {projectedStr}
+          </span>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function TransferRequestModal({
   open,
   onOpenChange,
@@ -97,6 +136,31 @@ export function TransferRequestModal({
     const coord = coordinations.find((c) => c.id === selectedCoordinations[0]);
     return coord?.name || 'GPM';
   }, [coordinations, selectedCoordinations]);
+
+  // Net delta per plate from all transfers and balance requests
+  const plateDeltas = useMemo(() => {
+    const deltas: Record<string, number> = {};
+    if (wantTransfer) {
+      transfers.forEach((t) => {
+        const val = parseMonetaryInput(t.value);
+        if (val > 0 && t.fromPlate) {
+          deltas[t.fromPlate] = (deltas[t.fromPlate] || 0) - val;
+        }
+        if (val > 0 && t.toPlate) {
+          deltas[t.toPlate] = (deltas[t.toPlate] || 0) + val;
+        }
+      });
+    }
+    if (wantBalance) {
+      balanceRequests.forEach((b) => {
+        const val = parseMonetaryInput(b.value);
+        if (val > 0 && b.plate) {
+          deltas[b.plate] = (deltas[b.plate] || 0) + val;
+        }
+      });
+    }
+    return deltas;
+  }, [wantTransfer, wantBalance, transfers, balanceRequests]);
 
   const resetForm = useCallback(() => {
     setStep(1);
@@ -298,7 +362,7 @@ export function TransferRequestModal({
                       ) : (
                         <Select value={t.fromPlate} onValueChange={(v) => updateTransfer(idx, 'fromPlate', v)}>
                           <SelectTrigger className="h-9 text-xs bg-background">
-                            <SelectValue placeholder="Placa" />
+                            <SelectValue placeholder="Selecione..." />
                           </SelectTrigger>
                           <SelectContent>
                             {plates.map((p) => (
@@ -307,6 +371,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
+                      <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={plateDeltas[t.fromPlate] || 0} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
@@ -331,7 +396,7 @@ export function TransferRequestModal({
                       ) : (
                         <Select value={t.toPlate} onValueChange={(v) => updateTransfer(idx, 'toPlate', v)}>
                           <SelectTrigger className={cn("h-9 text-xs bg-background", t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && "border-destructive")}>
-                            <SelectValue placeholder="Placa" />
+                            <SelectValue placeholder="Selecione..." />
                           </SelectTrigger>
                           <SelectContent>
                             {plates.filter((p) => p !== t.fromPlate).map((p) => (
@@ -340,6 +405,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
+                      <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={plateDeltas[t.toPlate] || 0} />
                     </div>
                     <Button
                       variant="ghost"
@@ -378,7 +444,7 @@ export function TransferRequestModal({
                       ) : (
                         <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
                           <SelectTrigger className="h-9 text-xs bg-background">
-                            <SelectValue placeholder="Placa" />
+                            <SelectValue placeholder="Selecione..." />
                           </SelectTrigger>
                           <SelectContent>
                             {plates.map((p) => (
@@ -387,6 +453,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
+                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={plateDeltas[b.plate] || 0} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
