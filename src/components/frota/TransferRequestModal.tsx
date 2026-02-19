@@ -213,20 +213,6 @@ export function TransferRequestModal({
       `Me chamo ${userName.trim() || '___'} da coordenação ${coordName} e gostaria de solicitar uma transferência de combustível para minha frota da seguinte forma:`
     );
 
-    if (wantBalance) {
-      const validRequests = balanceRequests.filter(
-        (b) => b.plate && parseMonetaryInput(b.value) > 0
-      );
-      if (validRequests.length > 0) {
-        lines.push('');
-        lines.push('Solicitação de Saldo:');
-        validRequests.forEach((b) => {
-          const val = formatValueBR(parseMonetaryInput(b.value));
-          lines.push(`${b.plate} = ${val}`);
-        });
-      }
-    }
-
     if (wantTransfer) {
       const validTransfers = transfers.filter(
         (t) => t.fromPlate && t.toPlate && t.fromPlate !== t.toPlate && parseMonetaryInput(t.value) > 0
@@ -237,6 +223,20 @@ export function TransferRequestModal({
         validTransfers.forEach((t) => {
           const val = formatValueBR(parseMonetaryInput(t.value));
           lines.push(`(${t.fromPlate} = ${val}) para ${t.toPlate}`);
+        });
+      }
+    }
+
+    if (wantBalance) {
+      const validRequests = balanceRequests.filter(
+        (b) => b.plate && parseMonetaryInput(b.value) > 0
+      );
+      if (validRequests.length > 0) {
+        lines.push('');
+        lines.push('Solicitação de Saldo:');
+        validRequests.forEach((b) => {
+          const val = formatValueBR(parseMonetaryInput(b.value));
+          lines.push(`${b.plate} = ${val}`);
         });
       }
     }
@@ -354,17 +354,6 @@ export function TransferRequestModal({
               <p className="text-sm text-muted-foreground font-medium">Tipo de solicitação:</p>
               <div className="flex items-center gap-2">
                 <Checkbox
-                  id="want-balance"
-                  checked={wantBalance}
-                  onCheckedChange={(v) => setWantBalance(!!v)}
-                />
-                <Label htmlFor="want-balance" className="flex items-center gap-2 text-sm cursor-pointer">
-                  <CircleDollarSign className="w-4 h-4 text-primary" />
-                  Solicitação de novo saldo
-                </Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
                   id="want-transfer"
                   checked={wantTransfer}
                   onCheckedChange={(v) => setWantTransfer(!!v)}
@@ -374,69 +363,18 @@ export function TransferRequestModal({
                   Transferência entre veículos
                 </Label>
               </div>
-            </div>
-
-            {/* Balance requests */}
-            {wantBalance && (
-              <div className="space-y-3 p-3 rounded-xl border border-border bg-muted/30">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Solicitações de Saldo
-                </p>
-                {balanceRequests.map((b, idx) => (
-                  <div key={idx} className="flex flex-row gap-1.5 items-end">
-                    <div className="flex-1 min-w-0">
-                      <Label className="text-[10px] text-muted-foreground">Veículo</Label>
-                      {isMobile ? (
-                        <NativePlateSelect
-                          value={b.plate}
-                          onChange={(v) => updateBalanceReq(idx, 'plate', v)}
-                          plates={plates}
-                          placeholder="Selecione..."
-                        />
-                      ) : (
-                        <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
-                          <SelectTrigger className="h-9 text-xs bg-background">
-                            <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {plates.map((p) => (
-                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={combinedDeltas[b.plate] || 0} />
-                    </div>
-                    <div className="w-20 sm:w-24 shrink-0">
-                      <Label className="text-[10px] text-muted-foreground">Valor</Label>
-                      <Input
-                        className="h-9 text-xs bg-background"
-                        placeholder="0,00"
-                        inputMode="decimal"
-                        value={b.value}
-                        onChange={(e) => updateBalanceReq(idx, 'value', e.target.value)}
-                      />
-                      <div className="h-[18px]" />
-                    </div>
-                    <div className="shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                        onClick={() => removeBalanceReq(idx)}
-                        disabled={balanceRequests.length <= 1 && !balanceRequests[0].plate && !balanceRequests[0].value}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                      <div className="h-[18px]" />
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addBalanceReq}>
-                  <Plus className="w-3 h-3" /> Adicionar solicitação
-                </Button>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="want-balance"
+                  checked={wantBalance}
+                  onCheckedChange={(v) => setWantBalance(!!v)}
+                />
+                <Label htmlFor="want-balance" className="flex items-center gap-2 text-sm cursor-pointer">
+                  <CircleDollarSign className="w-4 h-4 text-primary" />
+                  Solicitação de novo saldo
+                </Label>
               </div>
-            )}
+            </div>
 
             {/* Transfers */}
             {wantTransfer && (
@@ -520,6 +458,68 @@ export function TransferRequestModal({
                 ))}
                 <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addTransfer}>
                   <Plus className="w-3 h-3" /> Adicionar transferência
+                </Button>
+              </div>
+            )}
+
+            {/* Balance requests */}
+            {wantBalance && (
+              <div className="space-y-3 p-3 rounded-xl border border-border bg-muted/30">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Solicitações de Saldo
+                </p>
+                {balanceRequests.map((b, idx) => (
+                  <div key={idx} className="flex flex-row gap-1.5 items-end">
+                    <div className="flex-1 min-w-0">
+                      <Label className="text-[10px] text-muted-foreground">Veículo</Label>
+                      {isMobile ? (
+                        <NativePlateSelect
+                          value={b.plate}
+                          onChange={(v) => updateBalanceReq(idx, 'plate', v)}
+                          plates={plates}
+                          placeholder="Selecione..."
+                        />
+                      ) : (
+                        <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
+                          <SelectTrigger className="h-9 text-xs bg-background">
+                            <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {plates.map((p) => (
+                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={combinedDeltas[b.plate] || 0} />
+                    </div>
+                    <div className="w-20 sm:w-24 shrink-0">
+                      <Label className="text-[10px] text-muted-foreground">Valor</Label>
+                      <Input
+                        className="h-9 text-xs bg-background"
+                        placeholder="0,00"
+                        inputMode="decimal"
+                        value={b.value}
+                        onChange={(e) => updateBalanceReq(idx, 'value', e.target.value)}
+                      />
+                      <div className="h-[18px]" />
+                    </div>
+                    <div className="shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                        onClick={() => removeBalanceReq(idx)}
+                        disabled={balanceRequests.length <= 1 && !balanceRequests[0].plate && !balanceRequests[0].value}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <div className="h-[18px]" />
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addBalanceReq}>
+                  <Plus className="w-3 h-3" /> Adicionar solicitação
                 </Button>
               </div>
             )}
