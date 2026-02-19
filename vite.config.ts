@@ -23,7 +23,17 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["react", "react-dom", "react/jsx-runtime"],
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "react-dom/client", "react/jsx-runtime", "react/jsx-dev-runtime"],
+    include: [
+      "react",
+      "react-dom",
+      "react-dom/client",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-select",
+      "@radix-ui/react-label",
+    ],
     force: true,
   },
 }));
