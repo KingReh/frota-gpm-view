@@ -163,6 +163,14 @@ export function TransferRequestModal({
     return deltas;
   }, [balanceRequests]);
 
+  const combinedDeltas = useMemo(() => {
+    const deltas: Record<string, number> = { ...transferDeltas };
+    Object.entries(balanceDeltas).forEach(([plate, val]) => {
+      deltas[plate] = (deltas[plate] || 0) + val;
+    });
+    return deltas;
+  }, [transferDeltas, balanceDeltas]);
+
   const resetForm = useCallback(() => {
     setStep(1);
     setWantTransfer(false);
@@ -303,7 +311,8 @@ export function TransferRequestModal({
           if (v > 0 && t.toPlate === currentTransfer.fromPlate) return acc + v;
           return acc;
         }, 0);
-        if (currentBalance + otherDeltas - numVal < 0) {
+        const balanceDeltaForOrigin = balanceDeltas[currentTransfer.fromPlate] || 0;
+        if (currentBalance + otherDeltas + balanceDeltaForOrigin - numVal < 0) {
           toast({
             title: 'Valor inválido',
             description: `O veículo ${currentTransfer.fromPlate} ficaria com saldo negativo. Saldo disponível: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(currentBalance + otherDeltas)}`,
@@ -396,7 +405,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={transferDeltas[t.fromPlate] || 0} />
+                      <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={combinedDeltas[t.fromPlate] || 0} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
@@ -431,7 +440,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={transferDeltas[t.toPlate] || 0} />
+                      <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={combinedDeltas[t.toPlate] || 0} />
                     </div>
                     <div className="shrink-0">
                       <Button
@@ -482,7 +491,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={(transferDeltas[b.plate] || 0) + (balanceDeltas[b.plate] || 0)} />
+                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={combinedDeltas[b.plate] || 0} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
