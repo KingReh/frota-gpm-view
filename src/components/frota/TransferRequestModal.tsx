@@ -80,7 +80,7 @@ function BalanceFeedback({
   vehicles: VehicleWithDetails[];
   delta: number;
 }) {
-  if (!plate) return null;
+  if (!plate) return <div className="h-[18px]" />;
   const vehicle = vehicles.find((v) => v.plate === plate);
   const current = vehicle ? parseBalance(vehicle.balance) : 0;
   const projected = current + delta;
@@ -95,7 +95,7 @@ function BalanceFeedback({
   };
 
   return (
-    <div className="flex items-center gap-1 mt-0.5">
+    <div className="flex items-center gap-1 h-[18px]">
       <span className="text-[10px] text-muted-foreground">{currentStr}</span>
       {delta !== 0 && (
         <>
@@ -318,7 +318,7 @@ export function TransferRequestModal({
 
   const addTransfer = () => setTransfers((prev) => [...prev, emptyTransfer()]);
   const removeTransfer = (idx: number) =>
-    setTransfers((prev) => (prev.length <= 1 ? prev : prev.filter((_, i) => i !== idx)));
+    setTransfers((prev) => (prev.length <= 1 ? [emptyTransfer()] : prev.filter((_, i) => i !== idx)));
 
   // --- Balance request list helpers ---
   const updateBalanceReq = (idx: number, field: keyof BalanceRequestItem, value: string) => {
@@ -327,7 +327,7 @@ export function TransferRequestModal({
 
   const addBalanceReq = () => setBalanceRequests((prev) => [...prev, emptyBalanceRequest()]);
   const removeBalanceReq = (idx: number) =>
-    setBalanceRequests((prev) => (prev.length <= 1 ? prev : prev.filter((_, i) => i !== idx)));
+    setBalanceRequests((prev) => (prev.length <= 1 ? [emptyBalanceRequest()] : prev.filter((_, i) => i !== idx)));
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -439,7 +439,7 @@ export function TransferRequestModal({
                         size="icon"
                         className="h-9 w-9 text-muted-foreground hover:text-destructive"
                         onClick={() => removeTransfer(idx)}
-                        disabled={transfers.length <= 1}
+                        disabled={transfers.length <= 1 && !transfers[0].fromPlate && !transfers[0].toPlate && !transfers[0].value}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -482,7 +482,7 @@ export function TransferRequestModal({
                           </SelectContent>
                         </Select>
                       )}
-                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={balanceDeltas[b.plate] || 0} />
+                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={(transferDeltas[b.plate] || 0) + (balanceDeltas[b.plate] || 0)} />
                     </div>
                     <div className="w-20 sm:w-24 shrink-0">
                       <Label className="text-[10px] text-muted-foreground">Valor</Label>
@@ -501,7 +501,7 @@ export function TransferRequestModal({
                         size="icon"
                         className="h-9 w-9 text-muted-foreground hover:text-destructive"
                         onClick={() => removeBalanceReq(idx)}
-                        disabled={balanceRequests.length <= 1}
+                        disabled={balanceRequests.length <= 1 && !balanceRequests[0].plate && !balanceRequests[0].value}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
