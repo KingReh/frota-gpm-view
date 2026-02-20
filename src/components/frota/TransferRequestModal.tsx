@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,9 @@ import {
   Send,
   ArrowLeftRight,
   CircleDollarSign,
+  GripVertical,
+  ArrowUp,
+  ArrowDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -109,6 +112,8 @@ function BalanceFeedback({
   );
 }
 
+type BlockOrder = 'transfer-first' | 'balance-first';
+
 export function TransferRequestModal({
   open,
   onOpenChange,
@@ -122,6 +127,8 @@ export function TransferRequestModal({
   const [transfers, setTransfers] = useState<TransferItem[]>([emptyTransfer()]);
   const [balanceRequests, setBalanceRequests] = useState<BalanceRequestItem[]>([emptyBalanceRequest()]);
   const [userName, setUserName] = useLocalStorage<string>('frota-gpm-requester-name', '');
+  const [blockOrder, setBlockOrder] = useState<BlockOrder>('transfer-first');
+  const [draggingBlock, setDraggingBlock] = useState<string | null>(null);
   const { toast } = useToast();
   const { data: gestor } = useGestorFrota();
   const isMobile = useIsMobile();
@@ -177,6 +184,8 @@ export function TransferRequestModal({
     setWantBalance(false);
     setTransfers([emptyTransfer()]);
     setBalanceRequests([emptyBalanceRequest()]);
+    setBlockOrder('transfer-first');
+    setDraggingBlock(null);
   }, []);
 
   const handleOpenChange = (val: boolean) => {
@@ -202,7 +211,38 @@ export function TransferRequestModal({
     return true;
   }, [wantTransfer, wantBalance, transfers, balanceRequests]);
 
-  // --- Build message ---
+  // --- Build message lines helpers ---
+  const buildTransferLines = useCallback((lines: string[]) => {
+    if (!wantTransfer) return;
+    const validTransfers = transfers.filter(
+      (t) => t.fromPlate && t.toPlate && t.fromPlate !== t.toPlate && parseMonetaryInput(t.value) > 0
+    );
+    if (validTransfers.length > 0) {
+      lines.push('');
+      lines.push('Transferência entre veículos:');
+      validTransfers.forEach((t) => {
+        const val = formatValueBR(parseMonetaryInput(t.value));
+        lines.push(`(${t.fromPlate} = ${val}) para ${t.toPlate}`);
+      });
+    }
+  }, [wantTransfer, transfers]);
+
+  const buildBalanceLines = useCallback((lines: string[]) => {
+    if (!wantBalance) return;
+    const validRequests = balanceRequests.filter(
+      (b) => b.plate && parseMonetaryInput(b.value) > 0
+    );
+    if (validRequests.length > 0) {
+      lines.push('');
+      lines.push('Solicitação de Saldo:');
+      validRequests.forEach((b) => {
+        const val = formatValueBR(parseMonetaryInput(b.value));
+        lines.push(`${b.plate} = ${val}`);
+      });
+    }
+  }, [wantBalance, balanceRequests]);
+
+  // --- Build message respecting block order ---
   const formattedMessage = useMemo(() => {
     if (!gestor) return '';
     const greeting = getGreeting();
@@ -213,36 +253,13 @@ export function TransferRequestModal({
       `Me chamo ${userName.trim() || '___'} da coordenação ${coordName} e gostaria de solicitar uma transferência de combustível para minha frota da seguinte forma:`
     );
 
-    if (wantTransfer) {
-      const validTransfers = transfers.filter(
-        (t) => t.fromPlate && t.toPlate && t.fromPlate !== t.toPlate && parseMonetaryInput(t.value) > 0
-      );
-      if (validTransfers.length > 0) {
-        lines.push('');
-        lines.push('Transferência entre veículos:');
-        validTransfers.forEach((t) => {
-          const val = formatValueBR(parseMonetaryInput(t.value));
-          lines.push(`(${t.fromPlate} = ${val}) para ${t.toPlate}`);
-        });
-      }
-    }
-
-    if (wantBalance) {
-      const validRequests = balanceRequests.filter(
-        (b) => b.plate && parseMonetaryInput(b.value) > 0
-      );
-      if (validRequests.length > 0) {
-        lines.push('');
-        lines.push('Solicitação de Saldo:');
-        validRequests.forEach((b) => {
-          const val = formatValueBR(parseMonetaryInput(b.value));
-          lines.push(`${b.plate} = ${val}`);
-        });
-      }
-    }
+    const sections = blockOrder === 'transfer-first'
+      ? [buildTransferLines, buildBalanceLines]
+      : [buildBalanceLines, buildTransferLines];
+    sections.forEach((fn) => fn(lines));
 
     return lines.join('\n');
-  }, [gestor, userName, coordName, wantTransfer, wantBalance, transfers, balanceRequests]);
+  }, [gestor, userName, coordName, blockOrder, buildTransferLines, buildBalanceLines]);
 
   // --- Actions ---
   const handleCopy = async () => {
@@ -265,7 +282,6 @@ export function TransferRequestModal({
       return;
     }
 
-    // Copy as fallback
     try {
       await navigator.clipboard.writeText(formattedMessage);
     } catch {}
@@ -303,7 +319,6 @@ export function TransferRequestModal({
       if (numVal > 0 && currentTransfer.fromPlate) {
         const vehicle = vehicles.find((v) => v.plate === currentTransfer.fromPlate);
         const currentBalance = vehicle ? parseBalance(vehicle.balance) : 0;
-        // Calculate other transfers already subtracting from this plate (excluding current row)
         const otherDeltas = transfers.reduce((acc, t, i) => {
           if (i === idx) return acc;
           const v = parseMonetaryInput(t.value);
@@ -315,7 +330,7 @@ export function TransferRequestModal({
         if (currentBalance + otherDeltas + balanceDeltaForOrigin - numVal < 0) {
           toast({
             title: 'Valor inválido',
-            description: `O veículo ${currentTransfer.fromPlate} ficaria com saldo negativo. Saldo disponível: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(currentBalance + otherDeltas)}`,
+            description: `O veículo ${currentTransfer.fromPlate} ficaria com saldo negativo. Saldo disponível: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(currentBalance + otherDeltas + balanceDeltaForOrigin)}`,
             variant: 'destructive',
           });
           return;
@@ -337,6 +352,241 @@ export function TransferRequestModal({
   const addBalanceReq = () => setBalanceRequests((prev) => [...prev, emptyBalanceRequest()]);
   const removeBalanceReq = (idx: number) =>
     setBalanceRequests((prev) => (prev.length <= 1 ? [emptyBalanceRequest()] : prev.filter((_, i) => i !== idx)));
+
+  // --- Drag-and-drop handlers ---
+  const canReorder = wantTransfer && wantBalance;
+
+  const handleDragStart = (blockId: string) => (e: React.DragEvent) => {
+    setDraggingBlock(blockId);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', blockId);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (targetBlockId: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    const sourceBlockId = e.dataTransfer.getData('text/plain');
+    setDraggingBlock(null);
+    if (sourceBlockId !== targetBlockId) {
+      setBlockOrder((prev) =>
+        prev === 'transfer-first' ? 'balance-first' : 'transfer-first'
+      );
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggingBlock(null);
+  };
+
+  const swapOrder = () => {
+    setBlockOrder((prev) =>
+      prev === 'transfer-first' ? 'balance-first' : 'transfer-first'
+    );
+  };
+
+  // --- Block wrapper with drag controls ---
+  const DraggableBlockHeader = ({ blockId, title, icon: Icon }: { blockId: string; title: string; icon: React.ElementType }) => {
+    const isFirst = (blockOrder === 'transfer-first' && blockId === 'transfer') ||
+                    (blockOrder === 'balance-first' && blockId === 'balance');
+
+    return (
+      <div
+        className="flex items-center gap-1.5"
+        draggable={canReorder && !isMobile}
+        onDragStart={canReorder && !isMobile ? handleDragStart(blockId) : undefined}
+        onDragEnd={canReorder && !isMobile ? handleDragEnd : undefined}
+      >
+        {canReorder && !isMobile && (
+          <GripVertical className="w-3.5 h-3.5 text-muted-foreground cursor-grab shrink-0" />
+        )}
+        <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex-1">
+          {title}
+        </p>
+        {canReorder && isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground"
+            onClick={swapOrder}
+          >
+            {isFirst ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
+          </Button>
+        )}
+      </div>
+    );
+  };
+
+  // --- Transfer block JSX ---
+  const transferBlock = wantTransfer ? (
+    <div
+      key="transfer"
+      className={cn(
+        "space-y-3 p-3 rounded-xl border border-border bg-muted/30 transition-all",
+        draggingBlock === 'transfer' && 'opacity-50',
+        draggingBlock && draggingBlock !== 'transfer' && 'border-dashed border-primary'
+      )}
+      onDragOver={canReorder ? handleDragOver : undefined}
+      onDrop={canReorder ? handleDrop('transfer') : undefined}
+    >
+      <DraggableBlockHeader blockId="transfer" title="Transferências" icon={ArrowLeftRight} />
+      {transfers.map((t, idx) => (
+        <div key={idx} className="flex flex-row gap-1.5 items-end">
+          <div className="flex-1 min-w-0">
+            <Label className="text-[10px] text-muted-foreground">Origem</Label>
+            {isMobile ? (
+              <NativePlateSelect
+                value={t.fromPlate}
+                onChange={(v) => updateTransfer(idx, 'fromPlate', v)}
+                plates={plates}
+                placeholder="Selecione..."
+              />
+            ) : (
+              <Select value={t.fromPlate} onValueChange={(v) => updateTransfer(idx, 'fromPlate', v)}>
+                <SelectTrigger className="h-9 text-xs bg-background">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {plates.map((p) => (
+                    <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={combinedDeltas[t.fromPlate] || 0} />
+          </div>
+          <div className="w-20 sm:w-24 shrink-0">
+            <Label className="text-[10px] text-muted-foreground">Valor</Label>
+            <Input
+              className="h-9 text-xs bg-background"
+              placeholder="0,00"
+              inputMode="decimal"
+              value={t.value}
+              onChange={(e) => updateTransfer(idx, 'value', e.target.value)}
+            />
+            <div className="h-[18px]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <Label className="text-[10px] text-muted-foreground">Destino</Label>
+            {isMobile ? (
+              <NativePlateSelect
+                value={t.toPlate}
+                onChange={(v) => updateTransfer(idx, 'toPlate', v)}
+                plates={plates.filter((p) => p !== t.fromPlate)}
+                placeholder="Selecione..."
+                className={cn(t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && 'border-destructive')}
+              />
+            ) : (
+              <Select value={t.toPlate} onValueChange={(v) => updateTransfer(idx, 'toPlate', v)}>
+                <SelectTrigger className={cn("h-9 text-xs bg-background", t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && "border-destructive")}>
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {plates.filter((p) => p !== t.fromPlate).map((p) => (
+                    <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={combinedDeltas[t.toPlate] || 0} />
+          </div>
+          <div className="shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-destructive"
+              onClick={() => removeTransfer(idx)}
+              disabled={transfers.length <= 1 && !transfers[0].fromPlate && !transfers[0].toPlate && !transfers[0].value}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+            <div className="h-[18px]" />
+          </div>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addTransfer}>
+        <Plus className="w-3 h-3" /> Adicionar transferência
+      </Button>
+    </div>
+  ) : null;
+
+  // --- Balance block JSX ---
+  const balanceBlock = wantBalance ? (
+    <div
+      key="balance"
+      className={cn(
+        "space-y-3 p-3 rounded-xl border border-border bg-muted/30 transition-all",
+        draggingBlock === 'balance' && 'opacity-50',
+        draggingBlock && draggingBlock !== 'balance' && 'border-dashed border-primary'
+      )}
+      onDragOver={canReorder ? handleDragOver : undefined}
+      onDrop={canReorder ? handleDrop('balance') : undefined}
+    >
+      <DraggableBlockHeader blockId="balance" title="Solicitações de Saldo" icon={CircleDollarSign} />
+      {balanceRequests.map((b, idx) => (
+        <div key={idx} className="flex flex-row gap-1.5 items-end">
+          <div className="flex-1 min-w-0">
+            <Label className="text-[10px] text-muted-foreground">Veículo</Label>
+            {isMobile ? (
+              <NativePlateSelect
+                value={b.plate}
+                onChange={(v) => updateBalanceReq(idx, 'plate', v)}
+                plates={plates}
+                placeholder="Selecione..."
+              />
+            ) : (
+              <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
+                <SelectTrigger className="h-9 text-xs bg-background">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {plates.map((p) => (
+                    <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={combinedDeltas[b.plate] || 0} />
+          </div>
+          <div className="w-20 sm:w-24 shrink-0">
+            <Label className="text-[10px] text-muted-foreground">Valor</Label>
+            <Input
+              className="h-9 text-xs bg-background"
+              placeholder="0,00"
+              inputMode="decimal"
+              value={b.value}
+              onChange={(e) => updateBalanceReq(idx, 'value', e.target.value)}
+            />
+            <div className="h-[18px]" />
+          </div>
+          <div className="shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-destructive"
+              onClick={() => removeBalanceReq(idx)}
+              disabled={balanceRequests.length <= 1 && !balanceRequests[0].plate && !balanceRequests[0].value}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+            <div className="h-[18px]" />
+          </div>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addBalanceReq}>
+        <Plus className="w-3 h-3" /> Adicionar solicitação
+      </Button>
+    </div>
+  ) : null;
+
+  // --- Ordered blocks ---
+  const orderedBlocks = blockOrder === 'transfer-first'
+    ? [transferBlock, balanceBlock]
+    : [balanceBlock, transferBlock];
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -376,153 +626,8 @@ export function TransferRequestModal({
               </div>
             </div>
 
-            {/* Transfers */}
-            {wantTransfer && (
-              <div className="space-y-3 p-3 rounded-xl border border-border bg-muted/30">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Transferências
-                </p>
-                {transfers.map((t, idx) => (
-                  <div key={idx} className="flex flex-row gap-1.5 items-end">
-                    <div className="flex-1 min-w-0">
-                      <Label className="text-[10px] text-muted-foreground">Origem</Label>
-                      {isMobile ? (
-                        <NativePlateSelect
-                          value={t.fromPlate}
-                          onChange={(v) => updateTransfer(idx, 'fromPlate', v)}
-                          plates={plates}
-                          placeholder="Selecione..."
-                        />
-                      ) : (
-                        <Select value={t.fromPlate} onValueChange={(v) => updateTransfer(idx, 'fromPlate', v)}>
-                          <SelectTrigger className="h-9 text-xs bg-background">
-                            <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {plates.map((p) => (
-                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      <BalanceFeedback plate={t.fromPlate} vehicles={vehicles} delta={combinedDeltas[t.fromPlate] || 0} />
-                    </div>
-                    <div className="w-20 sm:w-24 shrink-0">
-                      <Label className="text-[10px] text-muted-foreground">Valor</Label>
-                      <Input
-                        className="h-9 text-xs bg-background"
-                        placeholder="0,00"
-                        inputMode="decimal"
-                        value={t.value}
-                        onChange={(e) => updateTransfer(idx, 'value', e.target.value)}
-                      />
-                      <div className="h-[18px]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Label className="text-[10px] text-muted-foreground">Destino</Label>
-                      {isMobile ? (
-                        <NativePlateSelect
-                          value={t.toPlate}
-                          onChange={(v) => updateTransfer(idx, 'toPlate', v)}
-                          plates={plates.filter((p) => p !== t.fromPlate)}
-                          placeholder="Selecione..."
-                          className={cn(t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && 'border-destructive')}
-                        />
-                      ) : (
-                        <Select value={t.toPlate} onValueChange={(v) => updateTransfer(idx, 'toPlate', v)}>
-                          <SelectTrigger className={cn("h-9 text-xs bg-background", t.fromPlate && t.toPlate && t.fromPlate === t.toPlate && "border-destructive")}>
-                            <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {plates.filter((p) => p !== t.fromPlate).map((p) => (
-                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      <BalanceFeedback plate={t.toPlate} vehicles={vehicles} delta={combinedDeltas[t.toPlate] || 0} />
-                    </div>
-                    <div className="shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                        onClick={() => removeTransfer(idx)}
-                        disabled={transfers.length <= 1 && !transfers[0].fromPlate && !transfers[0].toPlate && !transfers[0].value}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                      <div className="h-[18px]" />
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addTransfer}>
-                  <Plus className="w-3 h-3" /> Adicionar transferência
-                </Button>
-              </div>
-            )}
-
-            {/* Balance requests */}
-            {wantBalance && (
-              <div className="space-y-3 p-3 rounded-xl border border-border bg-muted/30">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Solicitações de Saldo
-                </p>
-                {balanceRequests.map((b, idx) => (
-                  <div key={idx} className="flex flex-row gap-1.5 items-end">
-                    <div className="flex-1 min-w-0">
-                      <Label className="text-[10px] text-muted-foreground">Veículo</Label>
-                      {isMobile ? (
-                        <NativePlateSelect
-                          value={b.plate}
-                          onChange={(v) => updateBalanceReq(idx, 'plate', v)}
-                          plates={plates}
-                          placeholder="Selecione..."
-                        />
-                      ) : (
-                        <Select value={b.plate} onValueChange={(v) => updateBalanceReq(idx, 'plate', v)}>
-                          <SelectTrigger className="h-9 text-xs bg-background">
-                            <SelectValue placeholder="Selecione..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {plates.map((p) => (
-                              <SelectItem key={p} value={p} className="text-xs">{p}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      <BalanceFeedback plate={b.plate} vehicles={vehicles} delta={combinedDeltas[b.plate] || 0} />
-                    </div>
-                    <div className="w-20 sm:w-24 shrink-0">
-                      <Label className="text-[10px] text-muted-foreground">Valor</Label>
-                      <Input
-                        className="h-9 text-xs bg-background"
-                        placeholder="0,00"
-                        inputMode="decimal"
-                        value={b.value}
-                        onChange={(e) => updateBalanceReq(idx, 'value', e.target.value)}
-                      />
-                      <div className="h-[18px]" />
-                    </div>
-                    <div className="shrink-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                        onClick={() => removeBalanceReq(idx)}
-                        disabled={balanceRequests.length <= 1 && !balanceRequests[0].plate && !balanceRequests[0].value}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                      <div className="h-[18px]" />
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" className="w-full text-xs gap-1" onClick={addBalanceReq}>
-                  <Plus className="w-3 h-3" /> Adicionar solicitação
-                </Button>
-              </div>
-            )}
+            {/* Ordered blocks */}
+            {orderedBlocks}
 
             {/* Next */}
             <Button
