@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, MapPin, Key, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
+import { useGestorFrota } from "@/hooks/useGestorFrota";
+import { useToast } from "@/hooks/use-toast";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
 
 const links = [
@@ -35,9 +37,19 @@ interface FabMenuProps {
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const { data: gestor } = useGestorFrota();
+  const { toast } = useToast();
 
   const handleTransferClick = () => {
     setIsOpen(false);
+    if (!gestor) {
+      toast({
+        title: 'Gestor indisponível',
+        description:
+          'No momento o gestor da frota não permite solicitação por este canal. Solicite da maneira tradicional.',
+      });
+      return;
+    }
     setTransferModalOpen(true);
   };
 
