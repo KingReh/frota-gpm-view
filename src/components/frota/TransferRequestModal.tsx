@@ -114,6 +114,56 @@ function BalanceFeedback({
 
 type BlockOrder = 'transfer-first' | 'balance-first';
 
+/** Block header with drag handle (desktop) or arrow button (mobile) */
+function DraggableBlockHeader({
+  blockId,
+  title,
+  icon: Icon,
+  canReorder,
+  isMobile,
+  isFirst,
+  onSwap,
+  onDragStart,
+  onDragEnd,
+}: {
+  blockId: string;
+  title: string;
+  icon: React.ElementType;
+  canReorder: boolean;
+  isMobile: boolean;
+  isFirst: boolean;
+  onSwap: () => void;
+  onDragStart: (e: React.DragEvent) => void;
+  onDragEnd: () => void;
+}) {
+  return (
+    <div
+      className="flex items-center gap-1.5"
+      draggable={canReorder && !isMobile}
+      onDragStart={canReorder && !isMobile ? onDragStart : undefined}
+      onDragEnd={canReorder && !isMobile ? onDragEnd : undefined}
+    >
+      {canReorder && !isMobile && (
+        <GripVertical className="w-3.5 h-3.5 text-muted-foreground cursor-grab shrink-0" />
+      )}
+      <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex-1">
+        {title}
+      </p>
+      {canReorder && isMobile && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 text-muted-foreground"
+          onClick={onSwap}
+        >
+          {isFirst ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export function TransferRequestModal({
   open,
   onOpenChange,
@@ -388,38 +438,7 @@ export function TransferRequestModal({
     );
   };
 
-  // --- Block wrapper with drag controls ---
-  const DraggableBlockHeader = ({ blockId, title, icon: Icon }: { blockId: string; title: string; icon: React.ElementType }) => {
-    const isFirst = (blockOrder === 'transfer-first' && blockId === 'transfer') ||
-                    (blockOrder === 'balance-first' && blockId === 'balance');
-
-    return (
-      <div
-        className="flex items-center gap-1.5"
-        draggable={canReorder && !isMobile}
-        onDragStart={canReorder && !isMobile ? handleDragStart(blockId) : undefined}
-        onDragEnd={canReorder && !isMobile ? handleDragEnd : undefined}
-      >
-        {canReorder && !isMobile && (
-          <GripVertical className="w-3.5 h-3.5 text-muted-foreground cursor-grab shrink-0" />
-        )}
-        <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex-1">
-          {title}
-        </p>
-        {canReorder && isMobile && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 text-muted-foreground"
-            onClick={swapOrder}
-          >
-            {isFirst ? <ArrowDown className="w-3.5 h-3.5" /> : <ArrowUp className="w-3.5 h-3.5" />}
-          </Button>
-        )}
-      </div>
-    );
-  };
+  // (DraggableBlockHeader is now a top-level component)
 
   // --- Transfer block JSX ---
   const transferBlock = wantTransfer ? (
@@ -433,7 +452,17 @@ export function TransferRequestModal({
       onDragOver={canReorder ? handleDragOver : undefined}
       onDrop={canReorder ? handleDrop('transfer') : undefined}
     >
-      <DraggableBlockHeader blockId="transfer" title="Transferências" icon={ArrowLeftRight} />
+      <DraggableBlockHeader
+        blockId="transfer"
+        title="Transferências"
+        icon={ArrowLeftRight}
+        canReorder={canReorder}
+        isMobile={isMobile}
+        isFirst={blockOrder === 'transfer-first'}
+        onSwap={swapOrder}
+        onDragStart={handleDragStart('transfer')}
+        onDragEnd={handleDragEnd}
+      />
       {transfers.map((t, idx) => (
         <div key={idx} className="flex flex-row gap-1.5 items-end">
           <div className="flex-1 min-w-0">
@@ -526,7 +555,17 @@ export function TransferRequestModal({
       onDragOver={canReorder ? handleDragOver : undefined}
       onDrop={canReorder ? handleDrop('balance') : undefined}
     >
-      <DraggableBlockHeader blockId="balance" title="Solicitações de Saldo" icon={CircleDollarSign} />
+      <DraggableBlockHeader
+        blockId="balance"
+        title="Solicitações de Saldo"
+        icon={CircleDollarSign}
+        canReorder={canReorder}
+        isMobile={isMobile}
+        isFirst={blockOrder === 'balance-first'}
+        onSwap={swapOrder}
+        onDragStart={handleDragStart('balance')}
+        onDragEnd={handleDragEnd}
+      />
       {balanceRequests.map((b, idx) => (
         <div key={idx} className="flex flex-row gap-1.5 items-end">
           <div className="flex-1 min-w-0">
