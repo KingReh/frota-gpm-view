@@ -24,7 +24,7 @@ const links = [
     label: "CRLV's",
     href: "https://bi-frota.lovable.app/regularizacao-documentos",
     icon: FileText,
-    description: "Regularização de documentos",
+    description: "Documentos de veículos",
   },
 ];
 
