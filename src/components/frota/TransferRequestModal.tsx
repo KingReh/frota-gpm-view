@@ -674,7 +674,7 @@ export function TransferRequestModal({
                   onCheckedChange={(v) => setRequestBalanceUpdate(!!v)}
                 />
                 <Label htmlFor="request-balance-update" className="text-sm cursor-pointer text-muted-foreground">
-                  Solicitar atualização de saldo no sistema
+                  Atualizar saldo no sistema após solicitação
                 </Label>
               </div>
             )}
