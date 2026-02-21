@@ -322,16 +322,6 @@ export function TransferRequestModal({
   };
 
   const handleSend = async () => {
-    if (!gestor) {
-      toast({
-        title: 'Gestor indisponível',
-        description:
-          'No momento o gestor da frota não permite solicitação por este canal. Solicite da maneira tradicional.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
     try {
       await navigator.clipboard.writeText(formattedMessage);
     } catch {}
