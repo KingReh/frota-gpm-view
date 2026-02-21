@@ -72,7 +72,19 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                             <span className="whitespace-nowrap">
                                 {isToday(lastUpdated)
                                     ? `Atualizado às ${format(lastUpdated, 'HH:mm', { locale: ptBR })}`
-                                    : `Atualizado ${format(lastUpdated, "EEE - dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`
+                                    : (() => {
+                                        const formattedDate = format(
+                                            lastUpdated,
+                                            "EEEE - dd/MM/yyyy 'às' HH:mm",
+                                            { locale: ptBR }
+                                        );
+                            
+                                        const capitalized =
+                                            formattedDate.charAt(0).toUpperCase() +
+                                            formattedDate.slice(1);
+                            
+                                        return `Atualizado ${capitalized}`;
+                                    })()
                                 }
                             </span>
                         </div>
@@ -83,6 +95,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
 
 
