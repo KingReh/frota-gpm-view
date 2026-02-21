@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import {
@@ -180,6 +181,7 @@ export function TransferRequestModal({
   const [blockOrder, setBlockOrder] = useState<BlockOrder>('transfer-first');
   const [draggingBlock, setDraggingBlock] = useState<string | null>(null);
   const [requestBalanceUpdate, setRequestBalanceUpdate] = useState(false);
+  const [editedMessage, setEditedMessage] = useState('');
   const { toast } = useToast();
   const { data: gestor } = useGestorFrota();
   const isMobile = useIsMobile();
@@ -321,7 +323,7 @@ export function TransferRequestModal({
   // --- Actions ---
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(formattedMessage);
+      await navigator.clipboard.writeText(editedMessage);
       toast({ title: 'Mensagem copiada!' });
     } catch {
       toast({ title: 'Erro ao copiar', variant: 'destructive' });
@@ -330,13 +332,13 @@ export function TransferRequestModal({
 
   const handleSend = async () => {
     try {
-      await navigator.clipboard.writeText(formattedMessage);
+      await navigator.clipboard.writeText(editedMessage);
     } catch {}
 
     if (gestor.status_telefone) {
       try {
         const phone = formatPhoneForWhatsApp(gestor.telefone);
-        openWhatsApp(phone, formattedMessage);
+        openWhatsApp(phone, editedMessage);
         toast({ title: 'WhatsApp aberto!', description: 'A mensagem também foi copiada.' });
       } catch {
         toast({
@@ -346,7 +348,7 @@ export function TransferRequestModal({
         });
       }
     } else if (gestor.status_email) {
-      openEmail(gestor.email, 'Solicitação de Transferência de Combustível', formattedMessage);
+      openEmail(gestor.email, 'Solicitação de Transferência de Combustível', editedMessage);
       toast({ title: 'E-mail aberto!', description: 'A mensagem também foi copiada.' });
     } else {
       toast({
@@ -683,7 +685,7 @@ export function TransferRequestModal({
             <Button
               className="w-full gap-2"
               disabled={!step1Valid}
-              onClick={() => setStep(2)}
+              onClick={() => { setEditedMessage(formattedMessage); setStep(2); }}
             >
               Próximo <ArrowRight className="w-4 h-4" />
             </Button>
@@ -704,11 +706,11 @@ export function TransferRequestModal({
             {/* Preview */}
             <div>
               <Label className="text-sm text-muted-foreground">Prévia da mensagem</Label>
-              <div className="mt-1 p-3 rounded-lg bg-muted/40 border border-border max-h-52 overflow-y-auto">
-                <pre className="text-xs text-foreground whitespace-pre-wrap font-sans leading-relaxed">
-                  {formattedMessage}
-                </pre>
-              </div>
+              <Textarea
+                value={editedMessage}
+                onChange={(e) => setEditedMessage(e.target.value)}
+                className="mt-1 text-xs font-sans leading-relaxed bg-muted/40 min-h-[200px] max-h-52 resize-none"
+              />
             </div>
 
             {/* Actions */}
