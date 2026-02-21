@@ -71,8 +71,8 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                             <Clock className="w-2 md:w-2.5 h-2 md:h-2.5" />
                             <span className="whitespace-nowrap">
                                 {isToday(lastUpdated)
-                                    ? `Atualizado às ${format(lastUpdated, 'HH:mm')}`
-                                    : `Atualizado em ${format(lastUpdated, "ddd - dd/MM/yyyy 'às' HH:mm")}`
+                                    ? `Atualizado às ${format(lastUpdated, 'HH:mm', { locale: ptBR })}`
+                                    : `Atualizado em ${format(lastUpdated, "EEE - dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`
                                 }
                             </span>
                         </div>
@@ -83,4 +83,5 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
