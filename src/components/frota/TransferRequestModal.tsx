@@ -179,6 +179,7 @@ export function TransferRequestModal({
   const [userName, setUserName] = useLocalStorage<string>('frota-gpm-requester-name', '');
   const [blockOrder, setBlockOrder] = useState<BlockOrder>('transfer-first');
   const [draggingBlock, setDraggingBlock] = useState<string | null>(null);
+  const [requestBalanceUpdate, setRequestBalanceUpdate] = useState(false);
   const { toast } = useToast();
   const { data: gestor } = useGestorFrota();
   const isMobile = useIsMobile();
@@ -236,6 +237,7 @@ export function TransferRequestModal({
     setBalanceRequests([emptyBalanceRequest()]);
     setBlockOrder('transfer-first');
     setDraggingBlock(null);
+    setRequestBalanceUpdate(false);
   }, []);
 
   const handleOpenChange = (val: boolean) => {
@@ -308,8 +310,13 @@ export function TransferRequestModal({
       : [buildBalanceLines, buildTransferLines];
     sections.forEach((fn) => fn(lines));
 
+    if (requestBalanceUpdate) {
+      lines.push('');
+      lines.push('Após efetuar as transferências, peço por favor que atualize o saldo no sistema.');
+    }
+
     return lines.join('\n');
-  }, [gestor, userName, coordName, blockOrder, buildTransferLines, buildBalanceLines]);
+  }, [gestor, userName, coordName, blockOrder, buildTransferLines, buildBalanceLines, requestBalanceUpdate]);
 
   // --- Actions ---
   const handleCopy = async () => {
@@ -657,6 +664,20 @@ export function TransferRequestModal({
 
             {/* Ordered blocks */}
             {orderedBlocks}
+
+            {/* Balance update request checkbox */}
+            {(wantTransfer || wantBalance) && (
+              <div className="flex items-center gap-2 pt-1">
+                <Checkbox
+                  id="request-balance-update"
+                  checked={requestBalanceUpdate}
+                  onCheckedChange={(v) => setRequestBalanceUpdate(!!v)}
+                />
+                <Label htmlFor="request-balance-update" className="text-sm cursor-pointer text-muted-foreground">
+                  Solicitar atualização de saldo no sistema
+                </Label>
+              </div>
+            )}
 
             {/* Next */}
             <Button
