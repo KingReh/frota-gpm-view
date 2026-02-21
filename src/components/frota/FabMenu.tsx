@@ -3,14 +3,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, MapPin, Key, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
+import { useGestorFrota } from "@/hooks/useGestorFrota";
+import { useToast } from "@/hooks/use-toast";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
 
 const links = [
   {
-    label: "CRLV's",
-    href: "https://bi-frota.lovable.app/regularizacao-documentos",
-    icon: FileText,
-    description: "Documentos de veículos",
+    label: "Instruções iButtons",
+    href: "http://bi-frota.lovable.app/procedimento-ligar-veiculo",
+    icon: Key,
+    description: "Como ligar o veículo",
   },
   {
     label: "Postos Credenciados",
@@ -19,10 +21,10 @@ const links = [
     description: "Rede de postos",
   },
   {
-    label: "Instruções iButtons",
-    href: "http://bi-frota.lovable.app/procedimento-ligar-veiculo",
-    icon: Key,
-    description: "Como ligar o veículo",
+    label: "CRLV's",
+    href: "https://bi-frota.lovable.app/regularizacao-documentos",
+    icon: FileText,
+    description: "Regularização de documentos",
   },
 ];
 
@@ -35,9 +37,20 @@ interface FabMenuProps {
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const { data: gestor } = useGestorFrota();
+  const { toast } = useToast();
 
   const handleTransferClick = () => {
     setIsOpen(false);
+    if (!gestor) {
+      toast({
+        title: 'Gestor indisponível',
+        description:
+          'No momento o gestor da frota não permite solicitação por este canal. Solicite da maneira tradicional.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setTransferModalOpen(true);
   };
 
@@ -95,11 +108,36 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                 Acesso Rápido
               </span>
 
+              {links.map((link, i) => (
+                <motion.a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl",
+                    "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
+                    "border border-transparent transition-all duration-200 group",
+                  )}
+                >
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <link.icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-semibold text-foreground leading-tight truncate">{link.label}</span>
+                    <span className="text-[10px] text-muted-foreground truncate">{link.description}</span>
+                  </div>
+                </motion.a>
+              ))}
+
               {/* Transfer Request button */}
               <motion.button
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0 }}
+                transition={{ delay: links.length * 0.05 }}
                 onClick={handleTransferClick}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-left",
@@ -117,31 +155,6 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                   <span className="text-[10px] text-muted-foreground truncate">Saldo entre veículos ou saldo novo</span>
                 </div>
               </motion.button>
-
-              {links.map((link, i) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: (i + 1) * 0.05 }}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-xl",
-                    "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
-                    "border border-transparent transition-all duration-200 group",
-                  )}
-                >
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                    <link.icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-semibold text-foreground leading-tight truncate">{link.label}</span>
-                    <span className="text-[10px] text-muted-foreground truncate">{link.description}</span>
-                  </div>
-                </motion.a>
-              ))}
             </motion.div>
           )}
         </AnimatePresence>
