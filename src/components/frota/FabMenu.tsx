@@ -47,6 +47,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
         title: 'Gestor indisponível',
         description:
           'No momento o gestor da frota não permite solicitação por este canal. Solicite da maneira tradicional.',
+        variant: 'destructive',
       });
       return;
     }
