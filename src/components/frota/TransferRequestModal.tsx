@@ -251,6 +251,7 @@ export function TransferRequestModal({
 
   // --- Step 1 validation ---
   const step1Valid = useMemo(() => {
+    if (!userName.trim()) return false;
     if (!wantTransfer && !wantBalance) return false;
     if (wantTransfer) {
       const hasValid = transfers.some(
@@ -265,7 +266,7 @@ export function TransferRequestModal({
       if (!hasValid) return false;
     }
     return true;
-  }, [wantTransfer, wantBalance, transfers, balanceRequests]);
+  }, [userName, wantTransfer, wantBalance, transfers, balanceRequests]);
 
   // --- Build message lines helpers ---
   const buildTransferLines = useCallback((lines: string[]) => {
@@ -639,6 +640,17 @@ export function TransferRequestModal({
 
         {step === 1 ? (
           <div className="space-y-5">
+            {/* User name */}
+            <div>
+              <Label className="text-sm text-muted-foreground">Seu nome</Label>
+              <Input
+                placeholder="Digite seu nome"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value.slice(0, 100))}
+                className="bg-background"
+              />
+            </div>
+
             {/* Type checkboxes */}
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground font-medium">Tipo de solicitação:</p>
@@ -694,17 +706,6 @@ export function TransferRequestModal({
           </div>
         ) : (
           <div className="space-y-5">
-            {/* User name */}
-            <div>
-              <Label className="text-sm text-muted-foreground">Seu nome</Label>
-              <Input
-                placeholder="Digite seu nome"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value.slice(0, 100))}
-                className="bg-background"
-              />
-            </div>
-
             {/* Preview */}
             <div>
               <Label className="text-sm text-muted-foreground">Prévia da mensagem</Label>
