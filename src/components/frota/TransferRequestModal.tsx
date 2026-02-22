@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -182,6 +182,7 @@ export function TransferRequestModal({
   const [draggingBlock, setDraggingBlock] = useState<string | null>(null);
   const [requestBalanceUpdate, setRequestBalanceUpdate] = useState(false);
   const [editedMessage, setEditedMessage] = useState('');
+  const [manuallyEdited, setManuallyEdited] = useState(false);
   const { toast } = useToast();
   const { data: gestor } = useGestorFrota();
   const isMobile = useIsMobile();
@@ -240,6 +241,7 @@ export function TransferRequestModal({
     setBlockOrder('transfer-first');
     setDraggingBlock(null);
     setRequestBalanceUpdate(false);
+    setManuallyEdited(false);
   }, []);
 
   const handleOpenChange = (val: boolean) => {
@@ -685,7 +687,7 @@ export function TransferRequestModal({
             <Button
               className="w-full gap-2"
               disabled={!step1Valid}
-              onClick={() => { setEditedMessage(formattedMessage); setStep(2); }}
+              onClick={() => { setEditedMessage(formattedMessage); setManuallyEdited(false); setStep(2); }}
             >
               Próximo <ArrowRight className="w-4 h-4" />
             </Button>
@@ -708,7 +710,7 @@ export function TransferRequestModal({
               <Label className="text-sm text-muted-foreground">Prévia da mensagem</Label>
               <Textarea
                 value={editedMessage}
-                onChange={(e) => setEditedMessage(e.target.value)}
+                onChange={(e) => { setManuallyEdited(true); setEditedMessage(e.target.value); }}
                 className="mt-1 text-xs font-sans leading-relaxed bg-muted/40 min-h-[200px] max-h-52 resize-none"
               />
             </div>
