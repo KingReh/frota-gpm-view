@@ -43,6 +43,7 @@ import {
   GripVertical,
   ArrowUp,
   ArrowDown,
+  RotateCcw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -194,8 +195,10 @@ export function TransferRequestModal({
 
   const coordName = useMemo(() => {
     if (selectedCoordinations.length === 0) return 'GPM';
-    const coord = coordinations.find((c) => c.id === selectedCoordinations[0]);
-    return coord?.name || 'GPM';
+    const names = selectedCoordinations
+      .map((id) => coordinations.find((c) => c.id === id)?.name)
+      .filter(Boolean);
+    return names.length > 0 ? names.join('/') : 'GPM';
   }, [coordinations, selectedCoordinations]);
 
   // Separate deltas per section so they don't interfere
@@ -708,7 +711,19 @@ export function TransferRequestModal({
           <div className="space-y-5">
             {/* Preview */}
             <div>
-              <Label className="text-sm text-muted-foreground">Prévia da mensagem</Label>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm text-muted-foreground">Prévia da mensagem</Label>
+                {manuallyEdited && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={() => { setEditedMessage(formattedMessage); setManuallyEdited(false); }}
+                  >
+                    <RotateCcw className="w-3 h-3" /> Restaurar original
+                  </Button>
+                )}
+              </div>
               <Textarea
                 value={editedMessage}
                 onChange={(e) => { setManuallyEdited(true); setEditedMessage(e.target.value); }}
