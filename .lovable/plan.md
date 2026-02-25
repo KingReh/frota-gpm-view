@@ -1,67 +1,51 @@
 
-# Drag-and-Drop para Reordenar Blocos no Modal de Transferencia
+
+# Plano: Adicionar informação de Combustível (fuel_type)
 
 ## Resumo
 
-Adicionar a capacidade de reordenar os dois blocos de acao ("Transferencias" e "Solicitacoes de Saldo") via drag-and-drop no Step 1 do modal. A ordem escolhida reflete diretamente na previa da mensagem (Step 2). Ao fechar o modal, a ordem volta ao padrao.
+Buscar o campo `fuel_type` da tabela `vehicles` no Supabase e exibi-lo em tres locais: card, carrossel e modal de detalhes. Substituir a duplicata de "Concessionaria" no card pelo combustivel. Tratar ausencia do dado graciosamente.
 
-## Abordagem Tecnica
+---
 
-Sem adicionar dependencias externas. Os blocos sao apenas dois, entao um drag-and-drop simples com a HTML Drag API nativa e suficiente. Para mobile (touch), usaremos botoes de seta (cima/baixo) como alternativa, ja que a HTML Drag API tem suporte limitado em touch.
+## Alteracoes
 
-## Alteracoes no arquivo `src/components/frota/TransferRequestModal.tsx`
+### 1. Tipo `VehicleWithDetails` (`src/types/vehicle.ts`)
 
-### 1. Novo estado de ordem
+Adicionar campo `fuel_type: string | null` a interface `VehicleWithDetails`.
 
-```typescript
-// 'transfer-first' e o padrao; 'balance-first' inverte
-const [blockOrder, setBlockOrder] = useState<'transfer-first' | 'balance-first'>('transfer-first');
-```
+### 2. Hook `useVehicles` (`src/hooks/useVehicles.ts`)
 
-Resetar no `resetForm` para `'transfer-first'`.
+- Adicionar `fuel_type` ao `select` da query da tabela `vehicles`
+- Incluir `fuel_type` no `VehicleWithCoordination` interface
+- Mapear `fuel_type` no objeto combinado retornado (prioridade: `vehicles.fuel_type`)
 
-### 2. Renderizacao condicional dos blocos
+### 3. Card (`src/components/frota/VehicleCard.tsx`)
 
-Extrair os dois blocos (Transferencias e Solicitacoes de Saldo) em variaveis JSX (`transferBlock` e `balanceBlock`). Renderizar na ordem definida por `blockOrder`:
+**Visualizacao normal (nao compact):**
+- Substituir o bloco "Concessionaria" (linhas 128-137, ao lado da placa) por "Combustivel", usando icone `Fuel` e exibindo `vehicle.fuel_type || 'N/I'`
 
-```typescript
-const blocks = blockOrder === 'transfer-first'
-  ? [transferBlock, balanceBlock]
-  : [balanceBlock, transferBlock];
-```
+**Visualizacao compact:**
+- Substituir "Concessionaria" (linhas 195-198) por "Combustivel" com `vehicle.fuel_type || 'N/I'`
 
-Renderizar `blocks[0]` e `blocks[1]` no lugar dos blocos fixos atuais.
+### 4. Carrossel (`src/components/frota/VehicleCarousel.tsx`)
 
-### 3. Indicador visual de drag e controles
+Nenhuma alteracao direta necessaria -- o carrossel renderiza `VehicleCard` com `size="large"` e `hideTelemetry={true}`. A mudanca no card ja propagara a informacao de combustivel. O campo aparecera nos badges tecnicos ao lado da placa.
 
-Cada bloco recebera:
-- Um icone de arrastar (`GripVertical` do lucide-react) no cabecalho, ao lado do titulo
-- Atributo `draggable` no cabecalho do bloco
-- Handlers `onDragStart`, `onDragOver`, `onDrop` para trocar a ordem
-- Em mobile: um botao de seta (cima/baixo) no lugar do drag, para trocar a posicao com um toque
+### 5. Modal de Detalhes (`src/components/frota/VehicleDetailModal.tsx`)
 
-O drag-and-drop so sera ativado quando ambos os blocos estiverem visiveis (`wantTransfer && wantBalance`). Se apenas um bloco estiver ativo, nao exibe o controle de arrastar.
+- Adicionar um `DetailRow` com icone `Fuel`, label "Combustivel" e valor `vehicle.fuel_type` na secao "Especificacoes", antes ou apos "Tipo de Frota"
+- Como `DetailRow` ja retorna `null` se `value` for `null`, a ausencia do dado e tratada automaticamente
 
-### 4. Previa da mensagem respeita a ordem
+### 6. Tabela (`src/components/frota/VehicleTable.tsx`)
 
-Atualizar o `formattedMessage` (useMemo) para montar os paragrafos na ordem de `blockOrder`:
+Nenhuma alteracao solicitada para a tabela, porem o dado estara disponivel no tipo caso futuramente necessario.
 
-```typescript
-const sections = blockOrder === 'transfer-first'
-  ? [buildTransferLines, buildBalanceLines]
-  : [buildBalanceLines, buildTransferLines];
-sections.forEach(fn => fn(lines));
-```
+---
 
-### 5. Feedback visual durante o drag
+## Detalhes Tecnicos
 
-- Opacity reduzida no bloco sendo arrastado (`opacity-50`)
-- Borda tracejada de destaque no bloco alvo (`border-dashed border-primary`)
+- A coluna `fuel_type` ja existe na tabela `vehicles` no Supabase -- nenhuma migracao necessaria
+- O dado vem de outro sistema gestor, portanto pode ser `null` -- todos os locais de exibicao tratam `null` com fallback ou ocultacao
+- O backend Supabase permanece inalterado; apenas a query `select` sera expandida para incluir `fuel_type`
 
-## Comportamento
-
-- Ordem padrao: Transferencias primeiro, Solicitacoes de Saldo depois
-- O usuario so pode reordenar quando ambos os checkboxes estao marcados
-- Ao fechar o modal, a ordem volta ao padrao
-- A previa da mensagem no Step 2 reflete a ordem atual em tempo real
-- Em mobile: botao de seta substitui o drag nativo para melhor usabilidade touch
