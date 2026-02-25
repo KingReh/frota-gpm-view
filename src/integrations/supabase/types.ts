@@ -260,6 +260,7 @@ export type Database = {
         Row: {
           coordination_id: string | null
           created_at: string
+          fuel_type: string | null
           id: string
           plate: string
           updated_at: string
@@ -267,6 +268,7 @@ export type Database = {
         Insert: {
           coordination_id?: string | null
           created_at?: string
+          fuel_type?: string | null
           id?: string
           plate: string
           updated_at?: string
@@ -274,6 +276,7 @@ export type Database = {
         Update: {
           coordination_id?: string | null
           created_at?: string
+          fuel_type?: string | null
           id?: string
           plate?: string
           updated_at?: string

@@ -9,6 +9,7 @@ interface VehicleWithCoordination {
   id: string;
   plate: string;
   coordination_id: string | null;
+  fuel_type: string | null;
   coordinations: {
     id: string;
     name: string;
@@ -56,6 +57,7 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
           id,
           plate,
           coordination_id,
+          fuel_type,
           coordinations (
             id,
             name,
@@ -79,7 +81,8 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
         vehicles?.map(v => [v.plate, {
           id: v.id,
           coordination_id: v.coordination_id,
-          coordination: v.coordinations as Coordination | null
+          coordination: v.coordinations as Coordination | null,
+          fuel_type: v.fuel_type,
         }]) || []
       );
 
@@ -105,6 +108,7 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
           vehicle_id: vehicle?.id || null,
           coordination: vehicle?.coordination || null,
           image_url: vehicle?.id ? imageMap.get(vehicle.id) || null : null,
+          fuel_type: vehicle?.fuel_type || null,
         };
       });
 
