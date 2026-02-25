@@ -127,11 +127,11 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               {/* Technical Badges */}
               <div className="flex flex-col items-end gap-3">
                 <div className="flex flex-col items-end">
-                  <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Concessionária</span>
+                  <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Combustível</span>
                   <div className="flex items-center gap-2 text-foreground/80 bg-muted/20 px-3 py-1 rounded-md border border-border/20">
-                    <Building2 className="w-3 h-3 text-secondary" />
+                    <Fuel className="w-3 h-3 text-accent-fuel" />
                     <span className="text-[10px] uppercase font-bold tracking-wider truncate max-w-[120px]">
-                      {vehicle.manufacturer || 'N/A'}
+                      {vehicle.fuel_type || 'N/I'}
                     </span>
                   </div>
                 </div>
@@ -193,8 +193,8 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
             <div className="space-y-4 pt-4 border-t border-border/20">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-[7px] text-muted-foreground uppercase font-black">Concessionária</span>
-                  <span className="text-[9px] text-foreground/70 truncate max-w-[80px]">{vehicle.manufacturer || 'N/A'}</span>
+                  <span className="text-[7px] text-muted-foreground uppercase font-black">Combustível</span>
+                  <span className="text-[9px] text-foreground/70 truncate max-w-[80px]">{vehicle.fuel_type || 'N/I'}</span>
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[7px] text-muted-foreground uppercase font-black">Frota</span>

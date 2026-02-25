@@ -12,7 +12,7 @@ import { formatBalance } from '@/lib/balance';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
-import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star } from 'lucide-react';
+import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
@@ -147,6 +147,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
               </h4>
               <div className="grid grid-cols-1 gap-2">
                 <DetailRow icon={Car} label="Tipo de Frota" value={vehicle.fleet_type} />
+                <DetailRow icon={Fuel} label="Combustível" value={vehicle.fuel_type} />
                 <DetailRow icon={Building2} label="Concessionária" value={vehicle.manufacturer} />
                 <DetailRow icon={Gauge} label="Nº Frota" value={vehicle.fleet_number} />
                 <DetailRow icon={CreditCard} label="Nº Cartão" value={vehicle.card_number} />
