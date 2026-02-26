@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Info, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
-const DRIVING_TIPS = [
+const FALLBACK_TIPS = [
   "Mantenha sempre a distância de segurança do veículo à frente.",
   "Verifique a pressão dos pneus semanalmente para economizar combustível.",
   "Use o freio motor em descidas longas para poupar os freios.",
@@ -13,13 +14,7 @@ const DRIVING_TIPS = [
   "Sinalize com antecedência todas as suas manobras.",
   "Verifique o nível de óleo e fluidos regularmente.",
   "Em dias de chuva, reduza a velocidade e acenda os faróis.",
-  "Faça o rodízio de pneus a cada 10.000 km.",
   "Respeite sempre os limites de velocidade da via.",
-  "Mantenha o sistema de arrefecimento sempre limpo.",
-  "Evite carregar peso desnecessário no veículo.",
-  "Troque as marchas no tempo certo para otimizar o consumo.",
-  "Atenção redobrada em cruzamentos e rotatórias.",
-  "Realize a manutenção preventiva conforme o manual.",
   "Use o cinto de segurança, inclusive no banco traseiro."
 ];
 
@@ -30,16 +25,29 @@ export const DrivingTipsToast = () => {
   const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
-    // Select a random tip on mount
-    const randomTip = DRIVING_TIPS[Math.floor(Math.random() * DRIVING_TIPS.length)];
-    setTip(randomTip);
+    // Fetch tip from Google Sheets via edge function
+    const fetchTip = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('get-driving-tips');
+        if (!error && data?.tip) {
+          setTip(data.tip);
+        } else {
+          // Fallback to local tips
+          setTip(FALLBACK_TIPS[Math.floor(Math.random() * FALLBACK_TIPS.length)]);
+        }
+      } catch {
+        setTip(FALLBACK_TIPS[Math.floor(Math.random() * FALLBACK_TIPS.length)]);
+      }
+    };
+
+    fetchTip();
 
     // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIOS(isIosDevice);
 
-    // Delay appearance slightly for better UX
+    // Delay appearance
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 1000);

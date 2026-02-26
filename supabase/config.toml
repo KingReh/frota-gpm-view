@@ -2,3 +2,6 @@ project_id = "xsavrqjqiqohqxcnrjes"
 
 [functions.send-push-notification]
 verify_jwt = false
+
+[functions.get-driving-tips]
+verify_jwt = false
