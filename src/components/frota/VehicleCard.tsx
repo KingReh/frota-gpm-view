@@ -6,6 +6,7 @@ import { Gauge } from './Gauge';
 import { CoordinationBadge } from './CoordinationBadge';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
+import { simplifyFuelType } from '@/lib/fuel';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 
@@ -131,7 +132,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                   <div className="flex items-center gap-2 text-foreground/80 bg-muted/20 px-3 py-1 rounded-md border border-border/20">
                     <Fuel className="w-3 h-3 text-accent-fuel" />
                     <span className="text-[10px] uppercase font-bold tracking-wider truncate max-w-[120px]">
-                      {vehicle.fuel_type || 'N/I'}
+                      {simplifyFuelType(vehicle.fuel_type)}
                     </span>
                   </div>
                 </div>
