@@ -193,8 +193,8 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
             <div className="space-y-4 pt-4 border-t border-border/20">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-col">
-                  <span className="text-[7px] text-muted-foreground uppercase font-black">Combustível</span>
-                  <span className="text-[9px] text-foreground/70 truncate max-w-[80px]">{vehicle.fuel_type || 'N/I'}</span>
+                  <span className="text-[7px] text-muted-foreground uppercase font-black">Concessionária</span>
+                  <span className="text-[9px] text-foreground/70 truncate max-w-[80px]">{vehicle.manufacturer || 'N/I'}</span>
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[7px] text-muted-foreground uppercase font-black">Frota</span>
