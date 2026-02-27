@@ -16,6 +16,7 @@ import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, 
 import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
+import { isBalanceMasked } from '@/lib/maskedPlates';
 
 interface VehicleDetailModalProps {
   vehicle: VehicleWithDetails | null;
@@ -62,6 +63,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
 
   const hasFinancialData = vehicle.current_limit || vehicle.used_value || vehicle.reserved_value || vehicle.next_period_limit;
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
+  const masked = isBalanceMasked(vehicle.plate);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -127,10 +129,12 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
                 </DialogDescription>
               </div>
 
-              <div className="text-right">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Saldo Atual</p>
-                <BalanceIndicator balance={vehicle.balance} size="lg" className="text-xl px-4 py-1.5" />
-              </div>
+              {!masked && (
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Saldo Atual</p>
+                  <BalanceIndicator balance={vehicle.balance} size="lg" className="text-xl px-4 py-1.5" />
+                </div>
+              )}
             </div>
           </div>
         </div>
