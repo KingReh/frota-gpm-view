@@ -71,7 +71,7 @@ export const DrivingTipsToast = () => {
       {isVisible && (
         <div
           className={cn(
-            "fixed left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:bottom-8 md:right-8 z-50 w-full max-w-lg px-4 pointer-events-none transition-all duration-500 ease-in-out",
+            "fixed left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:bottom-8 md:right-8 z-[60] w-full max-w-lg px-4 pointer-events-none transition-all duration-500 ease-in-out",
             hasPwaPrompt
               ? (isIOS ? "bottom-[225px] md:bottom-[180px]" : "bottom-[210px] md:bottom-[205px]")
               : "bottom-4 md:bottom-8"
