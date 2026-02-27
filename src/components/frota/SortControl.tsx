@@ -1,3 +1,4 @@
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -10,6 +11,7 @@ import {
 import { ArrowDownAZ, ArrowUpAZ, ArrowDownUp, DollarSign, Building2, Car } from "lucide-react";
 import type { SortOption } from "@/types/vehicle";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SortControlProps {
     currentSort: SortOption;
@@ -17,6 +19,32 @@ interface SortControlProps {
 }
 
 export function SortControl({ currentSort, onSortChange }: SortControlProps) {
+    const isMobile = useIsMobile();
+    const [open, setOpen] = useState(false);
+    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleTouchStart = useCallback(() => {
+        if (!isMobile) return;
+        longPressTimer.current = setTimeout(() => {
+            setOpen(true);
+            // Vibrate for haptic feedback if available
+            if (navigator.vibrate) navigator.vibrate(30);
+        }, 500);
+    }, [isMobile]);
+
+    const handleTouchEnd = useCallback(() => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    }, []);
+
+    const handleTouchMove = useCallback(() => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current);
+            longPressTimer.current = null;
+        }
+    }, []);
     const getSortLabel = (sort: SortOption) => {
         switch (sort) {
             case 'plate_asc': return 'Placa (A-Z)';
@@ -37,12 +65,22 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
     };
 
     return (
-        <DropdownMenu>
+        <DropdownMenu open={open} onOpenChange={(v) => {
+            // On mobile, only allow programmatic open (via long-press)
+            if (isMobile && v) return;
+            setOpen(v);
+        }}>
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-9 md:h-10 bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all gap-2 min-w-[140px] justify-between"
+                    className="h-9 md:h-10 bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all gap-2 min-w-[140px] justify-between select-none"
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
+                    onTouchMove={handleTouchMove}
+                    onClick={(e) => {
+                        if (isMobile) e.preventDefault();
+                    }}
                 >
                     <div className="flex items-center">
                         {getSortIcon(currentSort)}
