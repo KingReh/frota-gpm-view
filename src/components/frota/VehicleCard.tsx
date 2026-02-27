@@ -7,6 +7,7 @@ import { CoordinationBadge } from './CoordinationBadge';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
 import { simplifyFuelType } from '@/lib/fuel';
+import { isBalanceMasked } from '@/lib/maskedPlates';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 
@@ -23,6 +24,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
   const isLarge = size === 'large';
   const balanceValue = parseBalance(vehicle.balance);
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
+  const masked = isBalanceMasked(vehicle.plate);
 
   return (
     <div className="relative transition-opacity duration-300">
@@ -179,12 +181,18 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 "flex relative transition-all duration-500",
                 hideTelemetry ? "justify-center scale-125 py-4" : "justify-end"
               )}>
-                <Gauge
-                  value={balanceValue}
-                  max={parseBalance(vehicle.next_period_limit)}
-                  label="SALDO ATUAL"
-                  size={hideTelemetry ? "lg" : "md"}
-                />
+                {masked ? (
+                  <div className="flex items-center justify-center text-muted-foreground text-xs font-medium">
+                    Saldo oculto
+                  </div>
+                ) : (
+                  <Gauge
+                    value={balanceValue}
+                    max={parseBalance(vehicle.next_period_limit)}
+                    label="SALDO ATUAL"
+                    size={hideTelemetry ? "lg" : "md"}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -204,7 +212,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-border/20">
                 <div className="font-mono font-black text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                  {balanceValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  {masked ? '••••••' : balanceValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </div>
                 <GaugeIcon className="w-4 h-4 text-primary" />
               </div>

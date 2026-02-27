@@ -14,6 +14,7 @@ import { CoordinationBadge } from './CoordinationBadge';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
+import { isBalanceMasked } from '@/lib/maskedPlates';
 import { motion } from 'framer-motion';
 import { Info, Building2, Car, LayoutList, Grid, MonitorPlay, Star } from 'lucide-react';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -126,7 +127,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                     <div className="flex items-center justify-end gap-3">
                       <div className="inline-flex items-center gap-2 md:gap-4">
                         <span className="font-mono font-black text-[11px] md:text-sm text-white tracking-tight">
-                          {parseBalance(vehicle.balance).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          {isBalanceMasked(vehicle.plate) ? '••••••' : parseBalance(vehicle.balance).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </span>
                         <div className="h-1 w-1 md:h-2 md:w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(255,45,32,0.8)] animate-pulse hidden xs:block" />
                       </div>
