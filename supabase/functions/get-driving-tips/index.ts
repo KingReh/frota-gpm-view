@@ -7,6 +7,40 @@ const corsHeaders = {
 
 const SHEET_ID = '15a3TdMn-Onn6B_rCnXgBD3M_L96CoGyhSskmMbjlqHw';
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+let cachedTips: string[] = [];
+let cacheTimestamp = 0;
+
+async function getTips(): Promise<string[]> {
+  if (cachedTips.length > 0 && Date.now() - cacheTimestamp < CACHE_TTL_MS) {
+    return cachedTips;
+  }
+
+  const response = await fetch(SHEET_URL);
+  if (!response.ok) {
+    throw new Error(`Google Sheets fetch failed [${response.status}]`);
+  }
+
+  const csvText = await response.text();
+  const lines = csvText.split('\n').filter(line => line.trim());
+  const tips: string[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const match = lines[i].match(/"([^"]+)"/);
+    if (match && match[1].trim()) {
+      tips.push(match[1].trim());
+    }
+  }
+
+  if (tips.length === 0) {
+    throw new Error('No tips found in spreadsheet');
+  }
+
+  cachedTips = tips;
+  cacheTimestamp = Date.now();
+  return tips;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -14,30 +48,7 @@ serve(async (req) => {
   }
 
   try {
-    const response = await fetch(SHEET_URL);
-    if (!response.ok) {
-      throw new Error(`Google Sheets fetch failed [${response.status}]`);
-    }
-
-    const csvText = await response.text();
-    
-    // Parse CSV: skip header row, extract first column (DicasFrotaGPM)
-    const lines = csvText.split('\n').filter(line => line.trim());
-    const tips: string[] = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      // CSV values are quoted: "value"
-      const match = lines[i].match(/"([^"]+)"/);
-      if (match && match[1].trim()) {
-        tips.push(match[1].trim());
-      }
-    }
-
-    if (tips.length === 0) {
-      throw new Error('No tips found in spreadsheet');
-    }
-
-    // Return a random tip
+    const tips = await getTips();
     const randomTip = tips[Math.floor(Math.random() * tips.length)];
 
     return new Response(JSON.stringify({ tip: randomTip }), {
