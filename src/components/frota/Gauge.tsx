@@ -7,10 +7,11 @@ interface GaugeProps {
     max?: number;
     label?: string;
     size?: 'sm' | 'md' | 'lg';
+    maskedDisplay?: string;
     className?: string;
 }
 
-export function Gauge({ value, max = 1000, label, size = 'md', className }: GaugeProps) {
+export function Gauge({ value, max = 1000, label, size = 'md', maskedDisplay, className }: GaugeProps) {
     // Normalize value based on the provided max limit
     const percentage = max > 0 ? Math.min(Math.max((value / max) * 100, 0), 100) : 0;
 
@@ -72,12 +73,14 @@ export function Gauge({ value, max = 1000, label, size = 'md', className }: Gaug
 
                 {/* Center Content: Dominant Value + Subtle Percentage */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pt-3">
-                    <span className={cn("font-mono font-black text-white drop-shadow-[0_4px_2px_rgba(0,0,0,0.8)] tracking-tighter", sizeMetrics.currencyFont)}>
-                        {formatCurrency(value).replace('R$', '').trim()}
+                    <span className={cn("font-mono font-black text-foreground drop-shadow-[0_4px_2px_rgba(0,0,0,0.8)] tracking-tighter", sizeMetrics.currencyFont)}>
+                        {maskedDisplay ?? formatCurrency(value).replace('R$', '').trim()}
                     </span>
-                    <span className={cn("font-mono font-bold text-white/20 select-none", sizeMetrics.percentFont)}>
-                        {percentage.toFixed(0)}%
-                    </span>
+                    {!maskedDisplay && (
+                      <span className={cn("font-mono font-bold text-foreground/20 select-none", sizeMetrics.percentFont)}>
+                          {percentage.toFixed(0)}%
+                      </span>
+                    )}
                 </div>
             </div>
 

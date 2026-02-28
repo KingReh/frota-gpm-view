@@ -181,10 +181,14 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 "flex relative transition-all duration-500",
                 hideTelemetry ? "justify-center scale-125 py-4" : "justify-end"
               )}>
-                {masked ? (
-                  <div className="flex items-center justify-center text-muted-foreground text-xs font-medium">
-                    Saldo oculto
-                  </div>
+              {masked ? (
+                  <Gauge
+                    value={balanceValue}
+                    max={parseBalance(vehicle.next_period_limit)}
+                    label="SALDO ATUAL"
+                    size={hideTelemetry ? "lg" : "md"}
+                    maskedDisplay="••••••"
+                  />
                 ) : (
                   <Gauge
                     value={balanceValue}
