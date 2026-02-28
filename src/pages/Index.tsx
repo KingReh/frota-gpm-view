@@ -16,6 +16,7 @@ import { useCoordinations } from '@/hooks/useCoordinations';
 import { useVehicles } from '@/hooks/useVehicles';
 import { useToast } from '@/hooks/use-toast';
 import { useBalanceUpdateAlert } from '@/hooks/useBalanceUpdateAlert';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { SortControl } from '@/components/frota/SortControl';
 import type { FleetTab, VehicleWithDetails, SortOption } from '@/types/vehicle';
@@ -65,6 +66,7 @@ const Index = () => {
 
   const { toast } = useToast();
   const { recentlyUpdated, triggerAlert } = useBalanceUpdateAlert();
+  const isMobile = useIsMobile();
 
   const onRealtimeUpdate = useCallback(() => {
     triggerAlert();
@@ -194,18 +196,35 @@ const Index = () => {
       ...summaryLines
     ].join('\n');
 
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      toast({
-        title: "Saldo Exportado!",
-        description: `${targetVehicles.length} veículos e totais copiados.`,
-      });
-    }).catch(() => {
-      toast({
-        title: "Erro ao exportar",
-        description: "Não foi possível copiar para a área de transferência.",
-        variant: "destructive"
-      });
-    });
+    const shareOrCopy = async () => {
+      // Mobile: try Web Share API first
+      if (isMobile && navigator.share) {
+        try {
+          await navigator.share({ text: textToCopy });
+          return;
+        } catch (err: any) {
+          // User cancelled share — silently ignore
+          if (err?.name === 'AbortError') return;
+        }
+      }
+
+      // Desktop or fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        toast({
+          title: "Saldo Exportado!",
+          description: `${targetVehicles.length} veículos e totais copiados.`,
+        });
+      } catch {
+        toast({
+          title: "Erro ao exportar",
+          description: "Não foi possível copiar para a área de transferência.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    shareOrCopy();
   };
 
   const renderVehicleContent = (vehicleList: VehicleWithDetails[]) => {
@@ -332,10 +351,10 @@ const Index = () => {
               {/* Export Button */}
               <button
                 onClick={handleExportBalance}
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group"
-                title="Exportar Saldo (Copiar para área de transferência)"
+                className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group w-full sm:w-auto"
+                title="Exportar Saldo"
               >
-                <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Copy className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
                 <span className="text-sm font-medium">Exportar</span>
               </button>
             </div>
