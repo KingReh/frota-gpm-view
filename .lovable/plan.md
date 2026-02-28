@@ -1,51 +1,65 @@
 
 
-# Plano: Adicionar informação de Combustível (fuel_type)
+# Migração de Cor: Vermelho → Azul #0066B3
 
 ## Resumo
 
-Buscar o campo `fuel_type` da tabela `vehicles` no Supabase e exibi-lo em tres locais: card, carrossel e modal de detalhes. Substituir a duplicata de "Concessionaria" no card pelo combustivel. Tratar ausencia do dado graciosamente.
+Substituição sistemática de todos os usos de vermelho como cor de identidade visual pelo azul `#0066B3` e suas variantes, preservando a estética premium e mantendo os vermelhos semânticos (erros, saldo zero, alertas).
 
----
+## Mapeamento de Cores
 
-## Alteracoes
+| Uso | Vermelho Atual (HSL) | Azul Novo (HSL) |
+|-----|---------------------|-----------------|
+| **Primary (base)** | `0 100% 56%` (#FF2D20) | `207 100% 35%` (#0066B3) |
+| **Ring** | `0 100% 56%` | `207 100% 35%` |
+| **text-glow** | `rgba(255, 45, 32, 0.5)` | `rgba(0, 102, 179, 0.5)` |
+| **Carousel dot ativo** | `rgba(255, 45, 32, 1)` | `rgba(0, 102, 179, 1)` |
+| **Pulse dot (tabela)** | `rgba(255,45,32,0.8)` | `rgba(0,102,179,0.8)` |
+| **Notification ping** | `bg-red-400/bg-red-500` | `bg-blue-400/bg-blue-500` |
 
-### 1. Tipo `VehicleWithDetails` (`src/types/vehicle.ts`)
+### Variantes tonais do #0066B3:
+- **Hover**: HSL 207 100% 30% (mais escuro)
+- **Active/Pressed**: HSL 207 100% 25%
+- **Fundo suave (10%)**: hsl(207 100% 35% / 0.1)
+- **Borda (20-40%)**: hsl(207 100% 35% / 0.2-0.4)
+- **Shadow glow**: rgba(0, 102, 179, 0.3-0.8)
 
-Adicionar campo `fuel_type: string | null` a interface `VehicleWithDetails`.
+### Acessibilidade (WCAG AA):
+- `#0066B3` sobre fundo escuro (#161A21): ratio ~4.7:1 -- passa AA
+- `#FFFFFF` sobre `#0066B3`: ratio ~5.7:1 -- passa AA
 
-### 2. Hook `useVehicles` (`src/hooks/useVehicles.ts`)
+## Exceções (NAO alterar)
 
-- Adicionar `fuel_type` ao `select` da query da tabela `vehicles`
-- Incluir `fuel_type` no `VehicleWithCoordination` interface
-- Mapear `fuel_type` no objeto combinado retornado (prioridade: `vehicles.fuel_type`)
+- `--destructive` (HSL `0 62.8% 30.6%`) -- erros/alertas
+- `--balance-low` (HSL `0 84% 60%`) -- saldo zero
+- `text-red-400` em `TotalBalanceStats.tsx` (saldo zero) -- semantico
+- Classes `destructive` nos toasts/alerts -- semantico
+- `#E63946` no gradiente do Gauge (vermelho para saldo baixo no degradê) -- semantico
 
-### 3. Card (`src/components/frota/VehicleCard.tsx`)
+## Arquivos a Modificar
 
-**Visualizacao normal (nao compact):**
-- Substituir o bloco "Concessionaria" (linhas 128-137, ao lado da placa) por "Combustivel", usando icone `Fuel` e exibindo `vehicle.fuel_type || 'N/I'`
+### 1. `src/index.css` (tokens centrais)
+- `--primary`: `0 100% 56%` → `207 100% 35%`
+- `--ring`: `0 100% 56%` → `207 100% 35%`
+- `.text-glow`: rgba vermelho → rgba azul
 
-**Visualizacao compact:**
-- Substituir "Concessionaria" (linhas 195-198) por "Combustivel" com `vehicle.fuel_type || 'N/I'`
+### 2. `src/components/frota/VehicleCarousel.tsx`
+- Linha 93: `rgba(255, 45, 32, 1)` → `rgba(0, 102, 179, 1)`
 
-### 4. Carrossel (`src/components/frota/VehicleCarousel.tsx`)
+### 3. `src/components/frota/VehicleTable.tsx`
+- Linha 132: `shadow-[0_0_8px_rgba(255,45,32,0.8)]` → `shadow-[0_0_8px_rgba(0,102,179,0.8)]`
 
-Nenhuma alteracao direta necessaria -- o carrossel renderiza `VehicleCard` com `size="large"` e `hideTelemetry={true}`. A mudanca no card ja propagara a informacao de combustivel. O campo aparecera nos badges tecnicos ao lado da placa.
+### 4. `src/components/layout/Header.tsx`
+- Linhas 23-24: `bg-red-400` → `bg-blue-400`, `bg-red-500` → `bg-blue-500`
 
-### 5. Modal de Detalhes (`src/components/frota/VehicleDetailModal.tsx`)
+### 5. `src/components/frota/AppHeader.tsx`
+- Linhas 32-33: `bg-red-400` → `bg-blue-400`, `bg-red-500` → `bg-blue-500`
 
-- Adicionar um `DetailRow` com icone `Fuel`, label "Combustivel" e valor `vehicle.fuel_type` na secao "Especificacoes", antes ou apos "Tipo de Frota"
-- Como `DetailRow` ja retorna `null` se `value` for `null`, a ausencia do dado e tratada automaticamente
+### 6. Componentes que usam `text-primary`, `bg-primary`, etc.
+Estes ja herdam a mudanca automaticamente via token CSS `--primary` e NAO precisam de alteracoes manuais:
+- `VehicleCard.tsx`, `VehicleDetailModal.tsx`, `FabMenu.tsx`, `CoordinationFilters.tsx`, `SortControl.tsx`, `TotalBalanceStats.tsx`, `TransferRequestModal.tsx`, `SearchBar.tsx`, `DashboardLayout.tsx`, componentes UI base (button, checkbox, progress, etc.)
 
-### 6. Tabela (`src/components/frota/VehicleTable.tsx`)
+## Total: 5 arquivos editados
 
-Nenhuma alteracao solicitada para a tabela, porem o dado estara disponivel no tipo caso futuramente necessario.
-
----
-
-## Detalhes Tecnicos
-
-- A coluna `fuel_type` ja existe na tabela `vehicles` no Supabase -- nenhuma migracao necessaria
-- O dado vem de outro sistema gestor, portanto pode ser `null` -- todos os locais de exibicao tratam `null` com fallback ou ocultacao
-- O backend Supabase permanece inalterado; apenas a query `select` sera expandida para incluir `fuel_type`
+A grande maioria da migracacao ocorre automaticamente pela alteracao dos 3 tokens CSS no `index.css`. Apenas 4 arquivos adicionais possuem cores vermelhas hardcoded que precisam de substituicacao manual.
 
