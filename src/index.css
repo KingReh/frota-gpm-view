@@ -14,7 +14,7 @@
     --popover: 220 18% 13%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 0 100% 56%; /* #FF2D20 Racing Red */
+    --primary: 207 100% 35%; /* #0066B3 Corporate Blue */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 190 100% 50%; /* #00D4FF Electric Blue */
@@ -31,7 +31,7 @@
 
     --border: 220 14% 25%; /* more visible borders */
     --input: 220 14% 25%;
-    --ring: 0 100% 56%;
+    --ring: 207 100% 35%;
 
     --radius: 0.75rem;
 
@@ -68,7 +68,7 @@
   }
   
   .text-glow {
-    text-shadow: 0 0 20px rgba(255, 45, 32, 0.5);
+    text-shadow: 0 0 20px rgba(0, 102, 179, 0.5);
   }
 
   .mesh-bg {
