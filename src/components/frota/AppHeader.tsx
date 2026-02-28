@@ -29,8 +29,8 @@ export function AppHeader({ isSynced, lastUpdated, recentlyUpdated }: AppHeaderP
             <span className="text-sm font-bold text-primary-foreground">GPM</span>
             {recentlyUpdated && (
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500" />
               </span>
             )}
           </div>

@@ -90,7 +90,7 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
               className="h-1.5 rounded-full transition-[width,background-color] duration-200"
               style={{
                 width: current === i + 1 ? 40 : 12,
-                backgroundColor: current === i + 1 ? "rgba(255, 45, 32, 1)" : "rgba(255, 255, 255, 0.1)"
+                backgroundColor: current === i + 1 ? "rgba(0, 102, 179, 1)" : "rgba(255, 255, 255, 0.1)"
               }}
             />
           ))}
