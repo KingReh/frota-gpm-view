@@ -1,4 +1,5 @@
-import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock } from "lucide-react";
+import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -37,6 +38,15 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
+                {/* Dashboard Link */}
+                <Link
+                    to="/dashboard"
+                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
+                    title="Dashboard"
+                >
+                    <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                </Link>
+
                 {/* Sync Status - Adaptive Layout */}
                 <div className="flex flex-col items-end mr-1 md:mr-4">
                     {/* Desktop: Full Status */}
