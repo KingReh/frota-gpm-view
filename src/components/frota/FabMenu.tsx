@@ -12,7 +12,7 @@ const links = [
     label: "Instruções iButtons",
     href: "http://bi-frota.lovable.app/procedimento-ligar-veiculo",
     icon: Key,
-    description: "Como ligar o veículo corretamente",
+    description: "Como ligar o veículo",
   },
   {
     label: "Postos Credenciados",
