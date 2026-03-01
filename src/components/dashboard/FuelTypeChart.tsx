@@ -37,6 +37,8 @@ export function FuelTypeChart({ data }: FuelTypeChartProps) {
           <Tooltip
             contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
             formatter={(value: number, name: string) => [`${value} veículos`, name]}
+            labelStyle={{ color: '#fff', fontWeight: 600 }}
+            itemStyle={{ color: '#fff' }}
           />
           <Legend
             formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
