@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
       "react": path.resolve(__dirname, "node_modules/react"),
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@radix-ui/react-tooltip"],
   },
   optimizeDeps: {
     include: [
@@ -36,6 +36,8 @@ export default defineConfig(({ mode }) => ({
       "@radix-ui/react-checkbox",
       "@radix-ui/react-select",
       "@radix-ui/react-label",
+      "@radix-ui/react-tooltip",
+      "recharts",
     ],
     force: true,
   },
