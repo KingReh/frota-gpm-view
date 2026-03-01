@@ -23,6 +23,7 @@ export function CoordinationBarChart({ data }: CoordinationBarChartProps) {
             contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
             formatter={(value: number) => [`${value} veículos`]}
             labelStyle={{ color: '#fff', fontWeight: 600 }}
+            itemStyle={{ color: '#fff' }}
           />
           <Bar dataKey="count" radius={[0, 6, 6, 0]} animationDuration={800}>
             {data.map((entry, i) => (
