@@ -1,65 +1,165 @@
 
 
-# Migração de Cor: Vermelho → Azul #0066B3
+# Dashboard - Painel Central de Inteligencia da Frota
 
 ## Resumo
 
-Substituição sistemática de todos os usos de vermelho como cor de identidade visual pelo azul `#0066B3` e suas variantes, preservando a estética premium e mantendo os vermelhos semânticos (erros, saldo zero, alertas).
+Criar uma subpagina `/dashboard` com visualizacao completa da frota atraves de cards de resumo, graficos interativos (pizza, barras, linha) e tabelas de detalhe, com filtro por coordenacao reaproveitado e design premium consistente com o sistema.
 
-## Mapeamento de Cores
+## Dados Disponiveis no Banco
 
-| Uso | Vermelho Atual (HSL) | Azul Novo (HSL) |
-|-----|---------------------|-----------------|
-| **Primary (base)** | `0 100% 56%` (#FF2D20) | `207 100% 35%` (#0066B3) |
-| **Ring** | `0 100% 56%` | `207 100% 35%` |
-| **text-glow** | `rgba(255, 45, 32, 0.5)` | `rgba(0, 102, 179, 0.5)` |
-| **Carousel dot ativo** | `rgba(255, 45, 32, 1)` | `rgba(0, 102, 179, 1)` |
-| **Pulse dot (tabela)** | `rgba(255,45,32,0.8)` | `rgba(0,102,179,0.8)` |
-| **Notification ping** | `bg-red-400/bg-red-500` | `bg-blue-400/bg-blue-500` |
+Com base na analise do banco, os seguintes dados serao utilizados:
 
-### Variantes tonais do #0066B3:
-- **Hover**: HSL 207 100% 30% (mais escuro)
-- **Active/Pressed**: HSL 207 100% 25%
-- **Fundo suave (10%)**: hsl(207 100% 35% / 0.1)
-- **Borda (20-40%)**: hsl(207 100% 35% / 0.2-0.4)
-- **Shadow glow**: rgba(0, 102, 179, 0.3-0.8)
+- **fleet_type**: PROPRIO, LOCADO, PROPRIA (proprio vs locado)
+- **manufacturer**: HONDA, MERCEDES-BENZ, VOLKSWAGEN, VW, FIAT, IVECO, CHEVROLET, FORD, etc.
+- **fuel_type** (tabela vehicles): DIESEL, ALCOOL/GASOLINA, GASOLINA/ALCOOL/GNV, MULTIFUEL
+- **model**: SAVEIRO, S10, MOBI, RANGER, CARGO, DELIVERY, etc.
+- **coordination**: via join com tabela coordinations
+- **balance**: saldo por veiculo
+- **Total de veiculos**: 63
 
-### Acessibilidade (WCAG AA):
-- `#0066B3` sobre fundo escuro (#161A21): ratio ~4.7:1 -- passa AA
-- `#FFFFFF` sobre `#0066B3`: ratio ~5.7:1 -- passa AA
+## Estrutura de Arquivos
 
-## Exceções (NAO alterar)
+### Novos arquivos a criar:
 
-- `--destructive` (HSL `0 62.8% 30.6%`) -- erros/alertas
-- `--balance-low` (HSL `0 84% 60%`) -- saldo zero
-- `text-red-400` em `TotalBalanceStats.tsx` (saldo zero) -- semantico
-- Classes `destructive` nos toasts/alerts -- semantico
-- `#E63946` no gradiente do Gauge (vermelho para saldo baixo no degradê) -- semantico
+1. **`src/pages/Dashboard.tsx`** - Pagina principal do dashboard
+2. **`src/hooks/useDashboardData.ts`** - Hook dedicado para buscar e processar todos os dados do dashboard
+3. **`src/components/dashboard/StatCard.tsx`** - Card de resumo reutilizavel
+4. **`src/components/dashboard/FleetTypeChart.tsx`** - Grafico de rosca (proprio vs locado)
+5. **`src/components/dashboard/FuelTypeChart.tsx`** - Grafico de rosca (tipos de combustivel)
+6. **`src/components/dashboard/CoordinationBarChart.tsx`** - Grafico de barras (veiculos por coordenacao + saldo)
+7. **`src/components/dashboard/ModelBarChart.tsx`** - Grafico de barras (modelos mais frequentes)
+8. **`src/components/dashboard/ManufacturerBarChart.tsx`** - Grafico de barras (concessionarias/fabricantes)
+9. **`src/components/dashboard/CoordinationBalanceLineChart.tsx`** - Grafico de linha (saldo por coordenacao)
+10. **`src/components/dashboard/DetailTable.tsx`** - Tabela de detalhe reutilizavel
 
-## Arquivos a Modificar
+### Arquivos a modificar:
 
-### 1. `src/index.css` (tokens centrais)
-- `--primary`: `0 100% 56%` → `207 100% 35%`
-- `--ring`: `0 100% 56%` → `207 100% 35%`
-- `.text-glow`: rgba vermelho → rgba azul
+1. **`src/App.tsx`** - Adicionar rota `/dashboard`
+2. **`src/components/layout/Header.tsx`** - Adicionar link de navegacao para o Dashboard
 
-### 2. `src/components/frota/VehicleCarousel.tsx`
-- Linha 93: `rgba(255, 45, 32, 1)` → `rgba(0, 102, 179, 1)`
+## Arquitetura
 
-### 3. `src/components/frota/VehicleTable.tsx`
-- Linha 132: `shadow-[0_0_8px_rgba(255,45,32,0.8)]` → `shadow-[0_0_8px_rgba(0,102,179,0.8)]`
+### Hook `useDashboardData`
 
-### 4. `src/components/layout/Header.tsx`
-- Linhas 23-24: `bg-red-400` → `bg-blue-400`, `bg-red-500` → `bg-blue-500`
+Reutiliza a mesma estrategia do `useVehicles` (queries ao Supabase com `@tanstack/react-query`), mas retorna dados agregados:
 
-### 5. `src/components/frota/AppHeader.tsx`
-- Linhas 32-33: `bg-red-400` → `bg-blue-400`, `bg-red-500` → `bg-blue-500`
+```text
+{
+  totalVehicles: number
+  ownedCount: number       // PROPRIO + PROPRIA
+  rentedCount: number      // LOCADO
+  distinctModels: number
+  distinctFuelTypes: number
+  distinctManufacturers: number
+  byCoordination: { name, color, count, totalBalance }[]
+  byFleetType: { name, count }[]
+  byFuelType: { name, count }[]
+  byModel: { name, count }[]
+  byManufacturer: { name, count }[]
+}
+```
 
-### 6. Componentes que usam `text-primary`, `bg-primary`, etc.
-Estes ja herdam a mudanca automaticamente via token CSS `--primary` e NAO precisam de alteracoes manuais:
-- `VehicleCard.tsx`, `VehicleDetailModal.tsx`, `FabMenu.tsx`, `CoordinationFilters.tsx`, `SortControl.tsx`, `TotalBalanceStats.tsx`, `TransferRequestModal.tsx`, `SearchBar.tsx`, `DashboardLayout.tsx`, componentes UI base (button, checkbox, progress, etc.)
+Aceita `selectedCoordinations` como parametro para filtrar todos os dados quando o usuario seleciona uma coordenacao.
 
-## Total: 5 arquivos editados
+### Pagina Dashboard
 
-A grande maioria da migracacao ocorre automaticamente pela alteracao dos 3 tokens CSS no `index.css`. Apenas 4 arquivos adicionais possuem cores vermelhas hardcoded que precisam de substituicacao manual.
+Layout em grid responsivo:
+
+```text
+Mobile (1 col):
+  [Card] [Card] [Card] [Card] [Card] [Card]
+  [Grafico Rosca - Tipo Frota]
+  [Grafico Rosca - Combustivel]
+  [Grafico Barras - Coordenacoes]
+  [Grafico Barras - Modelos]
+  [Grafico Barras - Fabricantes]
+  [Grafico Linha - Saldo por Coord]
+  [Tabela Coordenacoes]
+  [Tabela Modelos]
+  [Tabela Fabricantes]
+
+Tablet (2 cols):
+  [Card][Card]  [Card][Card]  [Card][Card]
+  [Rosca Tipo][Rosca Combustivel]
+  [Barras Coordenacoes - full width]
+  [Barras Modelos][Barras Fabricantes]
+  [Linha Saldo - full width]
+  [Tabelas...]
+
+Desktop (3-4 cols):
+  [Card][Card][Card][Card][Card][Card]
+  [Rosca][Rosca][Barras Coordenacoes]
+  [Barras Modelos][Barras Fabricantes][Linha Saldo]
+  [Tabelas lado a lado]
+```
+
+### Navegacao
+
+- Adicionar botao/link "Dashboard" no Header ao lado do logo ou como icone
+- Link de volta para a pagina principal (Frota) tambem no Header do Dashboard
+- Reutilizar o `DashboardLayout` existente (sem viewMode/FAB, apenas header + conteudo)
+
+### Filtro por Coordenacao
+
+- Reutilizar o componente `CoordinationFilters` ja existente no topo da pagina
+- Usar `useCoordinations()` para carregar as coordenacoes
+- Ao filtrar, todos os cards, graficos e tabelas atualizam automaticamente
+
+## Design
+
+### Cards de Resumo (StatCard)
+
+- Design `glass-panel` com borda lateral colorida (como o card principal do TotalBalanceStats)
+- Icone grande semi-transparente no fundo (padrao existente)
+- Numero principal grande em `font-mono font-bold`
+- Label em `text-xs uppercase tracking-widest`
+- Animacao de entrada com `animate-in fade-in`
+
+### Graficos
+
+- Usar `recharts` (ja instalado) com os componentes `ChartContainer`, `ChartTooltip` do `chart.tsx`
+- Cores derivadas das coordenacoes (quando aplicavel) ou do sistema de tokens
+- Animacoes de entrada nativas do recharts
+- Tooltips informativos com `ChartTooltipContent`
+- Rosca/Pizza: legenda lateral em desktop, abaixo em mobile
+- Barras: eixo X com labels truncados, tooltip com valor completo
+
+### Tabelas de Detalhe
+
+- Reutilizar componentes `Table` do shadcn/ui
+- Scroll horizontal em mobile com `custom-scrollbar-thin`
+- Zebra striping sutil com `bg-white/[0.02]`
+- Headers sticky
+
+### Cores dos Graficos
+
+- Proprio vs Locado: primary (#0066B3) e secondary (#00D4FF)
+- Combustivel: paleta de 4 tons derivados do azul primario
+- Coordenacoes: usar a cor propria de cada coordenacao do banco
+- Fabricantes/Modelos: escala de tons de azul/cinza
+
+## Detalhes Tecnicos
+
+### Rota
+
+```text
+App.tsx:
+  <Route path="/dashboard" element={<DashboardPage />} />
+```
+
+### Responsividade
+
+- Cards: `grid-cols-2 sm:grid-cols-3 lg:grid-cols-6`
+- Graficos: `ResponsiveContainer` do recharts com `width="100%" height={300}`
+- Tabelas: `overflow-x-auto` com `custom-scrollbar-thin`
+- Touch targets: minimo 44px em botoes e filtros (ja garantido pelo design existente)
+
+### Performance
+
+- `useMemo` para todas as agregacoes de dados
+- Query separada do dashboard para nao interferir com a query da pagina principal
+- `staleTime: 30s` consistente com o resto do sistema
+
+## Total: ~12 arquivos (10 novos + 2 modificados)
 
