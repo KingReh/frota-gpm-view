@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Car, Truck, Fuel, Wrench, Factory, LayoutGrid, ArrowLeft } from 'lucide-react';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useCoordinations } from '@/hooks/useCoordinations';
+import { useVehicles } from '@/hooks/useVehicles';
+import { FabMenu } from '@/components/frota/FabMenu';
+import { DrivingTipsToast } from '@/components/ui/DrivingTipsToast';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { FleetTypeChart } from '@/components/dashboard/FleetTypeChart';
@@ -147,6 +150,13 @@ function DashboardPage() {
           />
         </div>
       </main>
+
+      <DrivingTipsToast />
+      <FabMenu
+        vehicles={[]}
+        coordinations={coordinations}
+        selectedCoordinations={selectedCoordinations}
+      />
     </div>
   );
 }

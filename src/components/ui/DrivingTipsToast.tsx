@@ -20,9 +20,16 @@ const FALLBACK_TIPS = [
 
 export const DrivingTipsToast = () => {
   const [tip, setTip] = useState<string>("");
+  const [dismissed, setDismissed] = useState(() => sessionStorage.getItem('driving-tip-dismissed') === 'true');
   const [isVisible, setIsVisible] = useState(false);
   const [hasPwaPrompt, setHasPwaPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+
+  const handleDismiss = () => {
+    setIsVisible(false);
+    sessionStorage.setItem('driving-tip-dismissed', 'true');
+    setDismissed(true);
+  };
 
   useEffect(() => {
     // Fetch tip from Google Sheets via edge function
@@ -47,9 +54,11 @@ export const DrivingTipsToast = () => {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIOS(isIosDevice);
 
-    // Delay appearance
+    // Delay appearance (skip if already dismissed this session)
     const timer = setTimeout(() => {
-      setIsVisible(true);
+      if (!sessionStorage.getItem('driving-tip-dismissed')) {
+        setIsVisible(true);
+      }
     }, 1000);
 
     const handlePwaVisibility = (e: CustomEvent) => {
@@ -91,7 +100,7 @@ export const DrivingTipsToast = () => {
             dragElastic={0.6}
             onDragEnd={(_e, info) => {
               if (Math.abs(info.offset.x) > 100) {
-                setIsVisible(false);
+                handleDismiss();
               }
             }}
             className={cn(
@@ -117,7 +126,7 @@ export const DrivingTipsToast = () => {
                   <span className="w-1 h-1 rounded-full bg-primary/50 animate-pulse" />
                 </h4>
                 <button
-                  onClick={() => setIsVisible(false)}
+                  onClick={handleDismiss}
                   className="text-white/40 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
                 >
                   <X className="w-4 h-4" />
