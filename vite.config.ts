@@ -19,44 +19,10 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "react": path.resolve(__dirname, "node_modules/react"),
-      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
-      "react/jsx-runtime": path.resolve(__dirname, "node_modules/react/jsx-runtime"),
-      "react/jsx-dev-runtime": path.resolve(__dirname, "node_modules/react/jsx-dev-runtime"),
     },
     dedupe: [
       "react",
       "react-dom",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "@radix-ui/react-tooltip",
-      "@radix-ui/react-dialog",
-      "@radix-ui/react-dropdown-menu",
-      "recharts",
     ],
-  },
-  optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react-dom/client",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "framer-motion",
-      "@radix-ui/react-dialog",
-      "@radix-ui/react-checkbox",
-      "@radix-ui/react-select",
-      "@radix-ui/react-label",
-      "@radix-ui/react-tooltip",
-      "@radix-ui/react-dropdown-menu",
-      "recharts",
-      "@tanstack/react-query",
-      "@supabase/supabase-js",
-    ],
-    force: true,
-    // Cache bust timestamp
-    esbuildOptions: {
-      define: { '__CACHE_BUST__': `"${Date.now()}"` },
-    },
   },
 }));
