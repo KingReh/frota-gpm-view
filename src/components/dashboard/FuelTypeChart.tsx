@@ -35,9 +35,31 @@ export function FuelTypeChart({ data }: FuelTypeChartProps) {
             ))}
           </Pie>
           <Tooltip
-            contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
-            formatter={(value: number) => [`${value} veículos`]}
-            labelStyle={{ color: '#fff', fontWeight: 600 }}
+            content={({ active, payload }) => {
+              if (!active || !payload || !payload.length) return null;
+          
+              const data = payload[0];
+              const color = data.color;
+          
+              return (
+                <div
+                  style={{
+                    backgroundColor: 'hsl(220, 18%, 13%)',
+                    border: '1px solid hsl(220, 14%, 25%)',
+                    borderRadius: '12px',
+                    padding: '8px 12px',
+                    fontSize: '12px',
+                  }}
+                >
+                  <div style={{ color, fontWeight: 600 }}>
+                    {data.name}
+                  </div>
+                  <div style={{ color: '#fff' }}>
+                    {data.value} veículos
+                  </div>
+                </div>
+              );
+            }}
           />
           <Legend
             formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
