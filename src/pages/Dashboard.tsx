@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Truck, Fuel, Wrench, Factory, LayoutGrid, ArrowLeft } from 'lucide-react';
+import { Car, Truck, Fuel, Wrench, Factory, LayoutGrid, ArrowLeft, RefreshCw, Clock, AlertTriangle, CircleDollarSign } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format, isToday } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { useCoordinations } from '@/hooks/useCoordinations';
 import { useVehicles } from '@/hooks/useVehicles';
@@ -20,6 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 function DashboardPage() {
   const [selectedCoordinations, setSelectedCoordinations] = useState<string[]>([]);
   const { data: coordinations = [] } = useCoordinations();
+  const { lastUpdated, isLoading: vehiclesLoading, isSuccess: isSynced } = useVehicles({ selectedCoordinations });
   const dashboard = useDashboardData(selectedCoordinations);
 
   const handleToggle = (id: string) => {
@@ -81,6 +85,35 @@ function DashboardPage() {
             </span>
           </div>
         </div>
+
+        {/* Sync Status + Last Updated */}
+        <div className="flex flex-col items-end gap-0.5">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <RefreshCw
+              className={cn(
+                "w-3 h-3",
+                isSynced ? "text-emerald-500" : "animate-spin text-amber-500"
+              )}
+            />
+            <span className={cn(
+              "font-mono uppercase tracking-wider text-[10px]",
+              isSynced ? "text-emerald-500/80" : "text-amber-500/80"
+            )}>
+              {isSynced ? 'VOCÊ ESTÁ ONLINE' : 'SINCRONIZANDO...'}
+            </span>
+          </div>
+          {lastUpdated && (
+            <div className="flex items-center gap-1 text-[9px] md:text-[10px] text-muted-foreground/60">
+              <Clock className="w-2 md:w-2.5 h-2 md:h-2.5" />
+              <span className="whitespace-nowrap">
+                {isToday(lastUpdated)
+                  ? `Atualizado às ${format(lastUpdated, 'HH:mm', { locale: ptBR })}`
+                  : `Atualizado ${(() => { const f = format(lastUpdated, "EEEE - dd/MM/yyyy 'às' HH:mm", { locale: ptBR }); return f.charAt(0).toUpperCase() + f.slice(1); })()}`
+                }
+              </span>
+            </div>
+          )}
+        </div>
       </header>
 
       {/* Content */}
@@ -95,13 +128,15 @@ function DashboardPage() {
         />
 
         {/* Stat Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           <StatCard label="Total de Veículos" value={dashboard.totalVehicles} icon={Car} delay={0} />
           <StatCard label="Próprios" value={dashboard.ownedCount} icon={Truck} accentColor="hsl(207, 100%, 35%)" delay={50} />
           <StatCard label="Locados" value={dashboard.rentedCount} icon={Truck} accentColor="hsl(190, 100%, 50%)" delay={100} />
           <StatCard label="Modelos" value={dashboard.distinctModels} icon={LayoutGrid} accentColor="hsl(207, 80%, 50%)" delay={150} />
           <StatCard label="Combustíveis" value={dashboard.distinctFuelTypes} icon={Fuel} accentColor="hsl(25, 95%, 53%)" delay={200} />
           <StatCard label="Fabricantes" value={dashboard.distinctManufacturers} icon={Factory} accentColor="hsl(207, 60%, 65%)" delay={250} />
+          <StatCard label="Saldo Zero" value={dashboard.zeroBalanceCount} icon={AlertTriangle} accentColor="hsl(0, 84%, 60%)" delay={300} />
+          <StatCard label="Saldo Positivo" value={dashboard.positiveBalanceCount} icon={CircleDollarSign} accentColor="hsl(142, 71%, 45%)" delay={350} />
         </div>
 
         {/* Charts Row 1: Donuts + Coordination Bar */}

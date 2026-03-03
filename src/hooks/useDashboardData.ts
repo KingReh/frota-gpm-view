@@ -22,6 +22,8 @@ export interface DashboardData {
   distinctModels: number;
   distinctFuelTypes: number;
   distinctManufacturers: number;
+  zeroBalanceCount: number;
+  positiveBalanceCount: number;
   byCoordination: CoordinationAgg[];
   byFleetType: NameCount[];
   byFuelType: NameCount[];
@@ -88,6 +90,8 @@ export function useDashboardData(selectedCoordinations: string[]) {
     // Aggregations
     let ownedCount = 0;
     let rentedCount = 0;
+    let zeroBalanceCount = 0;
+    let positiveBalanceCount = 0;
     const modelMap = new Map<string, number>();
     const manufacturerMap = new Map<string, number>();
     const fuelTypeMap = new Map<string, number>();
@@ -95,6 +99,12 @@ export function useDashboardData(selectedCoordinations: string[]) {
     const fleetTypeMap = new Map<string, number>();
 
     for (const d of filteredVD) {
+      // Balance classification
+      const bal = parseFloat((d.balance || '0').replace(/[^\d.,-]/g, '').replace(',', '.'));
+      const balNum = isNaN(bal) ? 0 : bal;
+      if (balNum === 0) zeroBalanceCount++;
+      else if (balNum > 0) positiveBalanceCount++;
+
       // Fleet type
       const ft = (d.fleet_type || '').toUpperCase();
       if (ft === 'PROPRIO' || ft === 'PROPRIA') ownedCount++;
@@ -119,8 +129,8 @@ export function useDashboardData(selectedCoordinations: string[]) {
         const key = vInfo.coord_name;
         const existing = coordMap.get(key) || { name: key, color: vInfo.coord_color, count: 0, totalBalance: 0 };
         existing.count++;
-        const bal = parseFloat((d.balance || '0').replace(/[^\d.,-]/g, '').replace(',', '.'));
-        existing.totalBalance += isNaN(bal) ? 0 : bal;
+      const coordBal = parseFloat((d.balance || '0').replace(/[^\d.,-]/g, '').replace(',', '.'));
+        existing.totalBalance += isNaN(coordBal) ? 0 : coordBal;
         coordMap.set(key, existing);
       }
     }
@@ -137,6 +147,8 @@ export function useDashboardData(selectedCoordinations: string[]) {
       distinctModels: modelMap.size,
       distinctFuelTypes: fuelTypeMap.size,
       distinctManufacturers: manufacturerMap.size,
+      zeroBalanceCount,
+      positiveBalanceCount,
       byCoordination: Array.from(coordMap.values()).sort((a, b) => b.count - a.count),
       byFleetType: toSorted(fleetTypeMap),
       byFuelType: toSorted(fuelTypeMap),
