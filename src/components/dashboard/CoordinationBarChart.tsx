@@ -21,8 +21,12 @@ export function CoordinationBarChart({ data }: CoordinationBarChartProps) {
           />
           <Tooltip
             contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
-            formatter={(value: number) => [`${value} veículos`]}
+            formatter={(value: number, _name: string, props: any) => {
+              const color = props?.payload?.color || '#fff';
+              return [<span style={{ color }}>{value} veículos</span>];
+            }}
             labelStyle={{ color: '#fff', fontWeight: 600 }}
+            itemStyle={{ color: '#fff' }}
           />
           <Bar dataKey="count" radius={[0, 6, 6, 0]} animationDuration={800}>
             {data.map((entry, i) => (
