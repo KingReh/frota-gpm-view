@@ -38,10 +38,10 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-                {/* Dashboard Link */}
+                {/* Dashboard Link - hidden on mobile, shown next to filters */}
                 <Link
                     to="/dashboard"
-                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
+                    className="hidden md:flex w-9 h-9 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
                     title="Dashboard"
                 >
                     <BarChart3 className="w-4 h-4 text-muted-foreground" />
