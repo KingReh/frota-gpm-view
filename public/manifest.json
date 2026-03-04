@@ -1,7 +1,7 @@
 {
-  "name": "Frota GPM - Controle de Abastecimento",
+  "name": "Frota GPM",
   "short_name": "Frota GPM",
-  "description": "Sistema de consulta de saldo e gestão de abastecimento para condutores da COMPESA",
+  "description": "Sistema de consulta de saldo e gestão de abastecimento para condutores e coordenação da COMPESA-GPM",
   "id": "/",
   "start_url": "/",
   "display": "standalone",
