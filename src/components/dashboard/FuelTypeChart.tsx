@@ -40,7 +40,10 @@ export function FuelTypeChart({ data }: FuelTypeChartProps) {
             labelStyle={{ color: '#fff', fontWeight: 600 }}
           />
           <Legend
-            formatter={(value) => <span className="text-xs text-muted-foreground">{value}</span>}
+            formatter={(value, entry) => {
+              const color = COLORS[(data.findIndex(d => d.name === value)) % COLORS.length] || entry?.color;
+              return <span className="text-xs" style={{ color }}>{value}</span>;
+            }}
           />
         </PieChart>
       </ResponsiveContainer>
