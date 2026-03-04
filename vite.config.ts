@@ -30,7 +30,18 @@ export default defineConfig(({ mode }) => ({
     ],
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "react/jsx-runtime", "recharts"],
+    include: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "recharts",
+      "react-dom/client",
+    ],
     force: true,
+    esbuildOptions: {
+      define: {
+        __CACHE_BUST__: JSON.stringify(Date.now().toString()),
+      },
+    },
   },
 }));
