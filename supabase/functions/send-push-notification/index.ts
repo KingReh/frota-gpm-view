@@ -126,7 +126,7 @@ async function encryptPayload(
   const subscriberPubKeyBytes = base64UrlDecode(subscription.keys.p256dh);
   const subscriberPubKey = await crypto.subtle.importKey(
     "raw",
-    subscriberPubKeyBytes,
+    subscriberPubKeyBytes as unknown as ArrayBuffer,
     { name: "ECDH", namedCurve: "P-256" },
     false,
     []
@@ -154,8 +154,8 @@ async function encryptPayload(
   ikmInfoFull.set(localPublicKeyRaw, ikmInfo.length + subscriberPubKeyBytes.length);
 
   // PRK = HKDF-Extract(auth_secret, shared_secret)
-  const prkKey = await crypto.subtle.importKey("raw", authSecret, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-  const prk = new Uint8Array(await crypto.subtle.sign("HMAC", prkKey, sharedSecret));
+  const prkKey = await crypto.subtle.importKey("raw", authSecret as unknown as ArrayBuffer, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const prk = new Uint8Array(await crypto.subtle.sign("HMAC", prkKey, sharedSecret as unknown as ArrayBuffer));
 
   // IKM = HKDF-Expand(PRK, info, 32)
   const ikm = await hkdfExpand(prk, ikmInfoFull, 32);
@@ -176,9 +176,9 @@ async function encryptPayload(
   padded.set(payloadBytes);
   padded[payloadBytes.length] = 2; // padding delimiter
 
-  const aesKey = await crypto.subtle.importKey("raw", cek, { name: "AES-GCM" }, false, ["encrypt"]);
+  const aesKey = await crypto.subtle.importKey("raw", cek as unknown as ArrayBuffer, { name: "AES-GCM" }, false, ["encrypt"]);
   const encryptedBuffer = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv: nonce, tagLength: 128 },
+    { name: "AES-GCM", iv: nonce as unknown as ArrayBuffer, tagLength: 128 },
     aesKey,
     padded
   );
@@ -203,16 +203,16 @@ async function encryptPayload(
 }
 
 async function hkdfExtract(salt: Uint8Array, ikm: Uint8Array): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey("raw", salt, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-  return new Uint8Array(await crypto.subtle.sign("HMAC", key, ikm));
+  const key = await crypto.subtle.importKey("raw", salt as unknown as ArrayBuffer, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return new Uint8Array(await crypto.subtle.sign("HMAC", key, ikm as unknown as ArrayBuffer));
 }
 
 async function hkdfExpand(prk: Uint8Array, info: Uint8Array, length: number): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey("raw", prk, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const key = await crypto.subtle.importKey("raw", prk as unknown as ArrayBuffer, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const input = new Uint8Array(info.length + 1);
   input.set(info);
   input[info.length] = 1;
-  const output = new Uint8Array(await crypto.subtle.sign("HMAC", key, input));
+  const output = new Uint8Array(await crypto.subtle.sign("HMAC", key, input as unknown as ArrayBuffer));
   return output.slice(0, length);
 }
 
@@ -244,7 +244,7 @@ async function sendPushToSubscription(
       TTL: "86400",
       Urgency: "high",
     },
-    body: encrypted,
+    body: encrypted as unknown as BodyInit,
   });
 }
 
@@ -381,7 +381,7 @@ Deno.serve(async (req: Request) => {
     );
   } catch (error) {
     console.error("Edge function error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

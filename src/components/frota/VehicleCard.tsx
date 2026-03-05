@@ -184,7 +184,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               {masked ? (
                   <Gauge
                     value={balanceValue}
-                    max={parseBalance(vehicle.next_period_limit)}
+                    max={parseBalance(vehicle.next_period_limit) || parseBalance(vehicle.current_limit) || 1000}
                     label="SALDO ATUAL"
                     size={hideTelemetry ? "lg" : "md"}
                     maskedDisplay="••••••"
@@ -192,7 +192,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 ) : (
                   <Gauge
                     value={balanceValue}
-                    max={parseBalance(vehicle.next_period_limit)}
+                    max={parseBalance(vehicle.next_period_limit) || parseBalance(vehicle.current_limit) || 1000}
                     label="SALDO ATUAL"
                     size={hideTelemetry ? "lg" : "md"}
                   />
