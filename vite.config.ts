@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       "react/jsx-runtime",
       "recharts",
       "react-dom/client",
+      "@radix-ui/react-dialog",
     ],
     force: true,
     esbuildOptions: {
