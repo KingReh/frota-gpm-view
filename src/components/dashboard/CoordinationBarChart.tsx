@@ -6,7 +6,7 @@ interface CoordinationBarChartProps {
 
 export function CoordinationBarChart({ data }: CoordinationBarChartProps) {
   return (
-    <div className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}>
+    <div data-chart-export className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '400ms', animationFillMode: 'backwards' }}>
       <h3 className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium mb-4">Veículos por Coordenação</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} layout="vertical" margin={{ left: 10, right: 20, top: 5, bottom: 5 }}>
