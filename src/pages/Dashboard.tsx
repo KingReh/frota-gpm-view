@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Car, Truck, Fuel, Wrench, Factory, LayoutGrid, ArrowLeft, RefreshCw, Clock, AlertTriangle, CircleDollarSign } from 'lucide-react';
+import { Car, Truck, Fuel, Wrench, Factory, LayoutGrid, ArrowLeft, RefreshCw, Clock, AlertTriangle, CircleDollarSign, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -19,6 +19,10 @@ import { ManufacturerBarChart } from '@/components/dashboard/ManufacturerBarChar
 import { CoordinationBalanceLineChart } from '@/components/dashboard/CoordinationBalanceLineChart';
 import { DetailTable } from '@/components/dashboard/DetailTable';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { exportToXLSX, exportToODS, exportToPDF } from '@/lib/dashboardExport';
+import { toast } from 'sonner';
 
 function DashboardPage() {
   const [selectedCoordinations, setSelectedCoordinations] = useState<string[]>([]);
@@ -30,6 +34,27 @@ function DashboardPage() {
     setSelectedCoordinations(prev =>
       prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
     );
+  };
+
+  const filterLabel = selectedCoordinations.length === 0
+    ? 'Todas as coordenações'
+    : coordinations
+        .filter(c => selectedCoordinations.includes(c.id))
+        .map(c => c.name)
+        .join(', ');
+
+  const handleExport = async (format: 'xlsx' | 'ods' | 'pdf') => {
+    const exportOpts = { dashboard, filterLabel };
+    try {
+      toast.loading('Gerando arquivo...', { id: 'export' });
+      if (format === 'xlsx') exportToXLSX(exportOpts);
+      else if (format === 'ods') exportToODS(exportOpts);
+      else await exportToPDF(exportOpts);
+      toast.success('Arquivo exportado com sucesso!', { id: 'export' });
+    } catch (err) {
+      console.error(err);
+      toast.error('Erro ao exportar. Tente novamente.', { id: 'export' });
+    }
   };
 
   if (dashboard.isLoading) {
@@ -86,33 +111,62 @@ function DashboardPage() {
           </div>
         </div>
 
-        {/* Sync Status + Last Updated */}
-        <div className="flex flex-col items-end gap-0.5">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <RefreshCw
-              className={cn(
-                "w-3 h-3",
-                isSynced ? "text-emerald-500" : "animate-spin text-amber-500"
-              )}
-            />
-            <span className={cn(
-              "font-mono uppercase tracking-wider text-[10px]",
-              isSynced ? "text-emerald-500/80" : "text-amber-500/80"
-            )}>
-              {isSynced ? 'VOCÊ ESTÁ ONLINE' : 'SINCRONIZANDO...'}
-            </span>
-          </div>
-          {lastUpdated && (
-            <div className="flex items-center gap-1 text-[9px] md:text-[10px] text-muted-foreground/60">
-              <Clock className="w-2 md:w-2.5 h-2 md:h-2.5" />
-              <span className="whitespace-nowrap">
-                {isToday(lastUpdated)
-                  ? `Atualizado às ${format(lastUpdated, 'HH:mm', { locale: ptBR })}`
-                  : `Atualizado ${(() => { const f = format(lastUpdated, "EEEE - dd/MM/yyyy 'às' HH:mm", { locale: ptBR }); return f.charAt(0).toUpperCase() + f.slice(1); })()}`
-                }
+        {/* Export + Sync Status */}
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1.5 border-border/40 bg-surface-overlay/50 hover:bg-surface-interactive text-foreground text-xs"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Exportar</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={() => handleExport('xlsx')} className="gap-2 cursor-pointer">
+                <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
+                Exportar XLSX
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('ods')} className="gap-2 cursor-pointer">
+                <FileSpreadsheet className="w-4 h-4 text-blue-500" />
+                Exportar ODS
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 cursor-pointer">
+                <FileText className="w-4 h-4 text-red-500" />
+                Exportar PDF
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <div className="flex flex-col items-end gap-0.5">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <RefreshCw
+                className={cn(
+                  "w-3 h-3",
+                  isSynced ? "text-emerald-500" : "animate-spin text-amber-500"
+                )}
+              />
+              <span className={cn(
+                "font-mono uppercase tracking-wider text-[10px]",
+                isSynced ? "text-emerald-500/80" : "text-amber-500/80"
+              )}>
+                {isSynced ? 'VOCÊ ESTÁ ONLINE' : 'SINCRONIZANDO...'}
               </span>
             </div>
-          )}
+            {lastUpdated && (
+              <div className="flex items-center gap-1 text-[9px] md:text-[10px] text-muted-foreground/60">
+                <Clock className="w-2 md:w-2.5 h-2 md:h-2.5" />
+                <span className="whitespace-nowrap">
+                  {isToday(lastUpdated)
+                    ? `Atualizado às ${format(lastUpdated, 'HH:mm', { locale: ptBR })}`
+                    : `Atualizado ${(() => { const f = format(lastUpdated, "EEEE - dd/MM/yyyy 'às' HH:mm", { locale: ptBR }); return f.charAt(0).toUpperCase() + f.slice(1); })()}`
+                  }
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 

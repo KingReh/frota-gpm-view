@@ -11,7 +11,7 @@ export function FleetTypeChart({ data }: FleetTypeChartProps) {
   const chartData = data.map(d => ({ ...d, name: LABELS[d.name] || d.name }));
 
   return (
-    <div className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}>
+    <div data-chart-export className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '200ms', animationFillMode: 'backwards' }}>
       <h3 className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium mb-4">Tipo de Frota</h3>
       <ResponsiveContainer width="100%" height={260}>
         <PieChart>

@@ -8,7 +8,7 @@ export function ModelBarChart({ data }: ModelBarChartProps) {
   const top10 = data.slice(0, 10);
 
   return (
-    <div className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}>
+    <div data-chart-export className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '500ms', animationFillMode: 'backwards' }}>
       <h3 className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium mb-4">Modelos mais Frequentes</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={top10} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>

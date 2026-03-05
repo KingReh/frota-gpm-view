@@ -14,7 +14,7 @@ const COLORS = [
 
 export function FuelTypeChart({ data }: FuelTypeChartProps) {
   return (
-    <div className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
+    <div data-chart-export className="glass-panel rounded-2xl p-5 animate-in fade-in slide-in-from-bottom-3" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
       <h3 className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium mb-4">Tipo de Combustível</h3>
       <ResponsiveContainer width="100%" height={260}>
         <PieChart>

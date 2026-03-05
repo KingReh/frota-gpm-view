@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => ({
       "recharts",
       "react-dom/client",
       "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
     ],
     force: true,
     esbuildOptions: {
