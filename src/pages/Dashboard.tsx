@@ -113,32 +113,35 @@ function DashboardPage() {
 
         {/* Export + Sync Status */}
         <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 gap-1.5 border-border/40 bg-surface-overlay/50 hover:bg-surface-interactive text-foreground text-xs"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Exportar</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuItem onClick={() => handleExport('xlsx')} className="gap-2 cursor-pointer">
-                <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-                Exportar XLSX
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport('ods')} className="gap-2 cursor-pointer">
-                <FileSpreadsheet className="w-4 h-4 text-blue-500" />
-                Exportar ODS
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 cursor-pointer">
-                <FileText className="w-4 h-4 text-red-500" />
-                Exportar PDF
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Export button - desktop only in header */}
+          <div className="hidden md:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-1.5 border-border/40 bg-surface-overlay/50 hover:bg-surface-interactive text-foreground text-xs"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Exportar</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem onClick={() => handleExport('xlsx')} className="gap-2 cursor-pointer">
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
+                  Exportar XLSX
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('ods')} className="gap-2 cursor-pointer">
+                  <FileSpreadsheet className="w-4 h-4 text-blue-500" />
+                  Exportar ODS
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 cursor-pointer">
+                  <FileText className="w-4 h-4 text-red-500" />
+                  Exportar PDF
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
           <div className="flex flex-col items-end gap-0.5">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -172,14 +175,45 @@ function DashboardPage() {
 
       {/* Content */}
       <main className="pt-20 pb-10 px-3 md:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6">
-        {/* Filters */}
-        <CoordinationFilters
-          coordinations={coordinations}
-          selectedIds={selectedCoordinations}
-          onToggle={handleToggle}
-          onClear={() => setSelectedCoordinations([])}
-          onSelectAll={(ids) => setSelectedCoordinations(ids)}
-        />
+        {/* Filters + Export (mobile) */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <CoordinationFilters
+            coordinations={coordinations}
+            selectedIds={selectedCoordinations}
+            onToggle={handleToggle}
+            onClear={() => setSelectedCoordinations([])}
+            onSelectAll={(ids) => setSelectedCoordinations(ids)}
+          />
+          {/* Export button - mobile only, next to filters */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-10 gap-1.5 border-white/10 bg-black/40 backdrop-blur-md text-muted-foreground hover:bg-white/5 text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem onClick={() => handleExport('xlsx')} className="gap-2 cursor-pointer">
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
+                  Exportar XLSX
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('ods')} className="gap-2 cursor-pointer">
+                  <FileSpreadsheet className="w-4 h-4 text-blue-500" />
+                  Exportar ODS
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 cursor-pointer">
+                  <FileText className="w-4 h-4 text-red-500" />
+                  Exportar PDF
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
 
         {/* Stat Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
