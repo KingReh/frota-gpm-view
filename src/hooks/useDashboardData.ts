@@ -15,6 +15,12 @@ interface NameCount {
   count: number;
 }
 
+export interface VehicleBalanceRow {
+  coordination: string;
+  plate: string;
+  balance: number;
+}
+
 export interface DashboardData {
   totalVehicles: number;
   ownedCount: number;
@@ -29,6 +35,7 @@ export interface DashboardData {
   byFuelType: NameCount[];
   byModel: NameCount[];
   byManufacturer: NameCount[];
+  vehicleBalances: VehicleBalanceRow[];
   isLoading: boolean;
 }
 
@@ -97,6 +104,7 @@ export function useDashboardData(selectedCoordinations: string[]) {
     const fuelTypeMap = new Map<string, number>();
     const coordMap = new Map<string, { name: string; color: string; count: number; totalBalance: number }>();
     const fleetTypeMap = new Map<string, number>();
+    const vehicleBalances: { coordination: string; plate: string; balance: number }[] = [];
 
     for (const d of filteredVD) {
       // Balance classification
@@ -133,6 +141,13 @@ export function useDashboardData(selectedCoordinations: string[]) {
         existing.totalBalance += isNaN(coordBal) ? 0 : coordBal;
         coordMap.set(key, existing);
       }
+
+      // Collect vehicle balance row
+      vehicleBalances.push({
+        coordination: vInfo?.coord_name || 'Sem coordenação',
+        plate: d.plate,
+        balance: balNum,
+      });
     }
 
     const toSorted = (map: Map<string, number>): NameCount[] =>
@@ -154,6 +169,7 @@ export function useDashboardData(selectedCoordinations: string[]) {
       byFuelType: toSorted(fuelTypeMap),
       byModel: toSorted(modelMap),
       byManufacturer: toSorted(manufacturerMap),
+      vehicleBalances: vehicleBalances.sort((a, b) => a.coordination.localeCompare(b.coordination) || a.plate.localeCompare(b.plate)),
     };
   }, [vehicleDataQuery.data, vehiclesQuery.data, selectedCoordinations]);
 
