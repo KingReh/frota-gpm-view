@@ -332,8 +332,8 @@ const Index = () => {
                 <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-full md:w-auto">
                   {[
                     { mode: 'table', icon: LayoutList, title: 'Visualização em tabela' },
-                    { mode: 'card', icon: Grid, title: 'Cards' },
-                    { mode: 'carousel', icon: MonitorPlay, title: 'Carousel' }
+                    { mode: 'card', icon: Grid, title: 'visualização em cards' },
+                    { mode: 'carousel', icon: MonitorPlay, title: 'visualização em carrossel' }
                   ].map((item) => (
                     <button
                       key={item.mode}
