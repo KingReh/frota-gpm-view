@@ -331,7 +331,7 @@ const Index = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-full md:w-auto">
                   {[
-                    { mode: 'table', icon: LayoutList, title: 'Tabela' },
+                    { mode: 'table', icon: LayoutList, title: 'Visualização em tabela' },
                     { mode: 'card', icon: Grid, title: 'Cards' },
                     { mode: 'carousel', icon: MonitorPlay, title: 'Carousel' }
                   ].map((item) => (
