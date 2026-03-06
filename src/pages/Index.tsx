@@ -364,7 +364,7 @@ const Index = () => {
                 title="Exportar Saldo"
               >
                 <Copy className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
-                <span className="text-sm font-medium">Exportar</span>
+                <span className="text-sm font-medium">Enviar/Copiar</span>
               </button>
             </div>
 
