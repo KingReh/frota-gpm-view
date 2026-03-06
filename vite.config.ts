@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => ({
     force: true,
     esbuildOptions: {
       define: {
-        __CACHE_BUST__: JSON.stringify(Date.now().toString()),
+        __CACHE_BUST__: JSON.stringify(Date.now().toString() + '_v2'),
       },
     },
   },
