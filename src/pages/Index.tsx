@@ -9,7 +9,7 @@ import { TotalBalanceStats } from '@/components/frota/TotalBalanceStats';
 import { SearchBar } from '@/components/frota/SearchBar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { LayoutList, Grid, MonitorPlay, Copy, Star, BarChart3 } from 'lucide-react';
+import { LayoutList, Grid, MonitorPlay, Copy, Star, Share, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
@@ -363,7 +363,7 @@ const Index = () => {
                 className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group w-full sm:w-auto"
                 title="Compartilhar ou copiar saldo"
               >
-                <Copy className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
+                <Share className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
                 <span className="text-sm font-medium">Enviar/Copiar</span>
               </button>
             </div>
