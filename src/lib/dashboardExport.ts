@@ -43,28 +43,39 @@ function buildWorkbook(opts: ExportOptions) {
   wsCoord['!cols'] = [{ wch: 30 }, { wch: 12 }, { wch: 18 }];
   XLSX.utils.book_append_sheet(wb, wsCoord, 'Coordenações');
 
-  // Sheet 3: Tipo de Frota
+  // Sheet 3: Saldo por Veículo
+  const balHeader = ['Unidade', 'Placa', 'Saldo Atual'];
+  const balRows = dashboard.vehicleBalances.map(v => [
+    v.coordination,
+    v.plate,
+    v.balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+  ]);
+  const wsBal = XLSX.utils.aoa_to_sheet([balHeader, ...balRows]);
+  wsBal['!cols'] = [{ wch: 30 }, { wch: 14 }, { wch: 18 }];
+  XLSX.utils.book_append_sheet(wb, wsBal, 'Saldo por Veículo');
+
+  // Sheet 4: Tipo de Frota
   const fleetHeader = ['Tipo de Frota', 'Quantidade'];
   const fleetRows = dashboard.byFleetType.map(f => [f.name, f.count]);
   const wsFleet = XLSX.utils.aoa_to_sheet([fleetHeader, ...fleetRows]);
   wsFleet['!cols'] = [{ wch: 20 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, wsFleet, 'Tipo de Frota');
 
-  // Sheet 4: Combustível
+  // Sheet 5: Combustível
   const fuelHeader = ['Combustível', 'Quantidade'];
   const fuelRows = dashboard.byFuelType.map(f => [f.name, f.count]);
   const wsFuel = XLSX.utils.aoa_to_sheet([fuelHeader, ...fuelRows]);
   wsFuel['!cols'] = [{ wch: 20 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, wsFuel, 'Combustível');
 
-  // Sheet 5: Modelos
+  // Sheet 6: Modelos
   const modelHeader = ['Modelo', 'Quantidade'];
   const modelRows = dashboard.byModel.map(m => [m.name, m.count]);
   const wsModel = XLSX.utils.aoa_to_sheet([modelHeader, ...modelRows]);
   wsModel['!cols'] = [{ wch: 30 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, wsModel, 'Modelos');
 
-  // Sheet 6: Fabricantes
+  // Sheet 7: Fabricantes
   const mfrHeader = ['Fabricante', 'Quantidade'];
   const mfrRows = dashboard.byManufacturer.map(m => [m.name, m.count]);
   const wsMfr = XLSX.utils.aoa_to_sheet([mfrHeader, ...mfrRows]);
@@ -88,6 +99,7 @@ export async function exportToPDF(opts: ExportOptions) {
   const { dashboard, filterLabel } = opts;
   const doc = new jsPDF('landscape', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
 
   // Title
   doc.setFontSize(18);
@@ -211,11 +223,48 @@ export async function exportToPDF(opts: ExportOptions) {
     margin: { left: pageWidth / 2 + 5, right: 14 },
   });
 
-  // Capture charts as images
+  // Page 4: Saldo por Veículo
+  doc.addPage();
+
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Saldo por Veículo', pageWidth / 2, 15, { align: 'center' });
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(120);
+  doc.text(`Total de veículos: ${dashboard.vehicleBalances.length}`, pageWidth / 2, 21, { align: 'center' });
+  doc.setTextColor(0);
+
+  autoTable(doc, {
+    startY: 25,
+    head: [['Unidade', 'Placa', 'Saldo Atual (R$)']],
+    body: dashboard.vehicleBalances.map(v => [
+      v.coordination,
+      v.plate,
+      v.balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+    ]),
+    theme: 'striped',
+    headStyles: { fillColor: [30, 41, 59], textColor: 255, fontSize: 9 },
+    bodyStyles: { fontSize: 8 },
+    columnStyles: { 2: { halign: 'right' } },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data) => {
+      // Highlight zero/negative balances in red
+      if (data.section === 'body' && data.column.index === 2) {
+        const raw = dashboard.vehicleBalances[data.row.index];
+        if (raw && raw.balance <= 0) {
+          data.cell.styles.textColor = [220, 38, 38];
+          data.cell.styles.fontStyle = 'bold';
+        }
+      }
+    },
+  });
+
+  // Page 5+: Capture charts as images using dom-to-image-more (more reliable than html2canvas)
   try {
-    const html2canvas = (await import('html2canvas')).default;
     const chartPanels = document.querySelectorAll<HTMLElement>('[data-chart-export]');
-    
+
     if (chartPanels.length > 0) {
       doc.addPage();
       doc.setFontSize(14);
@@ -227,12 +276,38 @@ export async function exportToPDF(opts: ExportOptions) {
       let col = 0;
 
       for (const panel of chartPanels) {
+        // Use a canvas-based approach with html2canvas
+        const html2canvas = (await import('html2canvas')).default;
+
+        // Force the element to be visible and rendered
+        const rect = panel.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) continue;
+
         const canvas = await html2canvas(panel, {
           backgroundColor: '#0f1729',
           scale: 2,
           logging: false,
+          useCORS: true,
+          allowTaint: true,
+          // Ensure SVGs are captured by rendering to canvas
+          onclone: (clonedDoc) => {
+            // Convert SVG elements to inline styles for better capture
+            const svgs = clonedDoc.querySelectorAll('svg');
+            svgs.forEach(svg => {
+              svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+              // Ensure computed styles are inlined
+              const allElements = svg.querySelectorAll('*');
+              allElements.forEach(el => {
+                const computed = window.getComputedStyle(el as Element);
+                (el as HTMLElement).style.fill = computed.fill;
+                (el as HTMLElement).style.stroke = computed.stroke;
+                (el as HTMLElement).style.fontSize = computed.fontSize;
+                (el as HTMLElement).style.fontFamily = computed.fontFamily;
+              });
+            });
+          },
         });
-        
+
         const imgData = canvas.toDataURL('image/png');
         const ratio = canvas.height / canvas.width;
         const imgWidth = maxWidth;
@@ -240,9 +315,10 @@ export async function exportToPDF(opts: ExportOptions) {
 
         const xPos = col === 0 ? 14 : pageWidth / 2 + 5;
 
-        if (yOffset + imgHeight > doc.internal.pageSize.getHeight() - 10) {
+        if (yOffset + imgHeight > pageHeight - 10) {
           doc.addPage();
           yOffset = 15;
+          col = 0;
         }
 
         doc.addImage(imgData, 'PNG', xPos, yOffset, imgWidth, imgHeight);
