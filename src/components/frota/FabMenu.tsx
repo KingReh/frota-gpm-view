@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, ArrowLeftRight } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, wrench, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
 import { useGestorFrota } from "@/hooks/useGestorFrota";
@@ -23,7 +23,7 @@ const links = [
   {
     label: "GAD Manutenção",
     href: "https://app.powerbi.com/view?r=eyJrIjoiNDlmYTYzYTEtOGM3Mi00M2VjLWFkZTgtZWViM2I3NzBkZDhhIiwidCI6IjU3YTY2OThkLTA5M2QtNDIxOC05OTA0LWVkMDRmOWNiNDI1MiJ9",
-    icon: Key,
+    icon: wrench,
     description: "Gerenciamento e controle de manutenção de veículos",
   },
   {
