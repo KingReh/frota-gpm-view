@@ -1,15 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import type { DashboardData } from '@/hooks/useDashboardData';
-
-// Extend jsPDF type for autotable
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: (options: any) => jsPDF;
-    lastAutoTable: { finalY: number };
-  }
-}
 
 interface ExportOptions {
   dashboard: Omit<DashboardData, 'isLoading'>;
@@ -113,7 +105,7 @@ export async function exportToPDF(opts: ExportOptions) {
   doc.setFont('helvetica', 'bold');
   doc.text('Resumo', 14, 32);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 35,
     head: [['Métrica', 'Valor']],
     body: [
@@ -138,7 +130,7 @@ export async function exportToPDF(opts: ExportOptions) {
   doc.setFont('helvetica', 'bold');
   doc.text('Coordenações', pageWidth / 2 + 5, 32);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 35,
     head: [['Coordenação', 'Veículos', 'Saldo Total (R$)']],
     body: dashboard.byCoordination.map(c => [
@@ -160,7 +152,7 @@ export async function exportToPDF(opts: ExportOptions) {
   doc.setFont('helvetica', 'bold');
   doc.text('Tipo de Frota', 14, 15);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 18,
     head: [['Tipo', 'Quantidade']],
     body: dashboard.byFleetType.map(f => [f.name, String(f.count)]),
@@ -175,7 +167,7 @@ export async function exportToPDF(opts: ExportOptions) {
   doc.setFont('helvetica', 'bold');
   doc.text('Combustível', pageWidth / 2 + 5, 15);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 18,
     head: [['Combustível', 'Quantidade']],
     body: dashboard.byFuelType.map(f => [f.name, String(f.count)]),
@@ -193,7 +185,7 @@ export async function exportToPDF(opts: ExportOptions) {
   doc.setFont('helvetica', 'bold');
   doc.text('Modelos', 14, 15);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 18,
     head: [['Modelo', 'Quantidade']],
     body: dashboard.byModel.map(m => [m.name, String(m.count)]),
@@ -208,7 +200,7 @@ export async function exportToPDF(opts: ExportOptions) {
   doc.setFont('helvetica', 'bold');
   doc.text('Fabricantes', pageWidth / 2 + 5, 15);
 
-  doc.autoTable({
+  autoTable(doc, {
     startY: 18,
     head: [['Fabricante', 'Quantidade']],
     body: dashboard.byManufacturer.map(m => [m.name, String(m.count)]),
