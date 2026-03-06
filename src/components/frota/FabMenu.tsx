@@ -21,6 +21,12 @@ const links = [
     description: "Rede de postos",
   },
   {
+    label: "GAD Manutenção",
+    href: "https://app.powerbi.com/view?r=eyJrIjoiNDlmYTYzYTEtOGM3Mi00M2VjLWFkZTgtZWViM2I3NzBkZDhhIiwidCI6IjU3YTY2OThkLTA5M2QtNDIxOC05OTA0LWVkMDRmOWNiNDI1MiJ9",
+    icon: Key,
+    description: "Gerenciamento e controle de manutenção de veículos",
+  },
+  {
     label: "CRLV's",
     href: "https://bi-frota.lovable.app/regularizacao-documentos",
     icon: FileText,
