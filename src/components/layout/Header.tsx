@@ -35,7 +35,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                         <span className="text-primary ml-1">GPM</span>
                     </h1>
                     <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">
-                        Telemetria da Frota
+                        Controle da Frota
                     </span>
                 </div>
             </div>
@@ -124,6 +124,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
 
 
