@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+// Note: html2canvas removed — charts are no longer exported to PDF
 import type { DashboardData } from '@/hooks/useDashboardData';
 
 interface ExportOptions {
