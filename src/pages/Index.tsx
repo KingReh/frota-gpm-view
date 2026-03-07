@@ -9,7 +9,7 @@ import { TotalBalanceStats } from '@/components/frota/TotalBalanceStats';
 import { SearchBar } from '@/components/frota/SearchBar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { LayoutList, Grid, MonitorPlay, Copy, Star, Share, BarChart3 } from 'lucide-react';
+import { LayoutList, Grid, MonitorPlay, Copy, Star, Share, BarChart3, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
