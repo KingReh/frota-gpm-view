@@ -9,7 +9,7 @@ import { TotalBalanceStats } from '@/components/frota/TotalBalanceStats';
 import { SearchBar } from '@/components/frota/SearchBar';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { LayoutList, Grid, MonitorPlay, Copy, Star, Share, BarChart3, RefreshCw } from 'lucide-react';
+import { LayoutList, Grid, MonitorPlay, Copy, Star, Share, BarChart3, Upload, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
@@ -272,7 +272,7 @@ const Index = () => {
             className="md:hidden flex w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 shrink-0"
             title="Atualizar Saldo"
           >
-            <RefreshCw className="w-4 h-4 text-muted-foreground" />
+            <Upload className="w-4 h-4 text-muted-foreground" />
           </button>
 
           <CoordinationFilters
