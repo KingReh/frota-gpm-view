@@ -1,4 +1,4 @@
-import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3, RefreshCcw } from "lucide-react";
+import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3, upload, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -53,7 +53,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                     className="hidden md:flex items-center gap-2 h-9 px-3 rounded-xl bg-white/5 border border-white/10 hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 group"
                     title="Atualizar Saldo"
                 >
-                    <RefreshCcw className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
+                    <Upload className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
                     <span className="text-xs font-medium text-muted-foreground group-hover:text-destructive transition-colors">Atualizar Saldo</span>
                 </button>
 
@@ -70,7 +70,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 <div className="flex flex-col items-end mr-1 md:mr-4">
                     {/* Desktop: Full Status */}
                     <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
-                        <RefreshCw
+                        <Upload
                             className={cn(
                                 "w-3 h-3",
                                 isSynced ? "text-emerald-500" : "animate-spin text-amber-500"
@@ -124,6 +124,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
 
 
