@@ -1,4 +1,5 @@
-import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3 } from "lucide-react";
+import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3, RefreshCcw } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
@@ -13,6 +14,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, recentlyUpdated }: HeaderProps) => {
+    const { toast } = useToast();
+
     return (
         <header className="fixed top-0 left-0 right-0 h-16 z-50 px-2 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
             {/* Brand Identity */}
@@ -38,7 +41,23 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-                {/* Dashboard Link - hidden on mobile, shown next to filters */}
+                {/* Atualizar Saldo - desktop only */}
+                <button
+                    onClick={() => {
+                        toast({
+                            title: "Atualização indisponível",
+                            description: "Atualização de saldo indisponível. No momento, a atualização do saldo da frota é feita apenas para gestores de Frota GPM.",
+                            variant: "destructive",
+                        });
+                    }}
+                    className="hidden md:flex items-center gap-2 h-9 px-3 rounded-xl bg-white/5 border border-white/10 hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 group"
+                    title="Atualizar Saldo"
+                >
+                    <RefreshCcw className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
+                    <span className="text-xs font-medium text-muted-foreground group-hover:text-destructive transition-colors">Atualizar Saldo</span>
+                </button>
+
+                {/* Dashboard Link - hidden on mobile */}
                 <Link
                     to="/dashboard"
                     className="hidden md:flex w-9 h-9 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
