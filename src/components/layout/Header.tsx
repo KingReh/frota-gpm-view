@@ -14,6 +14,8 @@ interface HeaderProps {
 }
 
 export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, recentlyUpdated }: HeaderProps) => {
+    const { toast } = useToast();
+
     return (
         <header className="fixed top-0 left-0 right-0 h-16 z-50 px-2 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
             {/* Brand Identity */}
