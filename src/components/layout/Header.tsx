@@ -70,7 +70,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 <div className="flex flex-col items-end mr-1 md:mr-4">
                     {/* Desktop: Full Status */}
                     <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
-                        <Upload
+                        <RefreshCcw
                             className={cn(
                                 "w-3 h-3",
                                 isSynced ? "text-emerald-500" : "animate-spin text-amber-500"
@@ -124,6 +124,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
 
 
