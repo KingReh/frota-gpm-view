@@ -261,11 +261,81 @@ export async function exportToPDF(opts: ExportOptions) {
     },
   });
 
-  // Page 5+: Capture charts as images using dom-to-image-more (more reliable than html2canvas)
+  // Page 5+: Capture charts as images
   try {
     const chartPanels = document.querySelectorAll<HTMLElement>('[data-chart-export]');
 
     if (chartPanels.length > 0) {
+      // 1) Wait for animations and rendering to fully complete
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const html2canvas = (await import('html2canvas')).default;
+
+      // 2) Pre-convert all SVGs to inline canvas for reliable capture
+      const svgReplacements: { parent: HTMLElement; canvas: HTMLCanvasElement; original: SVGSVGElement }[] = [];
+
+      for (const panel of chartPanels) {
+        const svgs = panel.querySelectorAll<SVGSVGElement>('svg');
+        for (const svg of svgs) {
+          try {
+            const rect = svg.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) continue;
+
+            // Inline all computed styles into the SVG elements
+            const inlineStyles = (el: Element) => {
+              const computed = window.getComputedStyle(el);
+              const htmlEl = el as HTMLElement;
+              const stylesToCopy = ['fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+                'font-size', 'font-family', 'font-weight', 'opacity', 'color',
+                'text-anchor', 'dominant-baseline', 'visibility', 'display'];
+              stylesToCopy.forEach(prop => {
+                const val = computed.getPropertyValue(prop);
+                if (val) htmlEl.style.setProperty(prop, val);
+              });
+              Array.from(el.children).forEach(child => inlineStyles(child));
+            };
+            inlineStyles(svg);
+
+            // Serialize SVG to a data URL and draw onto a canvas
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.width = rect.width * 2;
+            img.height = rect.height * 2;
+
+            await new Promise<void>((resolve, reject) => {
+              img.onload = () => resolve();
+              img.onerror = () => reject(new Error('SVG image load failed'));
+              img.src = url;
+            });
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = rect.width * 2;
+            tempCanvas.height = rect.height * 2;
+            const ctx = tempCanvas.getContext('2d');
+            if (ctx) {
+              ctx.fillStyle = '#0f1729';
+              ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+              ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+            }
+            URL.revokeObjectURL(url);
+
+            // Replace SVG with canvas in the DOM temporarily
+            tempCanvas.style.width = `${rect.width}px`;
+            tempCanvas.style.height = `${rect.height}px`;
+            svg.parentElement?.insertBefore(tempCanvas, svg);
+            svg.style.display = 'none';
+            svgReplacements.push({ parent: svg.parentElement as HTMLElement, canvas: tempCanvas, original: svg });
+          } catch {
+            // Skip this SVG if conversion fails
+          }
+        }
+      }
+
+      // 3) Now capture each panel with html2canvas (SVGs already replaced by canvas)
       doc.addPage();
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
@@ -275,11 +345,12 @@ export async function exportToPDF(opts: ExportOptions) {
       const maxWidth = (pageWidth - 28) / 2;
       let col = 0;
 
-      for (const panel of chartPanels) {
-        // Use a canvas-based approach with html2canvas
-        const html2canvas = (await import('html2canvas')).default;
+      // Inject temporary style fix for html2canvas quirks
+      const tempStyle = document.createElement('style');
+      tempStyle.textContent = 'body > div:last-child img { display: inline-block; }';
+      document.head.appendChild(tempStyle);
 
-        // Force the element to be visible and rendered
+      for (const panel of chartPanels) {
         const rect = panel.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) continue;
 
@@ -289,23 +360,7 @@ export async function exportToPDF(opts: ExportOptions) {
           logging: false,
           useCORS: true,
           allowTaint: true,
-          // Ensure SVGs are captured by rendering to canvas
-          onclone: (clonedDoc) => {
-            // Convert SVG elements to inline styles for better capture
-            const svgs = clonedDoc.querySelectorAll('svg');
-            svgs.forEach(svg => {
-              svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-              // Ensure computed styles are inlined
-              const allElements = svg.querySelectorAll('*');
-              allElements.forEach(el => {
-                const computed = window.getComputedStyle(el as Element);
-                (el as HTMLElement).style.fill = computed.fill;
-                (el as HTMLElement).style.stroke = computed.stroke;
-                (el as HTMLElement).style.fontSize = computed.fontSize;
-                (el as HTMLElement).style.fontFamily = computed.fontFamily;
-              });
-            });
-          },
+          windowHeight: panel.scrollHeight,
         });
 
         const imgData = canvas.toDataURL('image/png');
@@ -329,6 +384,13 @@ export async function exportToPDF(opts: ExportOptions) {
         } else {
           col = 1;
         }
+      }
+
+      // Cleanup: remove temp style and restore SVGs
+      tempStyle.remove();
+      for (const { canvas, original } of svgReplacements) {
+        original.style.display = '';
+        canvas.remove();
       }
     }
   } catch (err) {
