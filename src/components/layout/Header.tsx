@@ -1,4 +1,4 @@
-import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3, upload, RefreshCcw } from "lucide-react";
+import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3, Upload, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -124,6 +124,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
 
 
