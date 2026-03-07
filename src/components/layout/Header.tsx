@@ -46,7 +46,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                     onClick={() => {
                         toast({
                             title: "Atualização indisponível",
-                            description: "No momento, a atualização do saldo da frota é feita apenas para gestores de Frota GPM.",
+                            description: "Atualização de saldo indisponível. No momento, a atualização do saldo da frota é feita apenas para gestores de Frota GPM.",
                             variant: "destructive",
                         });
                     }}
@@ -124,6 +124,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
+
 
 
 
