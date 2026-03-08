@@ -159,7 +159,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
         </div>
 
         {/* Content Body */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto overflow-x-visible custom-scrollbar-thin">
+        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar-thin">
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
