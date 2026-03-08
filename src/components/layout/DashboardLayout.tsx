@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 import { DrivingTipsToast } from "@/components/ui/DrivingTipsToast";
 import { FabMenu } from "@/components/frota/FabMenu";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
@@ -54,6 +55,7 @@ export const DashboardLayout = ({
                 <main className="pt-20 px-2 md:px-4 lg:px-8 pb-12 max-w-[1920px] mx-auto animate-in fade-in zoom-in-95 duration-500">
                     {children}
                 </main>
+                <Footer />
             </div>
         </div>
     );

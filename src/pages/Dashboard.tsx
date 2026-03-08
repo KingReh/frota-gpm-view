@@ -23,6 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from '@/components/ui/button';
 import { exportToXLSX, exportToODS, exportToPDF } from '@/lib/dashboardExport';
 import { toast } from 'sonner';
+import { Footer } from '@/components/layout/Footer';
 
 function DashboardPage() {
   const [selectedCoordinations, setSelectedCoordinations] = useState<string[]>([]);
@@ -274,6 +275,7 @@ function DashboardPage() {
         </div>
       </main>
 
+      <Footer />
       <DrivingTipsToast />
       <FabMenu
         vehicles={[]}
