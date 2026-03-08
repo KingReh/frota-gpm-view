@@ -121,9 +121,17 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                   <span className="h-1 w-4 bg-primary rounded-full" />
                   <span className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Identificação</span>
                 </div>
-                <div className="bg-surface-overlay border border-border/40 px-4 py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.2em] text-2xl shadow-inner group-hover:border-primary/40 transition-colors">
+                <button
+                  className="bg-surface-overlay border border-border/40 px-4 py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.2em] text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
+                  title="Clique para copiar a placa"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(vehicle.plate);
+                    toast({ description: `Placa ${vehicle.plate} copiada!` });
+                  }}
+                >
                   {vehicle.plate}
-                </div>
+                </button>
                 <h3 className="text-foreground text-lg font-bold tracking-tight line-clamp-1 opacity-90">
                   {vehicle.model || 'Protótipo não identificado'}
                 </h3>
