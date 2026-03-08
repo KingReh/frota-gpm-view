@@ -79,6 +79,7 @@ function FinancialItem({ label, value, highlight = false }: { label: string; val
 
 export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetailModalProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
+  const { toast } = useToast();
   if (!vehicle) return null;
 
   const hasFinancialData = vehicle.current_limit || vehicle.used_value || vehicle.reserved_value || vehicle.next_period_limit;
