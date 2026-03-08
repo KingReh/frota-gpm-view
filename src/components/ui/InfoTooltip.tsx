@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import * as React from 'react';
 import { Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -8,11 +8,11 @@ interface InfoTooltipProps {
 }
 
 export function InfoTooltip({ text, className }: InfoTooltipProps) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
 
   // Close on outside click (mobile tap-away)
-  useEffect(() => {
+  React.useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent | TouchEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
