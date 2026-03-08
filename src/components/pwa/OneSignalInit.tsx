@@ -28,6 +28,16 @@ export default function OneSignalInit() {
           enable: false,
         },
       });
+
+      // Prompt push permission after init
+      try {
+        const permission = await OneSignal.Notifications.permission;
+        if (!permission) {
+          await OneSignal.Slidedown.promptPush();
+        }
+      } catch (e) {
+        console.warn('OneSignal promptPush failed:', e);
+      }
     });
   }, []);
 
