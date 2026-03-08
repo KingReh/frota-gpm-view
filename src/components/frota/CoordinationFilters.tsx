@@ -87,7 +87,7 @@ export function CoordinationFilters({
             Selecionar todas
           </DropdownMenuCheckboxItem>
           <DropdownMenuSeparator className="bg-white/10" />
-          <div className="max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="max-h-[300px] overflow-y-auto pr-1 custom-scrollbar-thin">
             {coordinations.map((coord) => {
               const isSelected = selectedIds.includes(coord.id);
               return (
