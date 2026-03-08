@@ -104,7 +104,7 @@ export const DrivingTipsToast = () => {
               }
             }}
             className={cn(
-              "pointer-events-auto relative",
+              "pointer-events-auto relative overflow-visible",
               "bg-black/40 backdrop-blur-xl border border-white/10",
               "p-4 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
               "flex items-start gap-4 group"
@@ -119,7 +119,7 @@ export const DrivingTipsToast = () => {
             </div>
 
             {/* Content */}
-            <div className="flex-1 pt-1">
+            <div className="flex-1 pt-1 min-w-0 overflow-visible">
               <div className="flex items-center justify-between gap-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 flex items-center gap-2">
                   Dica do Dia
@@ -127,12 +127,12 @@ export const DrivingTipsToast = () => {
                 </h4>
                 <button
                   onClick={handleDismiss}
-                  className="text-white/40 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10"
+                  className="text-white/40 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10 shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-sm text-gray-200 leading-relaxed font-medium">
+              <p className="text-sm text-gray-200 leading-relaxed font-medium break-words whitespace-normal">
                 {tip}
               </p>
             </div>
