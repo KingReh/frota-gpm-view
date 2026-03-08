@@ -33,8 +33,8 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         app_id: onesignalAppId,
         included_segments: ["Total Subscriptions"],
-        headings: { en: "Aviso" },
-        contents: { en: "Saldo de combustível atualizado pela GPM!" },
+        headings: { en: "COMPESA Frota GPM" },
+        contents: { en: "O saldo de combustível da Frota GPM foi atualizado." },
         chrome_web_icon: "https://frotagpm.vercel.app/icons/icon-192.png",
         chrome_web_badge: "https://frotagpm.vercel.app/icons/icon-192.png",
         web_push_topic: "fuel-balance-update",
