@@ -104,7 +104,7 @@ export const DrivingTipsToast = () => {
               }
             }}
             className={cn(
-              "pointer-events-auto relative overflow-hidden",
+              "pointer-events-auto relative",
               "bg-black/40 backdrop-blur-xl border border-white/10",
               "p-4 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
               "flex items-start gap-4 group"
