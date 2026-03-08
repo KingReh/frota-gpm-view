@@ -112,16 +112,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                             {name}
                                         </span>
                                     </div>
-                                    <TooltipProvider delayDuration={200}>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="w-3 h-3 text-white/20 group-hover/card:text-white/60 transition-colors cursor-help" />
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" className="max-w-[220px] text-xs">
-                                                Saldo total e quantidade de veículos da coordenação {name}
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    <InfoTooltip text={`Saldo total e quantidade de veículos da coordenação ${name}`} />
                                 </div>
 
                                 <div className="space-y-1">
