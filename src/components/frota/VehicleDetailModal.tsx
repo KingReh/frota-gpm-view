@@ -12,6 +12,7 @@ import { formatBalance } from '@/lib/balance';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useToast } from '@/hooks/use-toast';
 import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
