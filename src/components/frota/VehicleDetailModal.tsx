@@ -17,12 +17,25 @@ import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
 import { isBalanceMasked } from '@/lib/maskedPlates';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 
 interface VehicleDetailModalProps {
   vehicle: VehicleWithDetails | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const FIELD_TOOLTIPS: Record<string, string> = {
+  'Tipo de Frota': 'Indica se o veículo é locado ou próprio da empresa.',
+  'Combustível': 'Indica o tipo de combustível permitido para o veículo conforme registrado no CRLV.',
+  'Concessionária': 'Identifica a concessionária responsável pelo veículo.',
+  'Nº Frota': 'Número de identificação da frota atribuído ao veículo.',
+  'Nº Cartão': 'Número do cartão de abastecimento vinculado ao veículo.',
+  'Limite Total': 'Valor máximo de saldo que o cartão pode suportar por padrão, podendo ser ajustado conforme necessidade.',
+  'Utilizado': 'Valor já consumido do limite disponível.',
+  'Reservado': 'Valor reservado automaticamente ao veículo quando ocorre a virada de período/mês.',
+  'Limite Próx. Período': 'Valor de recurso que o veículo receberá no início de cada mês.',
+};
 
 function DetailRow({ icon: Icon, label, value, className }: { icon: React.ElementType; label: string; value: string | null, className?: string }) {
   if (!value) return null;
@@ -32,7 +45,10 @@ function DetailRow({ icon: Icon, label, value, className }: { icon: React.Elemen
         <Icon className="h-4 w-4 shrink-0" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</p>
+          {FIELD_TOOLTIPS[label] && <InfoTooltip text={FIELD_TOOLTIPS[label]} />}
+        </div>
         <p className="text-sm font-medium text-foreground truncate">{value}</p>
       </div>
     </div>
@@ -48,7 +64,10 @@ function FinancialItem({ label, value, highlight = false }: { label: string; val
         ? "bg-primary/10 border-primary/20"
         : "bg-muted/20 border-border/20"
     )}>
-      <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1">{label}</span>
+      <div className="flex items-center gap-1.5 mb-1">
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</span>
+        {FIELD_TOOLTIPS[label] && <InfoTooltip text={FIELD_TOOLTIPS[label]} />}
+      </div>
       <span className={cn(
         "text-sm font-mono font-bold",
         highlight ? "text-primary" : "text-foreground"
@@ -140,7 +159,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
         </div>
 
         {/* Content Body */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar-thin">
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 

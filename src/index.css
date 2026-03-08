@@ -60,6 +60,29 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Global premium scrollbar for all scrollable elements */
+  *,
+  *::before,
+  *::after {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
 }
 
 @layer utilities {
@@ -77,23 +100,30 @@
       radial-gradient(at 100% 0%, hsl(var(--secondary) / 0.1) 0px, transparent 50%);
   }
 
-  .custom-scrollbar-thin {
+  /* Premium scrollbar — applied globally and via .custom-scrollbar-thin */
+  .custom-scrollbar-thin,
+  .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border)) transparent;
   }
-  .custom-scrollbar-thin::-webkit-scrollbar {
+  .custom-scrollbar-thin::-webkit-scrollbar,
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
     height: 6px;
   }
-  .custom-scrollbar-thin::-webkit-scrollbar-track {
+  .custom-scrollbar-thin::-webkit-scrollbar-track,
+  .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 999px;
   }
-  .custom-scrollbar-thin::-webkit-scrollbar-thumb {
+  .custom-scrollbar-thin::-webkit-scrollbar-thumb,
+  .custom-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
     border-radius: 999px;
     transition: background 0.2s;
   }
-  .custom-scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  .custom-scrollbar-thin::-webkit-scrollbar-thumb:hover,
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
   }
 }

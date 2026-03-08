@@ -217,14 +217,14 @@ function DashboardPage() {
 
         {/* Stat Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          <StatCard label="Total de Veículos" value={dashboard.totalVehicles} icon={Car} delay={0} />
-          <StatCard label="Próprios" value={dashboard.ownedCount} icon={Truck} accentColor="hsl(207, 100%, 35%)" delay={50} />
-          <StatCard label="Locados" value={dashboard.rentedCount} icon={Truck} accentColor="hsl(190, 100%, 50%)" delay={100} />
-          <StatCard label="Modelos" value={dashboard.distinctModels} icon={LayoutGrid} accentColor="hsl(207, 80%, 50%)" delay={150} />
-          <StatCard label="Combustíveis" value={dashboard.distinctFuelTypes} icon={Fuel} accentColor="hsl(25, 95%, 53%)" delay={200} />
-          <StatCard label="Fabricantes" value={dashboard.distinctManufacturers} icon={Factory} accentColor="hsl(207, 60%, 65%)" delay={250} />
-          <StatCard label="Saldo Zero" value={dashboard.zeroBalanceCount} icon={AlertTriangle} accentColor="hsl(0, 84%, 60%)" delay={300} />
-          <StatCard label="Saldo Positivo" value={dashboard.positiveBalanceCount} icon={CircleDollarSign} accentColor="hsl(142, 71%, 45%)" delay={350} />
+          <StatCard label="Total de Veículos" value={dashboard.totalVehicles} icon={Car} delay={0} tooltip="Quantidade total de veículos cadastrados na frota." />
+          <StatCard label="Próprios" value={dashboard.ownedCount} icon={Truck} accentColor="hsl(207, 100%, 35%)" delay={50} tooltip="Veículos que são patrimônio próprio da empresa." />
+          <StatCard label="Locados" value={dashboard.rentedCount} icon={Truck} accentColor="hsl(190, 100%, 50%)" delay={100} tooltip="Veículos alugados de terceiros para uso da frota." />
+          <StatCard label="Modelos" value={dashboard.distinctModels} icon={LayoutGrid} accentColor="hsl(207, 80%, 50%)" delay={150} tooltip="Quantidade de modelos distintos presentes na frota." />
+          <StatCard label="Combustíveis" value={dashboard.distinctFuelTypes} icon={Fuel} accentColor="hsl(25, 95%, 53%)" delay={200} tooltip="Tipos diferentes de combustível utilizados pela frota." />
+          <StatCard label="Fabricantes" value={dashboard.distinctManufacturers} icon={Factory} accentColor="hsl(207, 60%, 65%)" delay={250} tooltip="Quantidade de fabricantes distintos dos veículos." />
+          <StatCard label="Saldo Zero" value={dashboard.zeroBalanceCount} icon={AlertTriangle} accentColor="hsl(0, 84%, 60%)" delay={300} tooltip="Veículos cujo saldo de abastecimento está zerado." />
+          <StatCard label="Saldo Positivo" value={dashboard.positiveBalanceCount} icon={CircleDollarSign} accentColor="hsl(142, 71%, 45%)" delay={350} tooltip="Veículos que ainda possuem saldo disponível para abastecimento." />
         </div>
 
         {/* Charts Row 1: Donuts + Coordination Bar */}
