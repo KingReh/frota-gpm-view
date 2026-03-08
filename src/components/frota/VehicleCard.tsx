@@ -1,4 +1,5 @@
 import { Car, Building2, Info, Gauge as GaugeIcon, Fuel, Zap, Star } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
