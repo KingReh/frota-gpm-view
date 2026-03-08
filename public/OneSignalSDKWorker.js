@@ -1,3 +1,10 @@
+// Message handler MUST be registered before importScripts
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 
 // ============= Cache logic =============
@@ -20,7 +27,6 @@ self.addEventListener('install', (event) => {
       });
     })
   );
-  // Do NOT call skipWaiting here to avoid reload loops
 });
 
 self.addEventListener('activate', (event) => {
@@ -79,10 +85,4 @@ self.addEventListener('fetch', (event) => {
       return cachedResponse || fetchPromise;
     })
   );
-});
-
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });
