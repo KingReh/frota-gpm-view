@@ -12,6 +12,7 @@ import { formatBalance } from '@/lib/balance';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useToast } from '@/hooks/use-toast';
 import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
@@ -78,6 +79,7 @@ function FinancialItem({ label, value, highlight = false }: { label: string; val
 
 export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetailModalProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
+  const { toast } = useToast();
   if (!vehicle) return null;
 
   const hasFinancialData = vehicle.current_limit || vehicle.used_value || vehicle.reserved_value || vehicle.next_period_limit;
@@ -125,7 +127,14 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
                   />
                 )}
                 <div className="flex items-center gap-3 mb-1">
-                  <DialogTitle className="font-mono text-4xl font-bold tracking-tight text-foreground">
+                  <DialogTitle
+                    className="font-mono text-4xl font-bold tracking-tight text-foreground cursor-pointer hover:text-primary transition-colors active:scale-95"
+                    title="Clique para copiar a placa"
+                    onClick={() => {
+                      navigator.clipboard.writeText(vehicle.plate);
+                      toast({ description: `Placa ${vehicle.plate} copiada!` });
+                    }}
+                  >
                     {vehicle.plate}
                   </DialogTitle>
                   <Button
