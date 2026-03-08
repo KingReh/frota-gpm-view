@@ -1,7 +1,7 @@
 importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 
-// ============= Cache logic (merged from sw.js) =============
-const CACHE_NAME = 'frota-gpm-v2';
+// ============= Cache logic =============
+const CACHE_NAME = 'frota-gpm-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -20,7 +20,7 @@ self.addEventListener('install', (event) => {
       });
     })
   );
-  self.skipWaiting();
+  // Do NOT call skipWaiting here to avoid reload loops
 });
 
 self.addEventListener('activate', (event) => {
@@ -40,12 +40,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
   if (!url.protocol.startsWith('http')) return;
-
-  if (url.hostname.includes('supabase.co') || url.pathname.includes('/api/')) {
-    return;
-  }
-
-  // Skip OneSignal SDK requests
+  if (url.hostname.includes('supabase.co') || url.pathname.includes('/api/')) return;
   if (url.hostname.includes('onesignal.com')) return;
 
   if (event.request.mode === 'navigate') {
