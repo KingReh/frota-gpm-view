@@ -32,7 +32,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         app_id: onesignalAppId,
-        included_segments: ["Subscribed Users"],
+        included_segments: ["Total Subscriptions"],
         headings: { en: "Aviso" },
         contents: { en: "Saldo de combustível atualizado pela GPM!" },
         chrome_web_icon: "/icons/icon-192.png",
@@ -44,10 +44,9 @@ Deno.serve(async (req: Request) => {
     });
 
     const result = await response.json();
-    console.log("OneSignal full response:", JSON.stringify(result));
-    console.log("OneSignal response status:", response.status);
+    console.log("OneSignal response:", JSON.stringify(result));
 
-    if (!response.ok) {
+    if (!response.ok && !result.id) {
       console.error("OneSignal API error:", result);
       return new Response(JSON.stringify({ error: "OneSignal API error", details: result }), {
         status: response.status,
