@@ -44,6 +44,8 @@ Deno.serve(async (req: Request) => {
     });
 
     const result = await response.json();
+    console.log("OneSignal full response:", JSON.stringify(result));
+    console.log("OneSignal response status:", response.status);
 
     if (!response.ok) {
       console.error("OneSignal API error:", result);
