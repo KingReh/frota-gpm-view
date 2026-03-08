@@ -2,14 +2,21 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RefreshCw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+
+const DISMISS_KEY = 'pwa-update-dismissed';
+const DISMISS_DURATION = 1000 * 60 * 60 * 4; // 4 hours
 
 export default function UpdatePrompt() {
     const [showUpdate, setShowUpdate] = useState(false);
     const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
 
     useEffect(() => {
-        // Check if SW is already waiting
+        // Check if recently dismissed
+        const dismissedAt = localStorage.getItem(DISMISS_KEY);
+        if (dismissedAt && Date.now() - parseInt(dismissedAt) < DISMISS_DURATION) {
+            return;
+        }
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then((registration) => {
                 if (registration.waiting) {
@@ -18,7 +25,6 @@ export default function UpdatePrompt() {
                 }
             });
 
-            // Listen for new SW updates
             const handleUpdateFound = (event: Event) => {
                 const registration = (event.target as ServiceWorkerRegistration);
                 const newWorker = registration.installing;
@@ -26,6 +32,11 @@ export default function UpdatePrompt() {
                 if (newWorker) {
                     newWorker.addEventListener('statechange', () => {
                         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // Check again if dismissed recently
+                            const dismissed = localStorage.getItem(DISMISS_KEY);
+                            if (dismissed && Date.now() - parseInt(dismissed) < DISMISS_DURATION) {
+                                return;
+                            }
                             setWaitingWorker(newWorker);
                             setShowUpdate(true);
                         }
@@ -33,8 +44,6 @@ export default function UpdatePrompt() {
                 }
             };
 
-            // We need to add this listener to the registration
-            // This is a simplified approach; in production, you might want a more robust way to get the registration
             navigator.serviceWorker.getRegistration().then(reg => {
                 if (reg) {
                     reg.addEventListener('updatefound', handleUpdateFound);
@@ -47,12 +56,17 @@ export default function UpdatePrompt() {
         if (waitingWorker) {
             waitingWorker.postMessage({ type: 'SKIP_WAITING' });
             setShowUpdate(false);
+            localStorage.removeItem(DISMISS_KEY);
 
-            // Reload page when new SW takes control
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 window.location.reload();
             });
         }
+    };
+
+    const handleDismiss = () => {
+        setShowUpdate(false);
+        localStorage.setItem(DISMISS_KEY, Date.now().toString());
     };
 
     if (!showUpdate) return null;
@@ -81,7 +95,7 @@ export default function UpdatePrompt() {
                             Atualizar
                         </Button>
                         <button
-                            onClick={() => setShowUpdate(false)}
+                            onClick={handleDismiss}
                             className="p-1 hover:bg-white/20 rounded-md transition-colors"
                         >
                             <X size={14} />
