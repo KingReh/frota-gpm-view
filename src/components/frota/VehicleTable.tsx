@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import {
   Table,
   TableBody,
@@ -26,6 +27,7 @@ interface VehicleTableProps {
 export function VehicleTable({ vehicles }: VehicleTableProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
   const { preferences, toggleFavorite } = useUserPreferences();
+  const { toast } = useToast();
 
   if (vehicles.length === 0) {
     return (
@@ -86,9 +88,17 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                         <Star className={cn("h-3.5 w-3.5", preferences.favoritePlates?.includes(vehicle.plate) && "fill-current")} />
                       </Button>
 
-                      <div className="bg-white/5 border border-white/10 px-2 md:px-4 py-1.5 rounded text-white font-mono font-bold tracking-widest text-[11px] md:text-sm shadow-inner group-hover:border-primary/40 transition-colors inline-block">
+                      <button
+                        className="bg-white/5 border border-white/10 px-2 md:px-4 py-1.5 rounded text-white font-mono font-bold tracking-widest text-[11px] md:text-sm shadow-inner group-hover:border-primary/40 transition-colors inline-block cursor-pointer hover:bg-primary/10 active:scale-95"
+                        title="Clique para copiar a placa"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigator.clipboard.writeText(vehicle.plate);
+                          toast({ description: `Placa ${vehicle.plate} copiada!` });
+                        }}
+                      >
                         {vehicle.plate}
-                      </div>
+                      </button>
                     </div>
                   </TableCell>
                   <TableCell className="py-2 md:py-4 px-4 md:px-0">
