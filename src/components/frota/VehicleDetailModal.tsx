@@ -127,7 +127,14 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
                   />
                 )}
                 <div className="flex items-center gap-3 mb-1">
-                  <DialogTitle className="font-mono text-4xl font-bold tracking-tight text-foreground">
+                  <DialogTitle
+                    className="font-mono text-4xl font-bold tracking-tight text-foreground cursor-pointer hover:text-primary transition-colors active:scale-95"
+                    title="Clique para copiar a placa"
+                    onClick={() => {
+                      navigator.clipboard.writeText(vehicle.plate);
+                      toast({ description: `Placa ${vehicle.plate} copiada!` });
+                    }}
+                  >
                     {vehicle.plate}
                   </DialogTitle>
                   <Button
