@@ -86,7 +86,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden glass-panel border-border/40 shadow-lg bg-card/95 [&>button]:hidden">
+      <DialogContent className="max-w-3xl p-0 gap-0 overflow-hidden glass-panel border-border/40 shadow-lg bg-card/95 [&>button]:hidden">
 
         {/* Header / Hero Section */}
         <div className="relative h-48 w-full overflow-hidden">
