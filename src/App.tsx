@@ -11,7 +11,7 @@ import NotFound from "./pages/NotFound";
 
 import InstallPrompt from "./components/pwa/InstallPrompt";
 import UpdatePrompt from "./components/pwa/UpdatePrompt";
-import PushNotificationManager from "./components/pwa/PushNotificationManager";
+import OneSignalInit from "./components/pwa/OneSignalInit";
 
 const queryClient = new QueryClient();
 
