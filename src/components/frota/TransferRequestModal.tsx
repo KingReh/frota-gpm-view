@@ -634,7 +634,7 @@ export function TransferRequestModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-card border-border sm:max-w-lg w-[calc(100%-2rem)] rounded-xl">
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-card border-border sm:max-w-lg w-[calc(100%-2rem)] rounded-xl" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-foreground">
             {step === 1 ? 'Solicitar Transferência' : 'Confirmar Solicitação'}
