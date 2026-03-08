@@ -22,6 +22,7 @@ interface VehicleCardProps {
 
 export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, onClick }: VehicleCardProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
+  const { toast } = useToast();
   const isLarge = size === 'large';
   const balanceValue = parseBalance(vehicle.balance);
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
