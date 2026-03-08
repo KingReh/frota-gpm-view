@@ -27,6 +27,7 @@ interface VehicleTableProps {
 export function VehicleTable({ vehicles }: VehicleTableProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
   const { preferences, toggleFavorite } = useUserPreferences();
+  const { toast } = useToast();
 
   if (vehicles.length === 0) {
     return (
