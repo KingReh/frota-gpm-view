@@ -23,33 +23,7 @@ Deno.serve(async (req: Request) => {
     const onesignalAppId = Deno.env.get("ONESIGNAL_APP_ID")!;
     const onesignalApiKey = Deno.env.get("ONESIGNAL_REST_API_KEY")!;
 
-    // DEBUG: List all subscriptions/players first
-    const playersResponse = await fetch(
-      `https://api.onesignal.com/apps/${onesignalAppId}/users?limit=10`,
-      {
-        headers: {
-          "Authorization": `Key ${onesignalApiKey}`,
-        },
-      }
-    );
-    const playersResult = await playersResponse.text();
-    console.log("OneSignal users list status:", playersResponse.status);
-    console.log("OneSignal users list:", playersResult);
-
-    // Also try the legacy players endpoint
-    const legacyPlayersResponse = await fetch(
-      `https://api.onesignal.com/players?app_id=${onesignalAppId}&limit=10`,
-      {
-        headers: {
-          "Authorization": `Key ${onesignalApiKey}`,
-        },
-      }
-    );
-    const legacyPlayersResult = await legacyPlayersResponse.text();
-    console.log("OneSignal legacy players status:", legacyPlayersResponse.status);
-    console.log("OneSignal legacy players:", legacyPlayersResult);
-
-    // Send notification using "All" segment instead of "Subscribed Users"
+    // Send notification to all subscribed users via OneSignal REST API
     const response = await fetch("https://api.onesignal.com/notifications", {
       method: "POST",
       headers: {
@@ -70,35 +44,10 @@ Deno.serve(async (req: Request) => {
     });
 
     const result = await response.json();
-    console.log("OneSignal notification response:", JSON.stringify(result));
-    console.log("OneSignal notification status:", response.status);
-
-    // If "Total Subscriptions" fails, try "Subscribed Users"
-    if (result.errors) {
-      console.log("Trying 'Subscribed Users' segment as fallback...");
-      const fallbackResponse = await fetch("https://api.onesignal.com/notifications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Key ${onesignalApiKey}`,
-        },
-        body: JSON.stringify({
-          app_id: onesignalAppId,
-          included_segments: ["Subscribed Users"],
-          headings: { en: "Aviso" },
-          contents: { en: "Saldo de combustível atualizado pela GPM!" },
-          chrome_web_icon: "/icons/icon-192.png",
-          chrome_web_badge: "/icons/icon-192.png",
-          web_push_topic: "fuel-balance-update",
-          ttl: 86400,
-          priority: 10,
-        }),
-      });
-      const fallbackResult = await fallbackResponse.json();
-      console.log("Fallback response:", JSON.stringify(fallbackResult));
-    }
+    console.log("OneSignal response:", JSON.stringify(result));
 
     if (!response.ok && !result.id) {
+      console.error("OneSignal API error:", result);
       return new Response(JSON.stringify({ error: "OneSignal API error", details: result }), {
         status: response.status,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -125,12 +74,7 @@ Deno.serve(async (req: Request) => {
     console.log(`OneSignal push sent: ${result.recipients || 0} recipients, id: ${result.id}`);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        recipients: result.recipients, 
-        onesignal_id: result.id,
-        debug_users: playersResult.substring(0, 500),
-      }),
+      JSON.stringify({ success: true, recipients: result.recipients, onesignal_id: result.id }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
