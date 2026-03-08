@@ -106,9 +106,9 @@ export default function PushNotificationManager() {
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
       >
-        <div className="bg-zinc-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl flex flex-col gap-4">
+        <div className="pointer-events-auto w-[calc(100%-2rem)] max-w-sm bg-zinc-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl flex flex-col gap-4">
           <div className="flex items-start justify-between">
             <div className="flex gap-3">
               <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20">
