@@ -275,6 +275,7 @@ function DashboardPage() {
         </div>
       </main>
 
+      <Footer />
       <DrivingTipsToast />
       <FabMenu
         vehicles={[]}
