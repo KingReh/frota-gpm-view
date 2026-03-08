@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 import { DrivingTipsToast } from "@/components/ui/DrivingTipsToast";
 import { FabMenu } from "@/components/frota/FabMenu";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
