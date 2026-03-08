@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
-import { TrendingUp, Wallet, Car, Info } from 'lucide-react';
+import { TrendingUp, Wallet, Car } from 'lucide-react';
 import { parseBalance } from '@/lib/balance';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { VehicleWithDetails } from '@/types/vehicle';
 
 interface TotalBalanceStatsProps {
