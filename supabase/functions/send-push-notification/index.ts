@@ -37,7 +37,6 @@ Deno.serve(async (req: Request) => {
         contents: { en: "O saldo de combustível da Frota GPM foi atualizado." },
         chrome_web_icon: "https://frotagpm.vercel.app/icons/icon-192.png",
         chrome_web_badge: "https://frotagpm.vercel.app/icons/badge-mono.png",
-        small_icon: "https://frotagpm.vercel.app/icons/badge-mono.png",
         web_push_topic: "fuel-balance-update",
         ttl: 86400,
         priority: 10,
