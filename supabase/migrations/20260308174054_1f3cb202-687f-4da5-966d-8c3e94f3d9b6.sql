@@ -1,0 +1,1 @@
+DROP TRIGGER IF EXISTS on_vehicle_data_updated ON public.vehicle_data;
