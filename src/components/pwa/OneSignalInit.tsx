@@ -22,6 +22,8 @@ export default function OneSignalInit() {
     window.OneSignalDeferred.push(async function (OneSignal: any) {
       await OneSignal.init({
         appId: ONESIGNAL_APP_ID,
+        serviceWorkerParam: { scope: '/' },
+        serviceWorkerPath: '/OneSignalSDKWorker.js',
         notifyButton: {
           enable: false,
         },

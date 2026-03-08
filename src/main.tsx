@@ -7,7 +7,7 @@ createRoot(document.getElementById("root")!).render(<App />);
 // Progressive Web App - Service Worker Registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        navigator.serviceWorker.register('/OneSignalSDKWorker.js', { scope: '/' })
             .then(registration => {
                 console.log('SW registered successfully with scope: ', registration.scope);
 
