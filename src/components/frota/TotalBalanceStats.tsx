@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from 'react'; // rebuilt
 import { TrendingUp, Wallet, Car } from 'lucide-react';
 import { parseBalance } from '@/lib/balance';
 import { cn } from '@/lib/utils';
