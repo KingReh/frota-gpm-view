@@ -98,6 +98,53 @@ O app funciona 100% no navegador, pode ser instalado na tela inicial de smartpho
 
 ---
 
+## Diagrama de Arquitetura
+
+```mermaid
+graph TB
+    subgraph Cliente ["Frontend (PWA)"]
+        APP["React App\n(Vite + TypeScript)"]
+        RQ["TanStack\nReact Query"]
+        SW["Service Worker\n(OneSignal SDK)"]
+    end
+
+    subgraph Supabase ["Supabase"]
+        DB["PostgreSQL\n(vehicle_data, vehicles,\ncoordinations, gestor_frota)"]
+        RT["Realtime\n(WebSocket)"]
+        TRG["Database Trigger\n(on_vehicle_data_update)"]
+        EF1["Edge Function\nsend-push-notification"]
+        EF2["Edge Function\nget-driving-tips"]
+    end
+
+    subgraph Externos ["Servicos Externos"]
+        OS["OneSignal\n(Web Push API)"]
+        GS["Google Sheets\n(Dicas de Direcao)"]
+    end
+
+    subgraph Dispositivo ["Dispositivo do Usuario"]
+        PUSH["Notificacao Push"]
+    end
+
+    APP -- "Queries REST" --> DB
+    RQ -- "Cache e refetch" --> APP
+    DB -- "Realtime changes" --> RT
+    RT -- "Atualizacao automatica" --> APP
+
+    DB -- "UPDATE event" --> TRG
+    TRG -- "Invoca" --> EF1
+    EF1 -- "POST /notifications" --> OS
+    OS -- "Web Push" --> SW
+    SW -- "Exibe" --> PUSH
+
+    APP -- "Invoke" --> EF2
+    EF2 -- "Fetch CSV" --> GS
+    EF2 -- "Dica aleatoria" --> APP
+
+    APP -- "WhatsApp / Email" --> WA["WhatsApp\ndo Gestor"]
+```
+
+---
+
 ## Arquitetura e Stack Tecnológica
 
 | Camada | Tecnologia |
