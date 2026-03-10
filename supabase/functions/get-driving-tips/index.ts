@@ -27,9 +27,9 @@ async function getTips(): Promise<string[]> {
   const tips: string[] = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const match = lines[i].match(/"([^"]+)"/);
+    const match = lines[i].match(/"((?:[^"]|"")*)"/);
     if (match && match[1].trim()) {
-      tips.push(match[1].trim());
+      tips.push(match[1].replace(/""/g, '"').trim());
     }
   }
 
