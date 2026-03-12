@@ -91,7 +91,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                             isSynced ? "bg-emerald-500 shadow-[0_0_5px_theme(colors.emerald.500)]" : "bg-amber-500 animate-pulse"
                         )} />
                         <span className="text-[9px] font-mono text-muted-foreground uppercase">
-                            {isSynced ? 'VOCÊ ESTÁ ONLINE' : 'SINCRONIZANDO...'}
+                            {isSynced ? 'ONLINE' : 'SINCRONIZANDO...'}
                         </span>
                     </div>
 
@@ -102,16 +102,12 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                                 {isToday(lastUpdated)
                                     ? `Atualizado às ${format(lastUpdated, 'HH:mm', { locale: ptBR })}`
                                     : (() => {
-                                        const formattedDate = format(
-                                            lastUpdated,
-                                            "EEEE - dd/MM/yyyy 'às' HH:mm",
-                                            { locale: ptBR }
-                                        );
-                            
-                                        const capitalized =
-                                            formattedDate.charAt(0).toUpperCase() +
-                                            formattedDate.slice(1);
-                            
+                                        const isMobile = window.innerWidth < 768;
+                                        const pattern = isMobile
+                                            ? "EEE - dd/MM/yy 'às' HH:mm"
+                                            : "EEEE - dd/MM/yyyy 'às' HH:mm";
+                                        const formattedDate = format(lastUpdated, pattern, { locale: ptBR });
+                                        const capitalized = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
                                         return `Atualizado ${capitalized}`;
                                     })()
                                 }
