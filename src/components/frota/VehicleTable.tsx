@@ -66,7 +66,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                   key={vehicle.plate}
                   className="border-b border-white/5 hover:bg-white/[0.03] transition-all group relative"
                 >
-                  <TableCell className="pl-4 md:pl-8 py-3 md:py-4 relative">
+                  <TableCell className="pl-2 sm:pl-4 md:pl-8 py-2.5 sm:py-3 md:py-4 relative">
                     {/* Horizontal row highlight line */}
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/5 bg-primary rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity" />
 
