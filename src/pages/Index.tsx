@@ -286,7 +286,7 @@ const Index = () => {
           {/* Dashboard Link - mobile only (right side) */}
           <Link
             to="/dashboard"
-            className="md:hidden flex w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 shrink-0"
+            className="md:hidden flex w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 shrink-0"
             title="Dashboard"
           >
             <BarChart3 className="w-4 h-4 text-muted-foreground" />
