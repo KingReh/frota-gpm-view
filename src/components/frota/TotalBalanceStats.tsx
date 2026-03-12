@@ -55,7 +55,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                     Somatório da Frota GPM
                                 </p>
                             </div>
-                            <h3 className="text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent break-all sm:break-normal">
                                 {formatCurrency(totalFleetBalance)}
                             </h3>
                             <p className="text-[10px] text-muted-foreground/60 font-mono uppercase tracking-widest">
