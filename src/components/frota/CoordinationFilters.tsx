@@ -60,7 +60,7 @@ export function CoordinationFilters({
             variant="outline"
             size="sm"
             className={cn(
-              "h-10 gap-2 px-4 text-sm font-medium transition-all duration-300 border-white/10 hover:bg-white/5",
+              "h-10 sm:h-10 min-h-[44px] gap-1.5 sm:gap-2 px-3 sm:px-4 text-xs sm:text-sm font-medium transition-all duration-300 border-white/10 hover:bg-white/5",
               hasSelection
                 ? "bg-primary/20 text-primary border-primary/30 hover:bg-primary/30"
                 : "bg-black/40 text-muted-foreground backdrop-blur-md"
