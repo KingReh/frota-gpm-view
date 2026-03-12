@@ -80,6 +80,6 @@ export default defineConfig(({ mode }) => ({
       "vaul",
       "zod",
     ],
-    force: true,
+    force: false,
   },
 }));
