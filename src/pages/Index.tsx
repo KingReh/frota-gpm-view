@@ -344,7 +344,7 @@ const Index = () => {
               <div className="hidden md:block w-px h-8 bg-white/10" />
 
               {/* View Selection & Sort */}
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-full md:w-auto">
                   {[
                     { mode: 'table', icon: LayoutList, title: 'Visualização em tabela' },
