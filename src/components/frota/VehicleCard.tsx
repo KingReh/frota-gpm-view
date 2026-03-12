@@ -47,7 +47,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
 
           {/* Branding / Badge Slot (Top Left) */}
           {vehicle.coordination && (
-            <div className="absolute left-6 top-6 z-20">
+            <div className="absolute left-3 sm:left-6 top-3 sm:top-6 z-20">
               <CoordinationBadge
                 coordination={vehicle.coordination}
                 compact={compact}
@@ -57,7 +57,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
           )}
 
           {/* Action Slot (Top Right) */}
-          <div className="absolute right-6 top-6 z-30 flex gap-2">
+          <div className="absolute right-3 sm:right-6 top-3 sm:top-6 z-30 flex gap-1.5 sm:gap-2">
             <Button
               size="icon"
               variant="ghost"
