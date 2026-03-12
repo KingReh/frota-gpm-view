@@ -101,8 +101,8 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                       </button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2 md:py-4 px-4 md:px-0">
-                    <span className="text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[72px] md:max-w-none block">
+                  <TableCell className="py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-0">
+                    <span className="text-[10px] sm:text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[60px] sm:max-w-[72px] md:max-w-none block">
                       {vehicle.model || 'N/A'}
                     </span>
                   </TableCell>
