@@ -112,11 +112,11 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
         </div>
 
         {/* Content Section */}
-        <div className="p-8 space-y-8 relative z-20">
+        <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 relative z-20">
           {/* Main Info Row */}
-          <div className="flex flex-col gap-6">
-            <div className="flex items-end justify-between gap-4">
-              <div className="space-y-2">
+          <div className="flex flex-col gap-4 sm:gap-6">
+            <div className="flex items-end justify-between gap-3 sm:gap-4">
+              <div className="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="h-1 w-4 bg-primary rounded-full" />
                   <span className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Identificação</span>
