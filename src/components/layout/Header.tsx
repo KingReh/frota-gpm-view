@@ -91,7 +91,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                             isSynced ? "bg-emerald-500 shadow-[0_0_5px_theme(colors.emerald.500)]" : "bg-amber-500 animate-pulse"
                         )} />
                         <span className="text-[9px] font-mono text-muted-foreground uppercase">
-                            {isSynced ? 'VOCÊ ESTÁ ONLINE' : 'SINCRONIZANDO...'}
+                            {isSynced ? 'ONLINE' : 'SINCRONIZANDO...'}
                         </span>
                     </div>
 
