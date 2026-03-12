@@ -54,7 +54,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                 <TableHead className="hidden md:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Tipo</TableHead>
                 <TableHead className="hidden sm:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Unidade</TableHead>
                 <TableHead className="hidden xl:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 text-right">Limite Próx. Período</TableHead>
-                <TableHead className="text-right text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 pr-4 md:pr-8">Saldo</TableHead>
+                <TableHead className="text-right text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 pr-2 sm:pr-4 md:pr-8">Saldo</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
