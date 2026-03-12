@@ -96,11 +96,11 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                         </span>
                     </div>
 
-                    <div className="flex gap-4 overflow-x-auto py-6 px-4 -mx-4 custom-scrollbar-thin">
+                    <div className="flex gap-3 sm:gap-4 overflow-x-auto py-4 sm:py-6 px-2 sm:px-4 -mx-2 sm:-mx-4 custom-scrollbar-thin">
                         {Object.entries(stats.byCoordination).map(([name, data]) => (
                             <div
                                 key={name}
-                                className="min-w-[240px] glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between group/card relative"
+                                className="min-w-[200px] sm:min-w-[240px] glass-panel p-4 sm:p-6 rounded-2xl border border-white/5 flex flex-col justify-between group/card relative"
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3">

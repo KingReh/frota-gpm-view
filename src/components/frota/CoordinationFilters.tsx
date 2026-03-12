@@ -118,7 +118,7 @@ export function CoordinationFilters({
             variant="ghost"
             size="sm"
             onClick={onClear}
-            className="h-10 gap-1 px-3 text-xs text-muted-foreground hover:text-white hover:bg-white/10 rounded-full"
+            className="h-10 min-h-[44px] gap-1 px-3 text-xs text-muted-foreground hover:text-white hover:bg-white/10 rounded-full"
           >
             <X className="h-3 w-3" />
             Limpar filtros

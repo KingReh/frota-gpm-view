@@ -30,7 +30,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                     )}
                 </div>
                 <div className="flex flex-col">
-                    <h1 className="text-lg font-bold tracking-tight leading-none text-white">
+                    <h1 className="text-base sm:text-lg font-bold tracking-tight leading-none text-white">
                         COMPESA
                         <span className="text-primary ml-1">GPM</span>
                     </h1>

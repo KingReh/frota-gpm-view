@@ -138,7 +138,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               </div>
 
               {/* Technical Badges */}
-              <div className="flex flex-col items-end gap-3">
+              <div className="flex flex-col items-end gap-2 sm:gap-3 shrink-0">
                 <div className="flex flex-col items-end">
                   <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Combustível</span>
                   <div className="flex items-center gap-2 text-foreground/80 bg-muted/20 px-3 py-1 rounded-md border border-border/20">

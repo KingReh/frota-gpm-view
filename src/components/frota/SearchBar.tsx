@@ -16,7 +16,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         placeholder="Buscar por placa ou modelo..."
         value={value}
         onChange={(e) => onChange(e.target.value.toUpperCase())}
-        className="pl-9 pr-9 h-9 text-sm bg-surface-overlay border-border/40 rounded-lg placeholder:text-muted-foreground/50 focus-visible:ring-primary/30 focus-visible:border-primary/40"
+        className="pl-9 pr-9 h-10 sm:h-9 text-sm bg-surface-overlay border-border/40 rounded-lg placeholder:text-muted-foreground/50 focus-visible:ring-primary/30 focus-visible:border-primary/40"
       />
       {value && (
         <Button

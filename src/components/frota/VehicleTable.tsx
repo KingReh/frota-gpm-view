@@ -144,7 +144,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 md:h-10 md:w-10 text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 rounded-lg md:rounded-xl transition-all"
+                        className="h-9 w-9 min-w-[36px] min-h-[36px] sm:h-8 sm:w-8 md:h-10 md:w-10 text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 rounded-lg md:rounded-xl transition-all"
                         onClick={() => setSelectedVehicle(vehicle)}
                       >
                         <Info className="h-4 w-4 md:h-5 md:w-5" />
