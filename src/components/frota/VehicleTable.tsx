@@ -43,7 +43,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 
   return (
     <>
-      <div className="glass-panel rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-black/20 shadow-2xl mx-1 md:mx-0">
+      <div className="glass-panel rounded-xl sm:rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-black/20 shadow-2xl mx-0">
         <div className="overflow-x-auto scrollbar-hide">
           <Table>
             <TableHeader>
