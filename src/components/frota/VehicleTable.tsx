@@ -133,7 +133,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                       </span>
                     ) : '-'}
                   </TableCell>
-                  <TableCell className="text-right py-2 md:py-4 pr-4 md:pr-8">
+                  <TableCell className="text-right py-2 sm:py-3 md:py-4 pr-2 sm:pr-4 md:pr-8">
                     <div className="flex items-center justify-end gap-3">
                       <div className="inline-flex items-center gap-2 md:gap-4">
                         <span className="font-mono font-black text-[11px] md:text-sm text-white tracking-tight">
