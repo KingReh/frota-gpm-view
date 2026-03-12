@@ -17,11 +17,11 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
     const { toast } = useToast();
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-16 z-50 px-2 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
+        <header className="fixed top-0 left-0 right-0 h-14 sm:h-16 z-50 px-2 sm:px-3 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
             {/* Brand Identity */}
             <div className="flex items-center gap-3">
-                <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
-                    <Car className="w-6 h-6 text-white" />
+                <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
+                    <Car className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     {recentlyUpdated && (
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
@@ -30,7 +30,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                     )}
                 </div>
                 <div className="flex flex-col">
-                    <h1 className="text-lg font-bold tracking-tight leading-none text-white">
+                    <h1 className="text-base sm:text-lg font-bold tracking-tight leading-none text-white">
                         COMPESA
                         <span className="text-primary ml-1">GPM</span>
                     </h1>

@@ -47,7 +47,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
 
           {/* Branding / Badge Slot (Top Left) */}
           {vehicle.coordination && (
-            <div className="absolute left-6 top-6 z-20">
+            <div className="absolute left-3 sm:left-6 top-3 sm:top-6 z-20">
               <CoordinationBadge
                 coordination={vehicle.coordination}
                 compact={compact}
@@ -57,7 +57,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
           )}
 
           {/* Action Slot (Top Right) */}
-          <div className="absolute right-6 top-6 z-30 flex gap-2">
+          <div className="absolute right-3 sm:right-6 top-3 sm:top-6 z-30 flex gap-1.5 sm:gap-2">
             <Button
               size="icon"
               variant="ghost"
@@ -112,17 +112,17 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
         </div>
 
         {/* Content Section */}
-        <div className="p-8 space-y-8 relative z-20">
+        <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 relative z-20">
           {/* Main Info Row */}
-          <div className="flex flex-col gap-6">
-            <div className="flex items-end justify-between gap-4">
-              <div className="space-y-2">
+          <div className="flex flex-col gap-4 sm:gap-6">
+            <div className="flex items-end justify-between gap-3 sm:gap-4">
+              <div className="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="h-1 w-4 bg-primary rounded-full" />
                   <span className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Identificação</span>
                 </div>
                 <button
-                  className="bg-surface-overlay border border-border/40 px-4 py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.2em] text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
+                  className="bg-surface-overlay border border-border/40 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.15em] sm:tracking-[0.2em] text-lg sm:text-xl md:text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
                   title="Clique para copiar a placa"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -132,13 +132,13 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 >
                   {vehicle.plate}
                 </button>
-                <h3 className="text-foreground text-lg font-bold tracking-tight line-clamp-1 opacity-90">
+                <h3 className="text-foreground text-sm sm:text-base md:text-lg font-bold tracking-tight line-clamp-1 opacity-90">
                   {vehicle.model || 'Protótipo não identificado'}
                 </h3>
               </div>
 
               {/* Technical Badges */}
-              <div className="flex flex-col items-end gap-3">
+              <div className="flex flex-col items-end gap-2 sm:gap-3 shrink-0">
                 <div className="flex flex-col items-end">
                   <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Combustível</span>
                   <div className="flex items-center gap-2 text-foreground/80 bg-muted/20 px-3 py-1 rounded-md border border-border/20">

@@ -257,9 +257,9 @@ const Index = () => {
       coordinations={coordinations}
       selectedCoordinations={preferences.selectedCoordinations}
     >
-      <div className="space-y-8">
+      <div className="space-y-5 sm:space-y-6 md:space-y-8">
         {/* 1. Global Filters (Centered at Top) */}
-        <div className="flex justify-center items-center gap-2 w-full px-2 md:px-0">
+        <div className="flex justify-center items-center gap-2 w-full px-1 sm:px-2 md:px-0">
           {/* Atualizar Saldo - mobile only (left side) */}
           <button
             onClick={() => {
@@ -269,7 +269,7 @@ const Index = () => {
                 variant: "destructive",
               });
             }}
-            className="md:hidden flex w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 shrink-0"
+            className="md:hidden flex w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 shrink-0"
             title="Atualizar Saldo"
           >
             <Upload className="w-4 h-4 text-muted-foreground" />
@@ -286,7 +286,7 @@ const Index = () => {
           {/* Dashboard Link - mobile only (right side) */}
           <Link
             to="/dashboard"
-            className="md:hidden flex w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 shrink-0"
+            className="md:hidden flex w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 shrink-0"
             title="Dashboard"
           >
             <BarChart3 className="w-4 h-4 text-muted-foreground" />
@@ -302,21 +302,21 @@ const Index = () => {
         <Tabs
           value={preferences.activeTab}
           onValueChange={(value) => setActiveTab(value as FleetTab)}
-          className="space-y-8"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
         >
           {/* 3. Main Control Bar: Tabs + View Selection + Search */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 md:gap-6 lg:gap-8 glass-panel p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
-            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-8">
-              <TabsList className="bg-transparent p-0 gap-2 shrink-0 w-full md:w-auto flex overflow-x-auto scrollbar-hide">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 md:gap-6 lg:gap-8 glass-panel p-2.5 sm:p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2.5 sm:gap-3 md:gap-8">
+              <TabsList className="bg-transparent p-0 gap-1.5 sm:gap-2 shrink-0 w-full md:w-auto flex overflow-x-auto scrollbar-hide">
                 <TabsTrigger
                   value="fleet"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-3 md:px-8 py-2 text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
                 >
                   Frota Geral
                 </TabsTrigger>
                 <TabsTrigger
                   value="undefined"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-3 md:px-8 py-2 text-xs md:text-sm gap-2 transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm gap-1.5 sm:gap-2 transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
                 >
                   Indefinidos
                   {!isLoading && undefinedVehicles.length > 0 && (
@@ -328,7 +328,7 @@ const Index = () => {
 
                 <TabsTrigger
                   value="favorites"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 px-3 md:px-8 py-2 text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap gap-2"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap gap-1.5 sm:gap-2"
                 >
                   <Star className="w-3 h-3 md:w-3.5 md:h-3.5" fill={preferences.activeTab === 'favorites' ? 'currentColor' : 'none'} />
                   <span className="hidden md:inline">Favoritos</span>
@@ -344,7 +344,7 @@ const Index = () => {
               <div className="hidden md:block w-px h-8 bg-white/10" />
 
               {/* View Selection & Sort */}
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-full md:w-auto">
                   {[
                     { mode: 'table', icon: LayoutList, title: 'Visualização em tabela' },
@@ -376,11 +376,11 @@ const Index = () => {
               {/* Export Button */}
               <button
                 onClick={handleExportBalance}
-                className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group w-full sm:w-auto"
+                className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 min-h-[44px] rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group w-full sm:w-auto"
                 title="Compartilhar ou copiar saldo"
               >
                 <Share className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
-                <span className="text-sm font-medium">Enviar/Copiar</span>
+                <span className="text-xs sm:text-sm font-medium">Enviar/Copiar</span>
               </button>
             </div>
 

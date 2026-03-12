@@ -37,10 +37,10 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
     if (vehicles.length === 0 && totalFleetBalance === 0) return null;
 
     return (
-        <div className="space-y-8 p-4 md:p-6 lg:p-8 mesh-bg rounded-2xl overflow-hidden border border-white/5">
-            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8 p-3 sm:p-4 md:p-6 lg:p-8 mesh-bg rounded-2xl overflow-hidden border border-white/5">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 md:gap-8">
                 {/* Main Dashboard Card */}
-                <div className="md:col-span-2 lg:col-span-2 glass-panel p-8 rounded-2xl relative overflow-hidden group border-l-4 border-l-primary shadow-lg">
+                <div className="md:col-span-2 lg:col-span-2 glass-panel p-4 sm:p-6 md:p-8 rounded-2xl relative overflow-hidden group border-l-4 border-l-primary shadow-lg">
                     <div className="absolute right-[-20px] top-[-20px] opacity-5 group-hover:opacity-10 transition-opacity duration-700">
                         <Wallet className="w-48 h-48 rotate-12" />
                     </div>
@@ -55,7 +55,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                     Somatório da Frota GPM
                                 </p>
                             </div>
-                            <h3 className="text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent break-all sm:break-normal">
                                 {formatCurrency(totalFleetBalance)}
                             </h3>
                             <p className="text-[10px] text-muted-foreground/60 font-mono uppercase tracking-widest">
@@ -96,11 +96,11 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                         </span>
                     </div>
 
-                    <div className="flex gap-4 overflow-x-auto py-6 px-4 -mx-4 custom-scrollbar-thin">
+                    <div className="flex gap-3 sm:gap-4 overflow-x-auto py-4 sm:py-6 px-2 sm:px-4 -mx-2 sm:-mx-4 custom-scrollbar-thin">
                         {Object.entries(stats.byCoordination).map(([name, data]) => (
                             <div
                                 key={name}
-                                className="min-w-[240px] glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between group/card relative"
+                                className="min-w-[200px] sm:min-w-[240px] glass-panel p-4 sm:p-6 rounded-2xl border border-white/5 flex flex-col justify-between group/card relative"
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3">

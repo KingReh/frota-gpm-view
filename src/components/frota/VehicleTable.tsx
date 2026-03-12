@@ -43,18 +43,18 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
 
   return (
     <>
-      <div className="glass-panel rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-black/20 shadow-2xl mx-1 md:mx-0">
+      <div className="glass-panel rounded-xl sm:rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-black/20 shadow-2xl mx-0">
         <div className="overflow-x-auto scrollbar-hide">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-white/10 hover:bg-transparent bg-white/5">
-                <TableHead className="w-[112px] md:w-[144px] text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 pl-4 md:pl-8">Placa</TableHead>
-                <TableHead className="text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 px-4 md:px-0">Modelo</TableHead>
+                <TableHead className="w-[100px] sm:w-[112px] md:w-[144px] text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 pl-2 sm:pl-4 md:pl-8">Placa</TableHead>
+                <TableHead className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 px-2 sm:px-4 md:px-0">Modelo</TableHead>
                 <TableHead className="hidden lg:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Concessionária</TableHead>
                 <TableHead className="hidden md:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Tipo</TableHead>
                 <TableHead className="hidden sm:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Unidade</TableHead>
                 <TableHead className="hidden xl:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 text-right">Limite Próx. Período</TableHead>
-                <TableHead className="text-right text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 pr-4 md:pr-8">Saldo</TableHead>
+                <TableHead className="text-right text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 pr-2 sm:pr-4 md:pr-8">Saldo</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -66,7 +66,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                   key={vehicle.plate}
                   className="border-b border-white/5 hover:bg-white/[0.03] transition-all group relative"
                 >
-                  <TableCell className="pl-4 md:pl-8 py-3 md:py-4 relative">
+                  <TableCell className="pl-2 sm:pl-4 md:pl-8 py-2.5 sm:py-3 md:py-4 relative">
                     {/* Horizontal row highlight line */}
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/5 bg-primary rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -101,8 +101,8 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                       </button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2 md:py-4 px-4 md:px-0">
-                    <span className="text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[72px] md:max-w-none block">
+                  <TableCell className="py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-0">
+                    <span className="text-[10px] sm:text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[60px] sm:max-w-[72px] md:max-w-none block">
                       {vehicle.model || 'N/A'}
                     </span>
                   </TableCell>
@@ -133,10 +133,10 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                       </span>
                     ) : '-'}
                   </TableCell>
-                  <TableCell className="text-right py-2 md:py-4 pr-4 md:pr-8">
+                  <TableCell className="text-right py-2 sm:py-3 md:py-4 pr-2 sm:pr-4 md:pr-8">
                     <div className="flex items-center justify-end gap-3">
                       <div className="inline-flex items-center gap-2 md:gap-4">
-                        <span className="font-mono font-black text-[11px] md:text-sm text-white tracking-tight">
+                        <span className="font-mono font-black text-[10px] sm:text-[11px] md:text-sm text-white tracking-tight">
                           {isBalanceMasked(vehicle.plate) ? '••••••' : parseBalance(vehicle.balance).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </span>
                         <div className="h-1 w-1 md:h-2 md:w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,102,179,0.8)] animate-pulse hidden xs:block" />
@@ -144,7 +144,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 md:h-10 md:w-10 text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 rounded-lg md:rounded-xl transition-all"
+                        className="h-9 w-9 min-w-[36px] min-h-[36px] sm:h-8 sm:w-8 md:h-10 md:w-10 text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 rounded-lg md:rounded-xl transition-all"
                         onClick={() => setSelectedVehicle(vehicle)}
                       >
                         <Info className="h-4 w-4 md:h-5 md:w-5" />
