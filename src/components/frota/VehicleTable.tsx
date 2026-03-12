@@ -48,8 +48,8 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
           <Table>
             <TableHeader>
               <TableRow className="border-b border-white/10 hover:bg-transparent bg-white/5">
-                <TableHead className="w-[112px] md:w-[144px] text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 pl-4 md:pl-8">Placa</TableHead>
-                <TableHead className="text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 px-4 md:px-0">Modelo</TableHead>
+                <TableHead className="w-[100px] sm:w-[112px] md:w-[144px] text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 pl-2 sm:pl-4 md:pl-8">Placa</TableHead>
+                <TableHead className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 px-2 sm:px-4 md:px-0">Modelo</TableHead>
                 <TableHead className="hidden lg:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Concessionária</TableHead>
                 <TableHead className="hidden md:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Tipo</TableHead>
                 <TableHead className="hidden sm:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Unidade</TableHead>
