@@ -132,7 +132,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 >
                   {vehicle.plate}
                 </button>
-                <h3 className="text-foreground text-lg font-bold tracking-tight line-clamp-1 opacity-90">
+                <h3 className="text-foreground text-sm sm:text-base md:text-lg font-bold tracking-tight line-clamp-1 opacity-90">
                   {vehicle.model || 'Protótipo não identificado'}
                 </h3>
               </div>
