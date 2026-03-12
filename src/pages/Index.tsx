@@ -259,7 +259,7 @@ const Index = () => {
     >
       <div className="space-y-8">
         {/* 1. Global Filters (Centered at Top) */}
-        <div className="flex justify-center items-center gap-2 w-full px-2 md:px-0">
+        <div className="flex justify-center items-center gap-2 w-full px-1 sm:px-2 md:px-0">
           {/* Atualizar Saldo - mobile only (left side) */}
           <button
             onClick={() => {
@@ -269,7 +269,7 @@ const Index = () => {
                 variant: "destructive",
               });
             }}
-            className="md:hidden flex w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 shrink-0"
+            className="md:hidden flex w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 shrink-0"
             title="Atualizar Saldo"
           >
             <Upload className="w-4 h-4 text-muted-foreground" />
