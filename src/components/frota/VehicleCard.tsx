@@ -122,7 +122,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                   <span className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Identificação</span>
                 </div>
                 <button
-                  className="bg-surface-overlay border border-border/40 px-4 py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.2em] text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
+                  className="bg-surface-overlay border border-border/40 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.15em] sm:tracking-[0.2em] text-lg sm:text-xl md:text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
                   title="Clique para copiar a placa"
                   onClick={(e) => {
                     e.stopPropagation();
