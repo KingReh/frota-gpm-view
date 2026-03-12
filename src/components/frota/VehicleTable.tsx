@@ -136,7 +136,7 @@ export function VehicleTable({ vehicles }: VehicleTableProps) {
                   <TableCell className="text-right py-2 sm:py-3 md:py-4 pr-2 sm:pr-4 md:pr-8">
                     <div className="flex items-center justify-end gap-3">
                       <div className="inline-flex items-center gap-2 md:gap-4">
-                        <span className="font-mono font-black text-[11px] md:text-sm text-white tracking-tight">
+                        <span className="font-mono font-black text-[10px] sm:text-[11px] md:text-sm text-white tracking-tight">
                           {isBalanceMasked(vehicle.plate) ? '••••••' : parseBalance(vehicle.balance).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </span>
                         <div className="h-1 w-1 md:h-2 md:w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,102,179,0.8)] animate-pulse hidden xs:block" />
