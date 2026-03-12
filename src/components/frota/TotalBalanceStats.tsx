@@ -37,10 +37,10 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
     if (vehicles.length === 0 && totalFleetBalance === 0) return null;
 
     return (
-        <div className="space-y-8 p-4 md:p-6 lg:p-8 mesh-bg rounded-2xl overflow-hidden border border-white/5">
-            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        <div className="space-y-5 sm:space-y-6 md:space-y-8 p-3 sm:p-4 md:p-6 lg:p-8 mesh-bg rounded-2xl overflow-hidden border border-white/5">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 md:gap-8">
                 {/* Main Dashboard Card */}
-                <div className="md:col-span-2 lg:col-span-2 glass-panel p-8 rounded-2xl relative overflow-hidden group border-l-4 border-l-primary shadow-lg">
+                <div className="md:col-span-2 lg:col-span-2 glass-panel p-4 sm:p-6 md:p-8 rounded-2xl relative overflow-hidden group border-l-4 border-l-primary shadow-lg">
                     <div className="absolute right-[-20px] top-[-20px] opacity-5 group-hover:opacity-10 transition-opacity duration-700">
                         <Wallet className="w-48 h-48 rotate-12" />
                     </div>
