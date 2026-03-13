@@ -257,7 +257,7 @@ const Index = () => {
       coordinations={coordinations}
       selectedCoordinations={preferences.selectedCoordinations}
     >
-      <div className="space-y-5 sm:space-y-6 md:space-y-8">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {/* 1. Global Filters (Centered at Top) */}
         <div className="flex justify-center items-center gap-2 w-full px-1 sm:px-2 md:px-0">
           {/* Atualizar Saldo - mobile only (left side) */}
@@ -305,18 +305,18 @@ const Index = () => {
           className="space-y-5 sm:space-y-6 md:space-y-8"
         >
           {/* 3. Main Control Bar: Tabs + View Selection + Search */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 md:gap-6 lg:gap-8 glass-panel p-2.5 sm:p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2 sm:gap-3 md:gap-6 lg:gap-8 glass-panel p-2 sm:p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-14 sm:top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2.5 sm:gap-3 md:gap-8">
-              <TabsList className="bg-transparent p-0 gap-1.5 sm:gap-2 shrink-0 w-full md:w-auto flex overflow-x-auto scrollbar-hide">
+              <TabsList className="bg-transparent p-0 gap-1 sm:gap-2 shrink-0 w-full md:w-auto flex overflow-x-auto scrollbar-hide">
                 <TabsTrigger
                   value="fleet"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2 sm:px-3 md:px-8 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] text-[10px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
                 >
-                  Frota Geral
+                  Frota
                 </TabsTrigger>
                 <TabsTrigger
                   value="undefined"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm gap-1.5 sm:gap-2 transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2 sm:px-3 md:px-8 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] text-[10px] sm:text-xs md:text-sm gap-1 sm:gap-2 transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
                 >
                   Indefinidos
                   {!isLoading && undefinedVehicles.length > 0 && (
@@ -328,7 +328,7 @@ const Index = () => {
 
                 <TabsTrigger
                   value="favorites"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap gap-1.5 sm:gap-2"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 px-2 sm:px-3 md:px-8 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] text-[10px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap gap-1 sm:gap-2"
                 >
                   <Star className="w-3 h-3 md:w-3.5 md:h-3.5" fill={preferences.activeTab === 'favorites' ? 'currentColor' : 'none'} />
                   <span className="hidden md:inline">Favoritos</span>

@@ -17,10 +17,10 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
     const { toast } = useToast();
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-14 sm:h-16 z-50 px-2 sm:px-3 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
+        <header className="fixed top-0 left-0 right-0 h-14 sm:h-16 z-50 px-1.5 sm:px-3 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10">
             {/* Brand Identity */}
-            <div className="flex items-center gap-3">
-                <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
+            <div className="flex items-center gap-2 sm:gap-3">
+                <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
                     <Car className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     {recentlyUpdated && (
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -40,7 +40,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
                 {/* Atualizar Saldo - desktop only */}
                 <button
                     onClick={() => {
@@ -67,7 +67,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 </Link>
 
                 {/* Sync Status - Adaptive Layout */}
-                <div className="flex flex-col items-end mr-1 md:mr-4">
+                <div className="flex flex-col items-end mr-0 sm:mr-1 md:mr-4">
                     {/* Desktop: Full Status */}
                     <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
                         <RefreshCw

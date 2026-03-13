@@ -56,19 +56,19 @@ export function CoordinationFilters({
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
+           <Button
             variant="outline"
             size="sm"
             className={cn(
-              "h-10 sm:h-10 min-h-[44px] gap-1.5 sm:gap-2 px-3 sm:px-4 text-xs sm:text-sm font-medium transition-all duration-300 border-white/10 hover:bg-white/5",
+              "h-10 sm:h-10 min-h-[44px] gap-1 sm:gap-2 px-2.5 sm:px-4 text-[11px] sm:text-sm font-medium transition-all duration-300 border-white/10 hover:bg-white/5 max-w-[200px] sm:max-w-none",
               hasSelection
                 ? "bg-primary/20 text-primary border-primary/30 hover:bg-primary/30"
                 : "bg-black/40 text-muted-foreground backdrop-blur-md"
             )}
           >
-            <Filter className={cn("w-4 h-4", hasSelection && "text-primary")} />
-            {getButtonLabel()}
-            <ChevronDown className="h-4 w-4 opacity-50" />
+            <Filter className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0", hasSelection && "text-primary")} />
+            <span className="truncate">{getButtonLabel()}</span>
+            <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 opacity-50 shrink-0" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
