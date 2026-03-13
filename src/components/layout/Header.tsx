@@ -40,7 +40,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
                 {/* Atualizar Saldo - desktop only */}
                 <button
                     onClick={() => {
