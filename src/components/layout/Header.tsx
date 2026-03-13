@@ -67,7 +67,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 </Link>
 
                 {/* Sync Status - Adaptive Layout */}
-                <div className="flex flex-col items-end mr-1 md:mr-4">
+                <div className="flex flex-col items-end mr-0 sm:mr-1 md:mr-4">
                     {/* Desktop: Full Status */}
                     <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
                         <RefreshCw

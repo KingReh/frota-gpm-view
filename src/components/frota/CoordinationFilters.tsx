@@ -56,11 +56,11 @@ export function CoordinationFilters({
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
+           <Button
             variant="outline"
             size="sm"
             className={cn(
-              "h-10 sm:h-10 min-h-[44px] gap-1.5 sm:gap-2 px-3 sm:px-4 text-xs sm:text-sm font-medium transition-all duration-300 border-white/10 hover:bg-white/5",
+              "h-10 sm:h-10 min-h-[44px] gap-1 sm:gap-2 px-2.5 sm:px-4 text-[11px] sm:text-sm font-medium transition-all duration-300 border-white/10 hover:bg-white/5 max-w-[200px] sm:max-w-none",
               hasSelection
                 ? "bg-primary/20 text-primary border-primary/30 hover:bg-primary/30"
                 : "bg-black/40 text-muted-foreground backdrop-blur-md"

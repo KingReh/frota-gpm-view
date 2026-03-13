@@ -257,7 +257,7 @@ const Index = () => {
       coordinations={coordinations}
       selectedCoordinations={preferences.selectedCoordinations}
     >
-      <div className="space-y-5 sm:space-y-6 md:space-y-8">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {/* 1. Global Filters (Centered at Top) */}
         <div className="flex justify-center items-center gap-2 w-full px-1 sm:px-2 md:px-0">
           {/* Atualizar Saldo - mobile only (left side) */}
