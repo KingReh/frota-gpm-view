@@ -328,7 +328,7 @@ const Index = () => {
 
                 <TabsTrigger
                   value="favorites"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap gap-1.5 sm:gap-2"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-yellow-500/20 data-[state=active]:text-yellow-400 px-2 sm:px-3 md:px-8 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] text-[10px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap gap-1 sm:gap-2"
                 >
                   <Star className="w-3 h-3 md:w-3.5 md:h-3.5" fill={preferences.activeTab === 'favorites' ? 'currentColor' : 'none'} />
                   <span className="hidden md:inline">Favoritos</span>
