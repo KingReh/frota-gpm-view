@@ -66,9 +66,9 @@ export function CoordinationFilters({
                 : "bg-black/40 text-muted-foreground backdrop-blur-md"
             )}
           >
-            <Filter className={cn("w-4 h-4", hasSelection && "text-primary")} />
-            {getButtonLabel()}
-            <ChevronDown className="h-4 w-4 opacity-50" />
+            <Filter className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0", hasSelection && "text-primary")} />
+            <span className="truncate">{getButtonLabel()}</span>
+            <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 opacity-50 shrink-0" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
