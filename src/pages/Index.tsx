@@ -316,7 +316,7 @@ const Index = () => {
                 </TabsTrigger>
                 <TabsTrigger
                   value="undefined"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm gap-1.5 sm:gap-2 transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2 sm:px-3 md:px-8 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] text-[10px] sm:text-xs md:text-sm gap-1 sm:gap-2 transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
                 >
                   Indefinidos
                   {!isLoading && undefinedVehicles.length > 0 && (
