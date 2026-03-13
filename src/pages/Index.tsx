@@ -310,9 +310,9 @@ const Index = () => {
               <TabsList className="bg-transparent p-0 gap-1 sm:gap-2 shrink-0 w-full md:w-auto flex overflow-x-auto scrollbar-hide">
                 <TabsTrigger
                   value="fleet"
-                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2.5 sm:px-3 md:px-8 py-2 min-h-[40px] text-[11px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
+                  className="rounded-lg md:rounded-xl data-[state=active]:bg-primary data-[state=active]:text-white px-2 sm:px-3 md:px-8 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] text-[10px] sm:text-xs md:text-sm transition-all duration-300 font-bold flex-1 md:flex-none whitespace-nowrap"
                 >
-                  Frota Geral
+                  Frota
                 </TabsTrigger>
                 <TabsTrigger
                   value="undefined"
