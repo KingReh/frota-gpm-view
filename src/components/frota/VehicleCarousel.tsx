@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Car } from 'lucide-react';
 import {
   Carousel,
@@ -21,18 +21,51 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
+
+  const onScroll = useCallback(() => {
+    if (!api) return;
+    setScrollProgress(api.scrollProgress());
+  }, [api]);
 
   useEffect(() => {
     if (!api) return;
 
     setCount(api.scrollSnapList().length);
+    setScrollSnaps(api.scrollSnapList());
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on('select', () => {
       setCurrent(api.selectedScrollSnap() + 1);
     });
-  }, [api]);
+    api.on('scroll', onScroll);
+
+    return () => {
+      api.off('scroll', onScroll);
+    };
+  }, [api, onScroll]);
+
+  // Calculate scale/opacity for each slide based on distance from center
+  const getSlideStyle = (index: number) => {
+    if (!api || scrollSnaps.length === 0) {
+      return { transform: 'scale(1)', opacity: 1 };
+    }
+
+    const snapPosition = scrollSnaps[index] || 0;
+    const diffToTarget = scrollProgress - snapPosition;
+    // Normalize distance (0 = center, 1 = fully off)
+    const distance = Math.abs(diffToTarget);
+    
+    const scale = Math.max(0.82, 1 - distance * 0.35);
+    const opacity = Math.max(0.4, 1 - distance * 1.2);
+
+    return {
+      transform: `scale(${scale})`,
+      opacity,
+    };
+  };
 
   if (vehicles.length === 0) {
     return (
@@ -63,9 +96,12 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
           }}
         >
           <CarouselContent className="-ml-4 md:-ml-8">
-            {vehicles.map((vehicle) => (
+            {vehicles.map((vehicle, index) => (
               <CarouselItem key={vehicle.plate} className="pl-4 md:pl-8 basis-[85%] md:basis-1/2 lg:basis-[60%]">
-                <div className="py-4 md:py-8">
+                <div
+                  className="py-4 md:py-8 transition-[transform,opacity] duration-150 ease-out will-change-transform"
+                  style={getSlideStyle(index)}
+                >
                   <VehicleCard
                     vehicle={vehicle}
                     size="large"
@@ -84,7 +120,7 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
           </div>
         </Carousel>
 
-        {/* Counter / Pager - 8px Multiples */}
+        {/* Counter / Pager */}
         <div className="mt-12 flex items-center gap-3">
           {Array.from({ length: Math.min(count, 12) }).map((_, i) => (
             <div
@@ -92,11 +128,11 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
               className="h-1.5 rounded-full transition-[width,background-color] duration-200"
               style={{
                 width: current === i + 1 ? 40 : 12,
-                backgroundColor: current === i + 1 ? "rgba(0, 102, 179, 1)" : "rgba(255, 255, 255, 0.1)"
+                backgroundColor: current === i + 1 ? "hsl(207, 100%, 35%)" : "rgba(255, 255, 255, 0.1)"
               }}
             />
           ))}
-          {count > 12 && <span className="text-[10px] font-mono text-zinc-500 ml-4 font-bold whitespace-nowrap">Página {current} / {count}</span>}
+          {count > 12 && <span className="text-[10px] font-mono text-muted-foreground ml-4 font-bold whitespace-nowrap">Página {current} / {count}</span>}
         </div>
       </div>
       <VehicleDetailModal
