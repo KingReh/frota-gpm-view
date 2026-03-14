@@ -56,8 +56,10 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
           opts={{
             align: 'center',
             loop: true,
-            dragFree: false,
+            dragFree: true,
             containScroll: 'trimSnaps',
+            duration: 18,
+            skipSnaps: true,
           }}
         >
           <CarouselContent className="-ml-4 md:-ml-8">
