@@ -1,5 +1,5 @@
 export const Footer = () => (
-  <footer className="w-full py-6 px-4 text-center select-none">
+  <footer className="w-full py-6 px-4 text-center select-none pb-safe">
     <p className="text-[10px] sm:text-[11px] text-muted-foreground/40 font-mono tracking-wide leading-relaxed">
       Desenvolvido por: <span className="text-muted-foreground/55">Renato Henrique</span> — Administrativo CMA SUL/GPM
     </p>
