@@ -52,7 +52,7 @@ export const DashboardLayout = ({
                     selectedCoordinations={selectedCoordinations}
                 />
 
-                <main className="pt-[60px] sm:pt-20 px-1 sm:px-2 md:px-4 lg:px-8 pb-12 max-w-[1920px] mx-auto animate-in fade-in zoom-in-95 duration-500">
+                <main className="pt-[calc(60px+env(safe-area-inset-top,0px))] sm:pt-20 px-1 sm:px-2 md:px-4 lg:px-8 pb-12 max-w-[1920px] mx-auto animate-in fade-in zoom-in-95 duration-500">
                     {children}
                 </main>
                 <Footer />
