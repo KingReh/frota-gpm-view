@@ -305,7 +305,7 @@ const Index = () => {
           className="space-y-5 sm:space-y-6 md:space-y-8"
         >
           {/* 3. Main Control Bar: Tabs + View Selection + Search */}
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2 sm:gap-3 md:gap-6 lg:gap-8 glass-panel p-2 sm:p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-14 sm:top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2 sm:gap-3 md:gap-6 lg:gap-8 glass-panel p-2 sm:p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] sm:top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2.5 sm:gap-3 md:gap-8">
               <TabsList className="bg-transparent p-0 gap-1 sm:gap-2 shrink-0 w-full md:w-auto flex overflow-x-auto scrollbar-hide">
                 <TabsTrigger
