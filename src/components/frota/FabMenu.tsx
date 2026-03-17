@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
 import { useGestorFrota } from "@/hooks/useGestorFrota";
@@ -31,6 +31,12 @@ const links = [
     href: "https://bi-frota.lovable.app/regularizacao-documentos",
     icon: FileText,
     description: "Documentos de veículos",
+  },
+  {
+    label: "AutoVision",
+    href: "https://www.autovisionweb.ddns.com.br",
+    icon: Map,
+    description: "Sistema de monitoramento de veículos",
   },
 ];
 
