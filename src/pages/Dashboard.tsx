@@ -277,6 +277,7 @@ function DashboardPage() {
       </main>
 
       <Footer />
+      <EndOfMonthAlert />
       <DrivingTipsToast />
       <FabMenu
         vehicles={[]}
