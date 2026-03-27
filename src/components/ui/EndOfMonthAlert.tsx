@@ -8,8 +8,8 @@ function isLastThreeDaysOfMonth(): boolean {
 }
 
 export function EndOfMonthAlert() {
-  const [dismissed, setDismissed] = useState(false);
-  const shouldShow = useMemo(() => isLastThreeDaysOfMonth(), []);
+  const [dismissed, setDismissed] = React.useState(false);
+  const shouldShow = React.useMemo(() => isLastThreeDaysOfMonth(), []);
 
   if (!shouldShow || dismissed) return null;
 
