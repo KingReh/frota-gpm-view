@@ -1,5 +1,5 @@
+import * as React from "react";
 import { AlertTriangle, X } from "lucide-react";
-import { useState, useMemo } from "react";
 
 function isLastThreeDaysOfMonth(): boolean {
   const now = new Date();
@@ -8,8 +8,8 @@ function isLastThreeDaysOfMonth(): boolean {
 }
 
 export function EndOfMonthAlert() {
-  const [dismissed, setDismissed] = useState(false);
-  const shouldShow = useMemo(() => isLastThreeDaysOfMonth(), []);
+  const [dismissed, setDismissed] = React.useState(false);
+  const shouldShow = React.useMemo(() => isLastThreeDaysOfMonth(), []);
 
   if (!shouldShow || dismissed) return null;
 
