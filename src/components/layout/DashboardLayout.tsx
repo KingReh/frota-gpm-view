@@ -46,6 +46,7 @@ export const DashboardLayout = ({
                     recentlyUpdated={recentlyUpdated}
                 />
 
+                <EndOfMonthAlert />
                 <DrivingTipsToast />
                 <FabMenu
                     vehicles={vehicles}
