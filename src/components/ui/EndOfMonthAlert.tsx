@@ -2,9 +2,11 @@ import * as React from "react";
 import { AlertTriangle, X } from "lucide-react";
 
 function isLastThreeDaysOfMonth(): boolean {
-  const now = new Date();
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  return now.getDate() >= lastDay - 2;
+  // TODO: remove forced true — temporary test override
+  return true;
+  // const now = new Date();
+  // const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  // return now.getDate() >= lastDay - 2;
 }
 
 export function EndOfMonthAlert() {
