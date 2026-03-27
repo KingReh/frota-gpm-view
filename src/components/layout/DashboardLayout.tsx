@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { DrivingTipsToast } from "@/components/ui/DrivingTipsToast";
+import { EndOfMonthAlert } from "@/components/ui/EndOfMonthAlert";
 import { FabMenu } from "@/components/frota/FabMenu";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
 
@@ -45,6 +46,7 @@ export const DashboardLayout = ({
                     recentlyUpdated={recentlyUpdated}
                 />
 
+                <EndOfMonthAlert />
                 <DrivingTipsToast />
                 <FabMenu
                     vehicles={vehicles}

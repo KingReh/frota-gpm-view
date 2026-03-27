@@ -9,6 +9,7 @@ import { useCoordinations } from '@/hooks/useCoordinations';
 import { useVehicles } from '@/hooks/useVehicles';
 import { FabMenu } from '@/components/frota/FabMenu';
 import { DrivingTipsToast } from '@/components/ui/DrivingTipsToast';
+import { EndOfMonthAlert } from '@/components/ui/EndOfMonthAlert';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { FleetTypeChart } from '@/components/dashboard/FleetTypeChart';
@@ -276,6 +277,7 @@ function DashboardPage() {
       </main>
 
       <Footer />
+      <EndOfMonthAlert />
       <DrivingTipsToast />
       <FabMenu
         vehicles={[]}
