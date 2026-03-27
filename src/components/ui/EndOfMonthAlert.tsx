@@ -1,5 +1,5 @@
+import * as React from "react";
 import { AlertTriangle, X } from "lucide-react";
-import { useState, useMemo } from "react";
 
 function isLastThreeDaysOfMonth(): boolean {
   const now = new Date();
