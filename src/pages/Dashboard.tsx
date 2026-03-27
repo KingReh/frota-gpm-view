@@ -175,13 +175,10 @@ function DashboardPage() {
         </div>
       </header>
 
-      {/* End of month alert */}
-      <div className="pt-16">
-        <EndOfMonthAlert />
-      </div>
-
       {/* Content */}
-      <main className="pb-10 px-3 md:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6 pt-4">
+      <main className="pt-20 pb-10 px-3 md:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6">
+        {/* End of month alert */}
+        <EndOfMonthAlert />
         {/* Filters + Export (mobile) */}
         <div className="flex items-center gap-2 flex-wrap">
           <CoordinationFilters
