@@ -14,7 +14,7 @@ export function EndOfMonthAlert() {
   if (!shouldShow || dismissed) return null;
 
   return (
-    <div className="w-full bg-[hsl(var(--balance-medium)/0.15)] border-b border-[hsl(var(--balance-medium)/0.3)] px-4 py-2.5">
+    <div className="sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] sm:top-16 z-40 w-full bg-[hsl(var(--balance-medium)/0.15)] border-b border-[hsl(var(--balance-medium)/0.3)] px-4 py-2.5">
       <div className="max-w-[1920px] mx-auto flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-[hsl(var(--balance-medium))] shrink-0 mt-0.5" />
         <p className="text-sm text-foreground flex-1">
