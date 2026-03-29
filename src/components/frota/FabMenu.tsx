@@ -49,8 +49,32 @@ interface FabMenuProps {
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const [isOverFooter, setIsOverFooter] = useState(false);
+  const fabRef = useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkOverlap = () => {
+      const footer = document.querySelector('footer');
+      const fab = fabRef.current?.querySelector('button');
+      if (!footer || !fab) return;
+
+      const footerRect = footer.getBoundingClientRect();
+      const fabRect = fab.getBoundingClientRect();
+
+      setIsOverFooter(fabRect.bottom > footerRect.top && fabRect.top < footerRect.bottom);
+    };
+
+    window.addEventListener('scroll', checkOverlap, { passive: true });
+    window.addEventListener('resize', checkOverlap, { passive: true });
+    checkOverlap();
+
+    return () => {
+      window.removeEventListener('scroll', checkOverlap);
+      window.removeEventListener('resize', checkOverlap);
+    };
+  }, []);
 
   const handleTransferClick = () => {
     setIsOpen(false);
