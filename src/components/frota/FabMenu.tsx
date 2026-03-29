@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -49,8 +49,32 @@ interface FabMenuProps {
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const [isOverFooter, setIsOverFooter] = useState(false);
+  const fabRef = useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkOverlap = () => {
+      const footer = document.querySelector('footer');
+      const fab = fabRef.current?.querySelector('button');
+      if (!footer || !fab) return;
+
+      const footerRect = footer.getBoundingClientRect();
+      const fabRect = fab.getBoundingClientRect();
+
+      setIsOverFooter(fabRect.bottom > footerRect.top && fabRect.top < footerRect.bottom);
+    };
+
+    window.addEventListener('scroll', checkOverlap, { passive: true });
+    window.addEventListener('resize', checkOverlap, { passive: true });
+    checkOverlap();
+
+    return () => {
+      window.removeEventListener('scroll', checkOverlap);
+      window.removeEventListener('resize', checkOverlap);
+    };
+  }, []);
 
   const handleTransferClick = () => {
     setIsOpen(false);
@@ -68,7 +92,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col-reverse items-end gap-3 mb-safe">
+      <div ref={fabRef} className={cn("fixed bottom-6 right-6 z-50 flex flex-col-reverse items-end gap-3 mb-safe transition-opacity duration-300", isOverFooter && !isOpen && "opacity-30")}>
         {/* FAB Toggle */}
         <motion.button
           whileTap={{ scale: 0.9 }}
