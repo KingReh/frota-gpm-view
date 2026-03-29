@@ -19,7 +19,7 @@ export function EndOfMonthAlert() {
         <AlertTriangle className="w-5 h-5 text-[hsl(var(--balance-medium))] shrink-0 mt-0.5" />
         <p className="text-sm text-foreground flex-1">
           <span className="font-semibold text-[hsl(var(--balance-medium))]">Atenção: </span>
-          Estamos nos últimos dias do mês. Solicitamos a todos os condutores que realizem o abastecimento até o final do expediente, com o objetivo de zerar o saldo da frota.
+          Estamos no período final do mês. Pedimos a todos os condutores que antecipem seus abastecimentos e os realizem o quanto antes, garantindo assim o consumo total do saldo disponível da frota antes do fechamento.
         </p>
         <button
           onClick={() => setDismissed(true)}
