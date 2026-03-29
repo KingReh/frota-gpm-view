@@ -60,7 +60,7 @@ export interface UserPreferences {
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  viewMode: 'card',
+  viewMode: 'carousel',
   selectedCoordinations: [],
   activeTab: 'fleet',
   sortOption: 'plate_asc',
