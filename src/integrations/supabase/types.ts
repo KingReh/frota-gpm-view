@@ -256,6 +256,42 @@ export type Database = {
           },
         ]
       }
+      vehicle_maintenance: {
+        Row: {
+          created_at: string
+          fleet_type: string | null
+          gad_service_date: string | null
+          id: string
+          model: string | null
+          os_number: number | null
+          plate: string
+          requested_date: string
+          workshop_entry_date: string | null
+        }
+        Insert: {
+          created_at?: string
+          fleet_type?: string | null
+          gad_service_date?: string | null
+          id?: string
+          model?: string | null
+          os_number?: number | null
+          plate: string
+          requested_date: string
+          workshop_entry_date?: string | null
+        }
+        Update: {
+          created_at?: string
+          fleet_type?: string | null
+          gad_service_date?: string | null
+          id?: string
+          model?: string | null
+          os_number?: number | null
+          plate?: string
+          requested_date?: string
+          workshop_entry_date?: string | null
+        }
+        Relationships: []
+      }
       vehicles: {
         Row: {
           coordination_id: string | null
