@@ -50,6 +50,7 @@ interface FabMenuProps {
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
   const [isOverFooter, setIsOverFooter] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
