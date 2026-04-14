@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
+import { MaintenanceModal } from "./MaintenanceModal";
 import { useGestorFrota } from "@/hooks/useGestorFrota";
 import { useToast } from "@/hooks/use-toast";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
