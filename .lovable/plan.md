@@ -1,31 +1,82 @@
 
 
-## Problema
+# Plano: Modulo de Controle de Manutencao de Frota (Revisado)
 
-O campo `next_period_limit` no banco de dados contém `"0,00"` para a maioria dos veículos. O `parseBalance("0,00")` retorna `0`, e o Gauge recebe `max=0`, o que faz `percentage = 0` independentemente do saldo real -- resultando em um arco vazio mesmo quando o veículo tem saldo.
+## Resumo
 
-## Solução
+Criar um modulo completo de manutencao de veiculos acessivel via FAB Menu, com modal de duas abas (solicitacao e painel geral), persistido em nova tabela Supabase. O link externo "GAD Manutencao" permanece inalterado.
 
-Alterar o `VehicleCard.tsx` para usar `current_limit` como fallback quando `next_period_limit` resulta em zero.
+## 1. Banco de Dados
 
-### Alteracao em `src/components/frota/VehicleCard.tsx`
+Criar tabela `vehicle_maintenance` via migracao:
 
-Onde o Gauge e chamado (linhas ~185-197), substituir:
+```sql
+CREATE TABLE public.vehicle_maintenance (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  plate text NOT NULL,
+  fleet_type text,
+  model text,
+  os_number integer,
+  requested_date date NOT NULL,
+  gad_service_date date,
+  workshop_entry_date date,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
 
-```tsx
-max={parseBalance(vehicle.next_period_limit)}
+ALTER TABLE public.vehicle_maintenance ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public full access for vehicle_maintenance"
+  ON public.vehicle_maintenance FOR ALL
+  TO public
+  USING (true) WITH CHECK (true);
 ```
 
-por:
+## 2. Novos Arquivos
 
-```tsx
-max={parseBalance(vehicle.next_period_limit) || parseBalance(vehicle.current_limit) || 1000}
+### `src/hooks/useVehicleMaintenance.ts`
+- Hook com react-query para CRUD na tabela `vehicle_maintenance`
+- Funcoes: listar todos, inserir registro, atualizar datas, deletar (retorno oficina)
+
+### `src/components/frota/MaintenanceModal.tsx`
+- Modal com Dialog, duas abas usando Tabs
+
+**Aba 1 - Solicitacao:**
+- Select de veiculo filtrado pelas coordenacoes selecionadas
+- Campo OS numerico, visivel apenas quando `fleet_type === 'PROPRIO'`
+- DatePicker para "Data Solicitada a GAD"
+- Botao "Adicionar"
+
+**Aba 2 - Painel Geral:**
+- Lista de registros ativos com placa, modelo, tipo, campos de data editaveis, tempo calculado, checkbox de retorno
+- Tempo na oficina calculado no frontend
+- Checkbox "Retorno da Oficina" deleta o registro
+
+## 3. Alteracao no FabMenu
+
+### `src/components/frota/FabMenu.tsx`
+- **Manter** o link externo "GAD Manutencao" (Power BI) exatamente como esta
+- **Adicionar um novo item** "GPM Manutencao" logo apos o "GAD Manutencao", com icone `Settings`, que abre o `MaintenanceModal`
+- Adicionar estado `maintenanceModalOpen` e renderizar `<MaintenanceModal />`
+- Passar `vehicles`, `coordinations`, `selectedCoordinations` como props
+
+## 4. Design e Responsividade
+
+- Reutilizar componentes UI existentes (Dialog, Tabs, Calendar, Checkbox, etc.)
+- Padrao visual premium consistente com o sistema
+- Mobile: NativePlateSelect para seletor de placa, layout em cards
+- Desktop: layout em tabela compacta
+
+## 5. Fluxo de Dados
+
+```text
+FAB Menu
+  ├─ GAD Manutencao (link externo Power BI — inalterado)
+  └─ GPM Manutencao (novo item — abre modal)
+       ├─ Aba 1: form → useVehicleMaintenance.add()
+       └─ Aba 2: useVehicleMaintenance.list()
+                  ├─ update dates → useVehicleMaintenance.update()
+                  └─ checkbox retorno → useVehicleMaintenance.delete()
 ```
 
-Isso se aplica as duas chamadas do Gauge (masked e nao-masked). A logica de fallback:
-1. Usa `next_period_limit` se > 0
-2. Senao usa `current_limit` se > 0
-3. Senao usa 1000 como default seguro
-
-Nenhuma alteracao de banco de dados e necessaria.
+Nenhuma tabela, funcao ou trigger existente sera modificada.
 
