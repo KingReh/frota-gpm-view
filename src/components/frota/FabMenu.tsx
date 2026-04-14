@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
+import { MaintenanceModal } from "./MaintenanceModal";
 import { useGestorFrota } from "@/hooks/useGestorFrota";
 import { useToast } from "@/hooks/use-toast";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
@@ -49,6 +50,7 @@ interface FabMenuProps {
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
   const [isOverFooter, setIsOverFooter] = useState(false);
   const fabRef = useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
@@ -169,11 +171,37 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                 </motion.a>
               ))}
 
-              {/* Transfer Request button */}
+              {/* GPM Manutenção button */}
               <motion.button
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: links.length * 0.05 }}
+                onClick={() => {
+                  setIsOpen(false);
+                  setMaintenanceModalOpen(true);
+                }}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-left",
+                  "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
+                  "border border-transparent transition-all duration-200 group",
+                )}
+              >
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <Settings className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold text-foreground leading-tight truncate">
+                    GPM Manutenção
+                  </span>
+                  <span className="text-[10px] text-muted-foreground truncate">Controle de manutenção da frota</span>
+                </div>
+              </motion.button>
+
+              {/* Transfer Request button */}
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (links.length + 1) * 0.05 }}
                 onClick={handleTransferClick}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl text-left",
@@ -199,6 +227,14 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
       <TransferRequestModal
         open={transferModalOpen}
         onOpenChange={setTransferModalOpen}
+        vehicles={vehicles}
+        coordinations={coordinations}
+        selectedCoordinations={selectedCoordinations}
+      />
+
+      <MaintenanceModal
+        open={maintenanceModalOpen}
+        onOpenChange={setMaintenanceModalOpen}
         vehicles={vehicles}
         coordinations={coordinations}
         selectedCoordinations={selectedCoordinations}
