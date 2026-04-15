@@ -1,82 +1,26 @@
 
 
-# Plano: Modulo de Controle de Manutencao de Frota (Revisado)
-
-## Resumo
-
-Criar um modulo completo de manutencao de veiculos acessivel via FAB Menu, com modal de duas abas (solicitacao e painel geral), persistido em nova tabela Supabase. O link externo "GAD Manutencao" permanece inalterado.
+# Plano: Campo "Problemas Identificados" na Manutenção
 
 ## 1. Banco de Dados
+Adicionar coluna `identified_problems` (text, NOT NULL, default '') à tabela `vehicle_maintenance` via migração.
 
-Criar tabela `vehicle_maintenance` via migracao:
+## 2. Hook `useVehicleMaintenance.ts`
+- Adicionar `identified_problems: string` à interface `VehicleMaintenance`
+- Adicionar `identified_problems: string` à interface `InsertPayload`
 
-```sql
-CREATE TABLE public.vehicle_maintenance (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  plate text NOT NULL,
-  fleet_type text,
-  model text,
-  os_number integer,
-  requested_date date NOT NULL,
-  gad_service_date date,
-  workshop_entry_date date,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
+## 3. Modal `MaintenanceModal.tsx`
 
-ALTER TABLE public.vehicle_maintenance ENABLE ROW LEVEL SECURITY;
+**Aba Solicitação:**
+- Novo estado `identifiedProblems`
+- Campo Textarea obrigatório com label "Problemas Identificados"
+- Botão "Adicionar" desabilitado se campo vazio
+- Reset do campo no `resetForm()`
+- Enviar valor no `handleAdd()`
 
-CREATE POLICY "Public full access for vehicle_maintenance"
-  ON public.vehicle_maintenance FOR ALL
-  TO public
-  USING (true) WITH CHECK (true);
-```
+**Aba Painel Geral:**
+- Exibir `InfoTooltip` (componente já existente) ao lado da placa, mostrando o texto dos problemas identificados
 
-## 2. Novos Arquivos
-
-### `src/hooks/useVehicleMaintenance.ts`
-- Hook com react-query para CRUD na tabela `vehicle_maintenance`
-- Funcoes: listar todos, inserir registro, atualizar datas, deletar (retorno oficina)
-
-### `src/components/frota/MaintenanceModal.tsx`
-- Modal com Dialog, duas abas usando Tabs
-
-**Aba 1 - Solicitacao:**
-- Select de veiculo filtrado pelas coordenacoes selecionadas
-- Campo OS numerico, visivel apenas quando `fleet_type === 'PROPRIO'`
-- DatePicker para "Data Solicitada a GAD"
-- Botao "Adicionar"
-
-**Aba 2 - Painel Geral:**
-- Lista de registros ativos com placa, modelo, tipo, campos de data editaveis, tempo calculado, checkbox de retorno
-- Tempo na oficina calculado no frontend
-- Checkbox "Retorno da Oficina" deleta o registro
-
-## 3. Alteracao no FabMenu
-
-### `src/components/frota/FabMenu.tsx`
-- **Manter** o link externo "GAD Manutencao" (Power BI) exatamente como esta
-- **Adicionar um novo item** "GPM Manutencao" logo apos o "GAD Manutencao", com icone `Settings`, que abre o `MaintenanceModal`
-- Adicionar estado `maintenanceModalOpen` e renderizar `<MaintenanceModal />`
-- Passar `vehicles`, `coordinations`, `selectedCoordinations` como props
-
-## 4. Design e Responsividade
-
-- Reutilizar componentes UI existentes (Dialog, Tabs, Calendar, Checkbox, etc.)
-- Padrao visual premium consistente com o sistema
-- Mobile: NativePlateSelect para seletor de placa, layout em cards
-- Desktop: layout em tabela compacta
-
-## 5. Fluxo de Dados
-
-```text
-FAB Menu
-  ├─ GAD Manutencao (link externo Power BI — inalterado)
-  └─ GPM Manutencao (novo item — abre modal)
-       ├─ Aba 1: form → useVehicleMaintenance.add()
-       └─ Aba 2: useVehicleMaintenance.list()
-                  ├─ update dates → useVehicleMaintenance.update()
-                  └─ checkbox retorno → useVehicleMaintenance.delete()
-```
-
-Nenhuma tabela, funcao ou trigger existente sera modificada.
+## 4. Tipos Supabase
+Atualizar `types.ts` automaticamente após migração.
 
