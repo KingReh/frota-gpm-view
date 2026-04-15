@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, Plus, Wrench, ClipboardList, Info } from 'lucide-react';
+import { CalendarIcon, Plus, Wrench, ClipboardList, Info, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
