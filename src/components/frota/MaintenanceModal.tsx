@@ -250,14 +250,15 @@ export function MaintenanceModal({
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={requestedDate}
-                        onSelect={(d) => {
-                          setRequestedDate(d);
-                          setRequestedDateOpen(false);
-                        }}
-                        initialFocus
+                    <Calendar
+                      mode="single"
+                      selected={requestedDate}
+                      onSelect={(d) => {
+                        setRequestedDate(d);
+                        setRequestedDateOpen(false);
+                      }}
+                      locale={ptBR}
+                      initialFocus
                         className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
@@ -413,6 +414,7 @@ function DateField({
               onChange(d);
               setOpen(false);
             }}
+            locale={ptBR}
             initialFocus
             className="p-3 pointer-events-auto"
           />
