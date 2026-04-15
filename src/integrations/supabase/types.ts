@@ -262,6 +262,7 @@ export type Database = {
           fleet_type: string | null
           gad_service_date: string | null
           id: string
+          identified_problems: string
           model: string | null
           os_number: number | null
           plate: string
@@ -273,6 +274,7 @@ export type Database = {
           fleet_type?: string | null
           gad_service_date?: string | null
           id?: string
+          identified_problems?: string
           model?: string | null
           os_number?: number | null
           plate: string
@@ -284,6 +286,7 @@ export type Database = {
           fleet_type?: string | null
           gad_service_date?: string | null
           id?: string
+          identified_problems?: string
           model?: string | null
           os_number?: number | null
           plate?: string

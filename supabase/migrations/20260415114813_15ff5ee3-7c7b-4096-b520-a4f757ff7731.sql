@@ -1,0 +1,1 @@
+ALTER TABLE public.vehicle_maintenance ADD COLUMN identified_problems text NOT NULL DEFAULT '';
