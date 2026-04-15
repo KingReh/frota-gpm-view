@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, Plus, Wrench, ClipboardList, Info } from 'lucide-react';
+import { CalendarIcon, Plus, Wrench, ClipboardList, Info, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -38,11 +38,18 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { NativePlateSelect } from './NativePlateSelect';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { exportMaintenancePDF, exportMaintenanceXLSX, exportMaintenanceODS } from '@/lib/maintenanceExport';
 import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
 
 interface MaintenanceModalProps {
@@ -158,11 +165,30 @@ export function MaintenanceModal({
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+          <DialogHeader className="flex flex-row items-center justify-between gap-2">
             <DialogTitle className="flex items-center gap-2">
               <Wrench className="w-5 h-5 text-primary" />
               GPM Manutenção
             </DialogTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" disabled={records.length === 0}>
+                  <Download className="w-3.5 h-3.5" />
+                  Exportar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => exportMaintenancePDF(records)} className="gap-2 text-xs">
+                  <FileText className="w-3.5 h-3.5" /> PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => exportMaintenanceXLSX(records)} className="gap-2 text-xs">
+                  <FileSpreadsheet className="w-3.5 h-3.5" /> Excel (.xlsx)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => exportMaintenanceODS(records)} className="gap-2 text-xs">
+                  <FileSpreadsheet className="w-3.5 h-3.5" /> LibreOffice (.ods)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
