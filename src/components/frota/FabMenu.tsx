@@ -22,10 +22,10 @@ const links = [
     description: "Rede de postos de combustíveis",
   },
   {
-    label: "GAD Manutenção",
+    label: "Ordens de Manutenção GAD",
     href: "https://app.powerbi.com/view?r=eyJrIjoiNDlmYTYzYTEtOGM3Mi00M2VjLWFkZTgtZWViM2I3NzBkZDhhIiwidCI6IjU3YTY2OThkLTA5M2QtNDIxOC05OTA0LWVkMDRmOWNiNDI1MiJ9",
     icon: Wrench,
-    description: "Gerenciamento e controle de manutenção de veículos",
+    description: "Gerenciamento de OS da GAD",
   },
   {
     label: "CRLV's",
