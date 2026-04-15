@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, Plus, Wrench, ClipboardList } from 'lucide-react';
+import { CalendarIcon, Plus, Wrench, ClipboardList, Info } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -36,6 +36,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { InfoTooltip } from '@/components/ui/InfoTooltip';
 import { NativePlateSelect } from './NativePlateSelect';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -68,6 +70,7 @@ export function MaintenanceModal({
   const [osNumber, setOsNumber] = useState('');
   const [requestedDate, setRequestedDate] = useState<Date>();
   const [requestedDateOpen, setRequestedDateOpen] = useState(false);
+  const [identifiedProblems, setIdentifiedProblems] = useState('');
 
   // Return confirmation state
   const [returnConfirmId, setReturnConfirmId] = useState<string | null>(null);
@@ -96,10 +99,11 @@ export function MaintenanceModal({
     setSelectedPlate('');
     setOsNumber('');
     setRequestedDate(undefined);
+    setIdentifiedProblems('');
   };
 
   const handleAdd = async () => {
-    if (!selectedPlate || !requestedDate) return;
+    if (!selectedPlate || !requestedDate || !identifiedProblems.trim()) return;
     try {
       await add({
         plate: selectedPlate,
@@ -107,6 +111,7 @@ export function MaintenanceModal({
         model: selectedVehicle?.model ?? null,
         os_number: isProprio && osNumber ? parseInt(osNumber, 10) : null,
         requested_date: format(requestedDate, 'yyyy-MM-dd'),
+        identified_problems: identifiedProblems.trim(),
       });
       toast({ title: 'Veículo adicionado à manutenção!' });
       resetForm();
@@ -265,10 +270,21 @@ export function MaintenanceModal({
                   </Popover>
                 </div>
 
+                {/* Identified Problems */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Problemas Identificados *</Label>
+                  <Textarea
+                    value={identifiedProblems}
+                    onChange={(e) => setIdentifiedProblems(e.target.value)}
+                    placeholder="Descreva os problemas encontrados no veículo..."
+                    className="min-h-[70px] text-xs bg-background resize-none"
+                  />
+                </div>
+
                 {/* Submit */}
                 <Button
                   onClick={handleAdd}
-                  disabled={!selectedPlate || !requestedDate || isAdding}
+                  disabled={!selectedPlate || !requestedDate || !identifiedProblems.trim() || isAdding}
                   className="w-full gap-2"
                 >
                   <Plus className="w-4 h-4" />
@@ -296,8 +312,13 @@ export function MaintenanceModal({
                       >
                         {/* Header */}
                         <div className="flex items-center justify-between">
-                          <div>
+                          <div className="flex items-center gap-1.5">
                             <p className="text-sm font-bold text-foreground">{rec.plate}</p>
+                            {rec.identified_problems && (
+                              <InfoTooltip text={rec.identified_problems} />
+                            )}
+                          </div>
+                          <div>
                             <p className="text-[10px] text-muted-foreground">
                               {rec.model ?? '—'} • {rec.fleet_type ?? '—'}
                               {rec.os_number ? ` • OS ${rec.os_number}` : ''}
