@@ -10,6 +10,7 @@ export interface VehicleMaintenance {
   requested_date: string;
   gad_service_date: string | null;
   workshop_entry_date: string | null;
+  identified_problems: string;
   created_at: string;
 }
 
@@ -19,6 +20,7 @@ interface InsertPayload {
   model?: string | null;
   os_number?: number | null;
   requested_date: string;
+  identified_problems: string;
 }
 
 interface UpdatePayload {
