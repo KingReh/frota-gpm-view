@@ -38,11 +38,18 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { NativePlateSelect } from './NativePlateSelect';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { exportMaintenancePDF, exportMaintenanceXLSX, exportMaintenanceODS } from '@/lib/maintenanceExport';
 import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
 
 interface MaintenanceModalProps {
