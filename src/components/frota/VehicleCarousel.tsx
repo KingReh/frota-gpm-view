@@ -15,9 +15,10 @@ import { cn } from '@/lib/utils';
 
 interface VehicleCarouselProps {
   vehicles: VehicleWithDetails[];
+  maintenancePlates?: Set<string>;
 }
 
-export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
+export function VehicleCarousel({ vehicles, maintenancePlates }: VehicleCarouselProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -106,6 +107,7 @@ export function VehicleCarousel({ vehicles }: VehicleCarouselProps) {
                     vehicle={vehicle}
                     size="large"
                     hideTelemetry={true}
+                    isInMaintenance={maintenancePlates?.has(vehicle.plate)}
                     onClick={() => setSelectedVehicle(vehicle)}
                   />
                 </div>

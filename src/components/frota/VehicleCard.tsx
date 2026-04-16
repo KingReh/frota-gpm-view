@@ -108,6 +108,17 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
             )}
           </div>
 
+          {/* Maintenance Overlay */}
+          {isInMaintenance && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+              <img
+                src="/manutencao.png"
+                alt="Em manutenção"
+                className="max-h-[70%] max-w-[70%] object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]"
+              />
+            </div>
+          )}
+
           {/* Bottom Overlay Gradient */}
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background via-background/40 to-transparent z-10" />
         </div>
