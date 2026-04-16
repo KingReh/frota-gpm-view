@@ -17,10 +17,11 @@ interface VehicleCardProps {
   size?: 'normal' | 'large';
   compact?: boolean;
   hideTelemetry?: boolean;
+  isInMaintenance?: boolean;
   onClick?: () => void;
 }
 
-export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, onClick }: VehicleCardProps) {
+export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, isInMaintenance = false, onClick }: VehicleCardProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
   const isLarge = size === 'large';

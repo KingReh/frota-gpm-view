@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
 import { VehicleGrid } from '@/components/frota/VehicleGrid';
