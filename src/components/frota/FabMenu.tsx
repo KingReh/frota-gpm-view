@@ -193,7 +193,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                   <span className="text-sm font-semibold text-foreground leading-tight truncate">
                     GPM Manutenção
                   </span>
-                  <span className="text-[10px] text-muted-foreground truncate">Controle de manutenção da frota</span>
+                  <span className="text-[10px] text-muted-foreground truncate">Controle de manutenção da frota da gerência</span>
                 </div>
               </motion.button>
 
