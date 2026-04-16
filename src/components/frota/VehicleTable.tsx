@@ -22,9 +22,10 @@ import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 interface VehicleTableProps {
   vehicles: VehicleWithDetails[];
+  maintenancePlates?: Set<string>;
 }
 
-export function VehicleTable({ vehicles }: VehicleTableProps) {
+export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
