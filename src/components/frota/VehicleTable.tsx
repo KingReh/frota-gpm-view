@@ -103,6 +103,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                       {maintenancePlates?.has(vehicle.plate) && (
                         <Wrench className="h-3.5 w-3.5 text-yellow-500 shrink-0" title="Em manutenção" />
                       )}
+                    </div>
                   </TableCell>
                   <TableCell className="py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-0">
                     <span className="text-[10px] sm:text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[60px] sm:max-w-[72px] md:max-w-none block">
