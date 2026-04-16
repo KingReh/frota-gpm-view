@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
 import { isBalanceMasked } from '@/lib/maskedPlates';
 import { motion } from 'framer-motion';
-import { Info, Building2, Car, LayoutList, Grid, MonitorPlay, Star } from 'lucide-react';
+import { Info, Building2, Car, Star, Wrench } from 'lucide-react';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 interface VehicleTableProps {
@@ -100,7 +100,9 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                       >
                         {vehicle.plate}
                       </button>
-                    </div>
+                      {maintenancePlates?.has(vehicle.plate) && (
+                        <Wrench className="h-3.5 w-3.5 text-yellow-500 shrink-0" title="Em manutenção" />
+                      )}
                   </TableCell>
                   <TableCell className="py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-0">
                     <span className="text-[10px] sm:text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[60px] sm:max-w-[72px] md:max-w-none block">
