@@ -101,7 +101,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                         {vehicle.plate}
                       </button>
                       {maintenancePlates?.has(vehicle.plate) && (
-                        <Wrench className="h-3.5 w-3.5 text-yellow-500 shrink-0" title="Em manutenção" />
+                        <Wrench className="h-3.5 w-3.5 text-yellow-500 shrink-0" />
                       )}
                     </div>
                   </TableCell>
