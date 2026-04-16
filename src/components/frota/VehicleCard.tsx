@@ -110,7 +110,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
 
           {/* Maintenance Overlay */}
           {isInMaintenance && (
-            <div className="absolute inset-0 z-20 pointer-events-none">
+            <div className="absolute inset-0 z-20 pointer-events-none animate-[pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite]">
               <img
                 src="/manutencao.png"
                 alt="Em manutenção"
