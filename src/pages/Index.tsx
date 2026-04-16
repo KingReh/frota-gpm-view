@@ -88,6 +88,12 @@ const Index = () => {
     onRealtimeUpdate,
   });
 
+  const { records: maintenanceRecords } = useVehicleMaintenance();
+  const maintenancePlates = useMemo(
+    () => new Set(maintenanceRecords.map(r => r.plate)),
+    [maintenanceRecords]
+  );
+
   const isSynced = !isFetching;
   const isLoading = loadingCoordinations || loadingVehicles;
 
