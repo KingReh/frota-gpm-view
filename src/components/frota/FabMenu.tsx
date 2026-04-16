@@ -25,7 +25,7 @@ const links = [
     label: "Ordens de Manutenção GAD",
     href: "https://app.powerbi.com/view?r=eyJrIjoiNDlmYTYzYTEtOGM3Mi00M2VjLWFkZTgtZWViM2I3NzBkZDhhIiwidCI6IjU3YTY2OThkLTA5M2QtNDIxOC05OTA0LWVkMDRmOWNiNDI1MiJ9",
     icon: Wrench,
-    description: "Gerenciamento de OS da GAD Veículos",
+    description: "Gerenciamento de OS da GAD veículos",
   },
   {
     label: "CRLV's",
