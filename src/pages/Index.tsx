@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
 import { VehicleGrid } from '@/components/frota/VehicleGrid';
@@ -86,6 +87,12 @@ const Index = () => {
     selectedCoordinations: preferences.selectedCoordinations,
     onRealtimeUpdate,
   });
+
+  const { records: maintenanceRecords } = useVehicleMaintenance();
+  const maintenancePlates = useMemo(
+    () => new Set(maintenanceRecords.map(r => r.plate)),
+    [maintenanceRecords]
+  );
 
   const isSynced = !isFetching;
   const isLoading = loadingCoordinations || loadingVehicles;
@@ -237,12 +244,12 @@ const Index = () => {
 
     switch (preferences.viewMode) {
       case 'table':
-        return <VehicleTable vehicles={vehicleList} />;
+        return <VehicleTable vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
       case 'carousel':
-        return <VehicleCarousel vehicles={vehicleList} />;
+        return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
       case 'card':
       default:
-        return <VehicleGrid vehicles={vehicleList} />;
+        return <VehicleGrid vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
     }
   };
 

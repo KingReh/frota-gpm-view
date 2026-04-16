@@ -6,9 +6,10 @@ import type { VehicleWithDetails } from '@/types/vehicle';
 
 interface VehicleGridProps {
   vehicles: VehicleWithDetails[];
+  maintenancePlates?: Set<string>;
 }
 
-export function VehicleGrid({ vehicles }: VehicleGridProps) {
+export function VehicleGrid({ vehicles, maintenancePlates }: VehicleGridProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleWithDetails | null>(null);
 
   if (vehicles.length === 0) {
@@ -28,6 +29,7 @@ export function VehicleGrid({ vehicles }: VehicleGridProps) {
             <VehicleCard
               vehicle={vehicle}
               compact
+              isInMaintenance={maintenancePlates?.has(vehicle.plate)}
               onClick={() => setSelectedVehicle(vehicle)}
             />
           </div>
