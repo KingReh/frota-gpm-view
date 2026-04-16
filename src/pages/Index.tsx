@@ -244,12 +244,12 @@ const Index = () => {
 
     switch (preferences.viewMode) {
       case 'table':
-        return <VehicleTable vehicles={vehicleList} />;
+        return <VehicleTable vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
       case 'carousel':
-        return <VehicleCarousel vehicles={vehicleList} />;
+        return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
       case 'card':
       default:
-        return <VehicleGrid vehicles={vehicleList} />;
+        return <VehicleGrid vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
     }
   };
 
