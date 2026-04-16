@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import * as React from 'react';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { CoordinationFilters } from '@/components/frota/CoordinationFilters';
@@ -54,7 +54,7 @@ function sortVehicles(vehicles: VehicleWithDetails[], sortOption: SortOption): V
 }
 
 const Index = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   const {
     preferences,
@@ -70,7 +70,7 @@ const Index = () => {
   const { recentlyUpdated, triggerAlert } = useBalanceUpdateAlert();
   const isMobile = useIsMobile();
 
-  const onRealtimeUpdate = useCallback(() => {
+  const onRealtimeUpdate = React.useCallback(() => {
     triggerAlert();
   }, [triggerAlert]);
 
@@ -89,7 +89,7 @@ const Index = () => {
   });
 
   const { records: maintenanceRecords } = useVehicleMaintenance();
-  const maintenancePlates = useMemo(
+  const maintenancePlates = React.useMemo(
     () => new Set(maintenanceRecords.map(r => r.plate)),
     [maintenanceRecords]
   );
@@ -97,7 +97,7 @@ const Index = () => {
   const isSynced = !isFetching;
   const isLoading = loadingCoordinations || loadingVehicles;
 
-  const filteredVehicles = useMemo(
+  const filteredVehicles = React.useMemo(
     () => {
       const filtered = filterBySearch(vehicles, searchQuery);
       return sortVehicles(filtered, preferences.sortOption);
@@ -105,7 +105,7 @@ const Index = () => {
     [vehicles, searchQuery, preferences.sortOption]
   );
 
-  const filteredFavorites = useMemo(
+  const filteredFavorites = React.useMemo(
     () => {
       const allVehicles = [...vehicles, ...undefinedVehicles];
       const favorites = allVehicles.filter(v => preferences.favoritePlates?.includes(v.plate));
@@ -115,7 +115,7 @@ const Index = () => {
     [vehicles, undefinedVehicles, searchQuery, preferences.sortOption, preferences.favoritePlates]
   );
 
-  const filteredUndefined = useMemo(
+  const filteredUndefined = React.useMemo(
     () => {
       const filtered = filterBySearch(undefinedVehicles, searchQuery);
       return sortVehicles(filtered, preferences.sortOption);
@@ -125,7 +125,7 @@ const Index = () => {
 
   // Apply theme based on system preference (Automotive Dark Mode default logic handled in CSS now, 
   // but keeping this to ensure 'dark' class is present if needed)
-  useEffect(() => {
+  React.useEffect(() => {
     // Force dark mode for automotive feel
     document.documentElement.classList.add('dark');
   }, []);
