@@ -4,6 +4,8 @@ import autoTable from 'jspdf-autotable';
 import { format, parseISO, differenceInDays } from 'date-fns';
 import type { VehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 
+export type CoordinationMap = Record<string, string>;
+
 function formatDate(date: string | null): string {
   if (!date) return '—';
   return format(parseISO(date), 'dd/MM/yyyy');
@@ -17,6 +19,7 @@ function getDaysLabel(entryDate: string | null): string {
 
 const HEADERS = [
   'Placa',
+  'Coordenação',
   'Modelo',
   'Tipo Frota',
   'OS',
@@ -27,9 +30,10 @@ const HEADERS = [
   'Dias na Oficina',
 ];
 
-function buildRows(records: VehicleMaintenance[]): string[][] {
+function buildRows(records: VehicleMaintenance[], coordMap: CoordinationMap = {}): string[][] {
   return records.map((r) => [
     r.plate,
+    coordMap[r.plate] ?? '—',
     r.model ?? '—',
     r.fleet_type ?? '—',
     r.os_number ? String(r.os_number) : '—',
@@ -41,12 +45,13 @@ function buildRows(records: VehicleMaintenance[]): string[][] {
   ]);
 }
 
-function buildWorkbook(records: VehicleMaintenance[]) {
+function buildWorkbook(records: VehicleMaintenance[], coordMap: CoordinationMap = {}) {
   const wb = XLSX.utils.book_new();
-  const rows = buildRows(records);
+  const rows = buildRows(records, coordMap);
   const ws = XLSX.utils.aoa_to_sheet([HEADERS, ...rows]);
   ws['!cols'] = [
     { wch: 12 },
+    { wch: 20 },
     { wch: 20 },
     { wch: 12 },
     { wch: 8 },
@@ -60,17 +65,17 @@ function buildWorkbook(records: VehicleMaintenance[]) {
   return wb;
 }
 
-export function exportMaintenanceXLSX(records: VehicleMaintenance[]) {
-  const wb = buildWorkbook(records);
+export function exportMaintenanceXLSX(records: VehicleMaintenance[], coordMap: CoordinationMap = {}) {
+  const wb = buildWorkbook(records, coordMap);
   XLSX.writeFile(wb, `manutencao-gpm-${Date.now()}.xlsx`);
 }
 
-export function exportMaintenanceODS(records: VehicleMaintenance[]) {
-  const wb = buildWorkbook(records);
+export function exportMaintenanceODS(records: VehicleMaintenance[], coordMap: CoordinationMap = {}) {
+  const wb = buildWorkbook(records, coordMap);
   XLSX.writeFile(wb, `manutencao-gpm-${Date.now()}.ods`, { bookType: 'ods' });
 }
 
-export function exportMaintenancePDF(records: VehicleMaintenance[]) {
+export function exportMaintenancePDF(records: VehicleMaintenance[], coordMap: CoordinationMap = {}) {
   const doc = new jsPDF('landscape', 'mm', 'a4');
   const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -89,7 +94,7 @@ export function exportMaintenancePDF(records: VehicleMaintenance[]) {
   );
   doc.setTextColor(0);
 
-  const rows = buildRows(records);
+  const rows = buildRows(records, coordMap);
 
   autoTable(doc, {
     startY: 28,
@@ -99,13 +104,14 @@ export function exportMaintenancePDF(records: VehicleMaintenance[]) {
     headStyles: { fillColor: [30, 41, 59], textColor: 255, fontSize: 8 },
     bodyStyles: { fontSize: 8 },
     columnStyles: {
-      0: { cellWidth: 22 },
-      3: { halign: 'center', cellWidth: 14 },
-      4: { cellWidth: 55 },
-      5: { halign: 'center', cellWidth: 24 },
-      6: { halign: 'center', cellWidth: 24 },
-      7: { halign: 'center', cellWidth: 24 },
+      0: { cellWidth: 20 },
+      1: { cellWidth: 28 },
+      4: { halign: 'center', cellWidth: 12 },
+      5: { cellWidth: 50 },
+      6: { halign: 'center', cellWidth: 22 },
+      7: { halign: 'center', cellWidth: 22 },
       8: { halign: 'center', cellWidth: 22 },
+      9: { halign: 'center', cellWidth: 20 },
     },
     margin: { left: 10, right: 10 },
   });
