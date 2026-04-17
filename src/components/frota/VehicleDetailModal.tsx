@@ -1,3 +1,6 @@
+import { useState, useMemo } from 'react';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   Dialog,
   DialogContent,
@@ -8,12 +11,16 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { CoordinationBadge } from './CoordinationBadge';
 import { BalanceIndicator } from './BalanceIndicator';
+import { MaintenanceModal } from './MaintenanceModal';
 import { formatBalance } from '@/lib/balance';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useToast } from '@/hooks/use-toast';
-import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel } from 'lucide-react';
+import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useCoordinations } from '@/hooks/useCoordinations';
+import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel, Wrench, AlertTriangle, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
@@ -80,11 +87,33 @@ function FinancialItem({ label, value, highlight = false }: { label: string; val
 export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetailModalProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
+  const { records: maintenanceRecords } = useVehicleMaintenance();
+  const { data: allVehicles = [], undefinedVehicles = [] } = useVehicles({ selectedCoordinations: [] });
+  const { data: coordinations = [] } = useCoordinations();
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
+
+  const maintenanceRecord = useMemo(() => {
+    if (!vehicle) return null;
+    return maintenanceRecords.find(
+      (r) => r.plate === vehicle.plate && !!r.workshop_entry_date
+    ) ?? null;
+  }, [maintenanceRecords, vehicle]);
+
   if (!vehicle) return null;
 
   const hasFinancialData = vehicle.current_limit || vehicle.used_value || vehicle.reserved_value || vehicle.next_period_limit;
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
   const masked = isBalanceMasked(vehicle.plate);
+  const isInMaintenance = !!maintenanceRecord;
+
+  const formatDate = (iso: string | null | undefined) => {
+    if (!iso) return null;
+    try {
+      return format(parseISO(iso), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    } catch {
+      return iso;
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
