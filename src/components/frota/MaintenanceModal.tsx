@@ -109,6 +109,14 @@ export function MaintenanceModal({
     [filteredVehicles]
   );
 
+  const coordMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    vehicles.forEach((v) => {
+      map[v.plate] = v.coordination?.name ?? '—';
+    });
+    return map;
+  }, [vehicles]);
+
   const selectedVehicle = useMemo(
     () => vehicles.find((v) => v.plate === selectedPlate),
     [vehicles, selectedPlate]
@@ -192,13 +200,13 @@ export function MaintenanceModal({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => exportMaintenancePDF(records)} className="gap-2 text-xs">
+                <DropdownMenuItem onClick={() => exportMaintenancePDF(records, coordMap)} className="gap-2 text-xs">
                   <FileText className="w-3.5 h-3.5" /> PDF
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => exportMaintenanceXLSX(records)} className="gap-2 text-xs">
+                <DropdownMenuItem onClick={() => exportMaintenanceXLSX(records, coordMap)} className="gap-2 text-xs">
                   <FileSpreadsheet className="w-3.5 h-3.5" /> Excel (.xlsx)
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => exportMaintenanceODS(records)} className="gap-2 text-xs">
+                <DropdownMenuItem onClick={() => exportMaintenanceODS(records, coordMap)} className="gap-2 text-xs">
                   <FileSpreadsheet className="w-3.5 h-3.5" /> LibreOffice (.ods)
                 </DropdownMenuItem>
               </DropdownMenuContent>
