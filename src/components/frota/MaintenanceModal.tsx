@@ -220,7 +220,7 @@ export function MaintenanceModal({
             </DropdownMenu>
           </DialogHeader>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'request' | 'panel')} className="w-full">
             <TabsList className="w-full grid grid-cols-2">
               <TabsTrigger value="request" className="text-xs gap-1.5">
                 <ClipboardList className="w-3.5 h-3.5" />
