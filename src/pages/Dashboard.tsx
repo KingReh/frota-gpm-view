@@ -29,7 +29,7 @@ import { Footer } from '@/components/layout/Footer';
 function DashboardPage() {
   const [selectedCoordinations, setSelectedCoordinations] = useState<string[]>([]);
   const { data: coordinations = [] } = useCoordinations();
-  const { lastUpdated, isLoading: vehiclesLoading, isSuccess: isSynced } = useVehicles({ selectedCoordinations });
+  const { data: vehicles = [], lastUpdated, isLoading: vehiclesLoading, isSuccess: isSynced } = useVehicles({ selectedCoordinations });
   const dashboard = useDashboardData(selectedCoordinations);
 
   const handleToggle = (id: string) => {
@@ -281,7 +281,7 @@ function DashboardPage() {
       <Footer />
       <DrivingTipsToast />
       <FabMenu
-        vehicles={[]}
+        vehicles={vehicles}
         coordinations={coordinations}
         selectedCoordinations={selectedCoordinations}
       />
