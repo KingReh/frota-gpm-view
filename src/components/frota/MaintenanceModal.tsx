@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon, Plus, Wrench, ClipboardList, Info, Download, FileText, FileSpreadsheet } from 'lucide-react';
@@ -59,6 +59,7 @@ interface MaintenanceModalProps {
   vehicles: VehicleWithDetails[];
   coordinations: Coordination[];
   selectedCoordinations: string[];
+  defaultTab?: 'request' | 'panel';
 }
 
 export function MaintenanceModal({
@@ -67,13 +68,19 @@ export function MaintenanceModal({
   vehicles,
   coordinations,
   selectedCoordinations,
+  defaultTab = 'request',
 }: MaintenanceModalProps) {
   const { records, isLoading, add, isAdding, update, remove } = useVehicleMaintenance();
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
   // Form state
-  const [activeTab, setActiveTab] = useState('request');
+  const [activeTab, setActiveTab] = useState(defaultTab);
+
+  // Sync tab when modal opens with a different defaultTab
+  useEffect(() => {
+    if (open) setActiveTab(defaultTab);
+  }, [open, defaultTab]);
   const [selectedPlate, setSelectedPlate] = useState('');
   const [osNumber, setOsNumber] = useState('');
   const [requestedDate, setRequestedDate] = useState<Date>();
@@ -213,7 +220,7 @@ export function MaintenanceModal({
             </DropdownMenu>
           </DialogHeader>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'request' | 'panel')} className="w-full">
             <TabsList className="w-full grid grid-cols-2">
               <TabsTrigger value="request" className="text-xs gap-1.5">
                 <ClipboardList className="w-3.5 h-3.5" />

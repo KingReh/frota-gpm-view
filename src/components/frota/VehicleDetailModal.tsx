@@ -1,3 +1,6 @@
+import { useState, useMemo } from 'react';
+import { format, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   Dialog,
   DialogContent,
@@ -8,12 +11,16 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { CoordinationBadge } from './CoordinationBadge';
 import { BalanceIndicator } from './BalanceIndicator';
+import { MaintenanceModal } from './MaintenanceModal';
 import { formatBalance } from '@/lib/balance';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useToast } from '@/hooks/use-toast';
-import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel } from 'lucide-react';
+import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useCoordinations } from '@/hooks/useCoordinations';
+import { Car, MapPin, User, CreditCard, Building2, Gauge, Calendar, DollarSign, Activity, X, Star, Fuel, Wrench, AlertTriangle, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
@@ -80,11 +87,33 @@ function FinancialItem({ label, value, highlight = false }: { label: string; val
 export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetailModalProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
+  const { records: maintenanceRecords } = useVehicleMaintenance();
+  const { data: allVehicles = [], undefinedVehicles = [] } = useVehicles({ selectedCoordinations: [] });
+  const { data: coordinations = [] } = useCoordinations();
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
+
+  const maintenanceRecord = useMemo(() => {
+    if (!vehicle) return null;
+    return maintenanceRecords.find(
+      (r) => r.plate === vehicle.plate && !!r.workshop_entry_date
+    ) ?? null;
+  }, [maintenanceRecords, vehicle]);
+
   if (!vehicle) return null;
 
   const hasFinancialData = vehicle.current_limit || vehicle.used_value || vehicle.reserved_value || vehicle.next_period_limit;
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
   const masked = isBalanceMasked(vehicle.plate);
+  const isInMaintenance = !!maintenanceRecord;
+
+  const formatDate = (iso: string | null | undefined) => {
+    if (!iso) return null;
+    try {
+      return format(parseISO(iso), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    } catch {
+      return iso;
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -168,7 +197,71 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
         </div>
 
         {/* Content Body */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar-thin">
+        <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar-thin space-y-6">
+
+          {/* Maintenance Alert Section */}
+          {isInMaintenance && maintenanceRecord && (
+            <div className="rounded-xl border border-yellow-400/40 bg-yellow-400/10 p-4 sm:p-5 shadow-[0_0_24px_-8px_hsl(48_96%_50%/0.4)]">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-yellow-400/20 border border-yellow-400/40 shrink-0">
+                  <Wrench className="w-5 h-5 text-yellow-300" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-sm font-bold text-yellow-100 uppercase tracking-wider">
+                      Veículo em Manutenção
+                    </h4>
+                    <AlertTriangle className="w-3.5 h-3.5 text-yellow-300" />
+                  </div>
+                  <p className="text-xs text-yellow-100/80 mb-3">
+                    Este veículo está atualmente na oficina e indisponível para operação.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-lg bg-background/40 border border-yellow-400/20 p-3">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Calendar className="w-3 h-3 text-yellow-300" />
+                        <span className="text-[10px] uppercase tracking-wider text-yellow-200/80 font-semibold">
+                          Data de Entrada na Oficina
+                        </span>
+                      </div>
+                      <p className="text-sm font-medium text-foreground">
+                        {formatDate(maintenanceRecord.workshop_entry_date) ?? '—'}
+                      </p>
+                    </div>
+
+                    {maintenanceRecord.os_number != null && (
+                      <div className="rounded-lg bg-background/40 border border-yellow-400/20 p-3">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <ClipboardIcon />
+                          <span className="text-[10px] uppercase tracking-wider text-yellow-200/80 font-semibold">
+                            Nº O.S.
+                          </span>
+                        </div>
+                        <p className="text-sm font-mono font-semibold text-foreground">
+                          {maintenanceRecord.os_number}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {maintenanceRecord.identified_problems && (
+                    <div className="mt-3 rounded-lg bg-background/40 border border-yellow-400/20 p-3">
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <AlertTriangle className="w-3 h-3 text-yellow-300" />
+                        <span className="text-[10px] uppercase tracking-wider text-yellow-200/80 font-semibold">
+                          Problemas Identificados
+                        </span>
+                      </div>
+                      <p className="text-sm text-foreground/90 whitespace-pre-wrap break-words">
+                        {maintenanceRecord.identified_problems}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -209,11 +302,38 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 bg-surface-overlay border-t border-border/20 flex justify-end">
-          {/* Add actions if needed */}
+        <div className="p-4 bg-surface-overlay border-t border-border/20 flex flex-col sm:flex-row justify-end gap-2">
+          <Button
+            variant={isInMaintenance ? 'default' : 'outline'}
+            className={cn(
+              "gap-2 transition-all",
+              isInMaintenance
+                ? "bg-yellow-500/90 hover:bg-yellow-500 text-yellow-950 border-yellow-400"
+                : "border-border/40"
+            )}
+            onClick={() => setMaintenanceModalOpen(true)}
+          >
+            <Wrench className="w-4 h-4" />
+            {isInMaintenance ? 'Ver no GPM Manutenção' : 'Abrir GPM Manutenção'}
+            <ExternalLink className="w-3 h-3 opacity-70" />
+          </Button>
         </div>
 
       </DialogContent>
+
+      {/* GPM Maintenance Modal */}
+      <MaintenanceModal
+        open={maintenanceModalOpen}
+        onOpenChange={setMaintenanceModalOpen}
+        vehicles={[...allVehicles, ...undefinedVehicles]}
+        coordinations={coordinations}
+        selectedCoordinations={[]}
+        defaultTab={isInMaintenance ? 'panel' : 'request'}
+      />
     </Dialog>
   );
+}
+
+function ClipboardIcon() {
+  return <Wrench className="w-3 h-3 text-yellow-300" />;
 }
