@@ -419,6 +419,8 @@ export function MaintenanceModal({
                     );
                   })}
                 </div>
+                  )}
+                </>
               )}
             </TabsContent>
           </Tabs>
