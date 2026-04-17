@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { VehicleDetailModal } from './VehicleDetailModal';
@@ -101,7 +102,26 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                         {vehicle.plate}
                       </button>
                       {maintenancePlates?.has(vehicle.plate) && (
-                        <Wrench className="h-3.5 w-3.5 text-yellow-500 shrink-0" />
+                        <TooltipProvider delayDuration={150}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                type="button"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center justify-center h-5 w-5 rounded-md bg-yellow-200/80 border border-yellow-400/50 shrink-0 hover:bg-yellow-200 transition-colors"
+                                aria-label="Em manutenção"
+                              >
+                                <Wrench className="h-3 w-3 text-yellow-800" />
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="top"
+                              className="bg-yellow-100 text-yellow-900 border border-yellow-300 shadow-lg text-[11px] font-semibold"
+                            >
+                              Veículo em manutenção
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </div>
                   </TableCell>
