@@ -90,7 +90,11 @@ const Index = () => {
 
   const { records: maintenanceRecords } = useVehicleMaintenance();
   const maintenancePlates = React.useMemo(
-    () => new Set(maintenanceRecords.map(r => r.plate)),
+    () => new Set(
+      maintenanceRecords
+        .filter(r => !!r.workshop_entry_date)
+        .map(r => r.plate)
+    ),
     [maintenanceRecords]
   );
 
