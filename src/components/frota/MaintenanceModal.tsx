@@ -45,6 +45,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NativePlateSelect } from './NativePlateSelect';
+import { SearchBar } from './SearchBar';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
@@ -82,6 +83,19 @@ export function MaintenanceModal({
   // Return confirmation state
   const [returnConfirmId, setReturnConfirmId] = useState<string | null>(null);
   const [returnConfirmPlate, setReturnConfirmPlate] = useState('');
+
+  // Search state for panel
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredRecords = useMemo(() => {
+    if (!searchQuery.trim()) return records;
+    const q = searchQuery.trim().toUpperCase();
+    return records.filter(
+      (r) =>
+        r.plate.toUpperCase().includes(q) ||
+        (r.model ?? '').toUpperCase().includes(q)
+    );
+  }, [records, searchQuery]);
 
   const filteredVehicles = useMemo(() => {
     if (selectedCoordinations.length === 0) return vehicles;
@@ -320,7 +334,7 @@ export function MaintenanceModal({
             </TabsContent>
 
             {/* Tab 2 - Painel Geral */}
-            <TabsContent value="panel" className="mt-4">
+            <TabsContent value="panel" className="mt-4 space-y-3">
               {isLoading ? (
                 <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
               ) : records.length === 0 ? (
@@ -328,8 +342,15 @@ export function MaintenanceModal({
                   Nenhum veículo em manutenção.
                 </p>
               ) : (
+                <>
+                  <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                  {filteredRecords.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      Nenhum veículo encontrado para "{searchQuery}".
+                    </p>
+                  ) : (
                 <div className="space-y-3">
-                  {records.map((rec) => {
+                  {filteredRecords.map((rec) => {
                     const days = getDaysInWorkshop(rec.workshop_entry_date);
                     return (
                       <div
