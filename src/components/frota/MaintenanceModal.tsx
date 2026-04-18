@@ -415,24 +415,24 @@ export function MaintenanceModal({
                         }
                       >
                         {/* Header */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-sm font-bold text-foreground">{rec.plate}</p>
-                            {rec.identified_problems && (
-                              <InfoTooltip text={rec.identified_problems} />
-                            )}
-                            {coordObjMap[rec.plate] && (
-                              <CoordinationBadge coordination={coordObjMap[rec.plate]} compact />
-                            )}
-                          </div>
-                          <div>
-                            <p className="text-[10px] text-muted-foreground">
-                              {rec.model ?? '—'} • {rec.fleet_type ?? '—'}
-                              {rec.os_number ? ` • OS ${rec.os_number}` : ''}
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <p className="text-sm font-bold text-foreground">{rec.plate}</p>
+                              {rec.identified_problems && (
+                                <InfoTooltip text={rec.identified_problems} />
+                              )}
+                              {coordObjMap[rec.plate] && (
+                                <CoordinationBadge coordination={coordObjMap[rec.plate]} compact />
+                              )}
+                            </div>
+                            <p className="text-[10px] text-muted-foreground whitespace-nowrap">
+                              {format(parseISO(rec.requested_date), 'dd/MM/yyyy')}
                             </p>
                           </div>
-                          <p className="text-[10px] text-muted-foreground">
-                            Solicitado: {format(parseISO(rec.requested_date), 'dd/MM/yyyy')}
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {rec.model ?? '—'} • {rec.fleet_type ?? '—'}
+                            {rec.os_number ? ` • OS ${rec.os_number}` : ''}
                           </p>
                         </div>
 
