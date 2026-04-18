@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { InfoTooltip } from '@/components/ui/InfoTooltip';
+import { EditableProblemsInfo } from './EditableProblemsInfo';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -420,7 +421,12 @@ export function MaintenanceModal({
                             <div className="flex items-center gap-1.5 min-w-0">
                               <p className="text-sm font-bold text-foreground">{rec.plate}</p>
                               {rec.identified_problems && (
-                                <InfoTooltip text={rec.identified_problems} />
+                                <EditableProblemsInfo
+                                  text={rec.identified_problems}
+                                  onSave={async (newText) => {
+                                    await update({ id: rec.id, identified_problems: newText });
+                                  }}
+                                />
                               )}
                               {coordObjMap[rec.plate] && (
                                 <CoordinationBadge coordination={coordObjMap[rec.plate]} compact />
