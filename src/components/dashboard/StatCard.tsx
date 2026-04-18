@@ -14,12 +14,12 @@ interface StatCardProps {
 export function StatCard({ label, value, icon: Icon, accentColor, delay = 0, tooltip }: StatCardProps) {
   return (
     <div
-      className="glass-panel rounded-2xl p-4 md:p-5 relative animate-in fade-in slide-in-from-bottom-2"
+      className="glass-panel rounded-2xl p-4 md:p-5 relative overflow-hidden animate-in fade-in slide-in-from-bottom-2"
       style={{ animationDelay: `${delay}ms`, animationFillMode: 'backwards' }}
     >
       {/* Accent border */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
+        className="absolute left-0 top-0 bottom-0 w-1"
         style={{ backgroundColor: accentColor || 'hsl(var(--primary))' }}
       />
 
