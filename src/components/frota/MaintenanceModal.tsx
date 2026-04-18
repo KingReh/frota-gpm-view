@@ -131,6 +131,14 @@ export function MaintenanceModal({
     return map;
   }, [vehicles]);
 
+  const coordColorMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    vehicles.forEach((v) => {
+      if (v.coordination?.color) map[v.plate] = v.coordination.color;
+    });
+    return map;
+  }, [vehicles]);
+
   const selectedVehicle = useMemo(
     () => vehicles.find((v) => v.plate === selectedPlate),
     [vehicles, selectedPlate]
