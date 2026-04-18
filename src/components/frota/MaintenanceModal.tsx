@@ -45,6 +45,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NativePlateSelect } from './NativePlateSelect';
+import { CoordinationBadge } from './CoordinationBadge';
 import { SearchBar } from './SearchBar';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { useIsMobile } from '@/hooks/use-mobile';
