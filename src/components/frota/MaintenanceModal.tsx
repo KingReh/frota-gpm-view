@@ -147,6 +147,14 @@ export function MaintenanceModal({
 
   const handleAdd = async () => {
     if (!selectedPlate || !requestedDate || !identifiedProblems.trim()) return;
+    if (maintenancePlatesSet.has(selectedPlate)) {
+      toast({
+        title: 'Veículo já está em manutenção',
+        description: 'Este veículo já possui um registro ativo no Painel Geral.',
+        variant: 'destructive',
+      });
+      return;
+    }
     try {
       await add({
         plate: selectedPlate,
