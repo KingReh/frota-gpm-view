@@ -26,6 +26,7 @@ interface InsertPayload {
 interface UpdatePayload {
   gad_service_date?: string | null;
   workshop_entry_date?: string | null;
+  identified_problems?: string;
 }
 
 const QUERY_KEY = ['vehicle_maintenance'];
