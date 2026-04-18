@@ -45,6 +45,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NativePlateSelect } from './NativePlateSelect';
+import { CoordinationBadge } from './CoordinationBadge';
 import { SearchBar } from './SearchBar';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -135,6 +136,14 @@ export function MaintenanceModal({
     const map: Record<string, string> = {};
     vehicles.forEach((v) => {
       if (v.coordination?.color) map[v.plate] = v.coordination.color;
+    });
+    return map;
+  }, [vehicles]);
+
+  const coordObjMap = useMemo(() => {
+    const map: Record<string, Coordination> = {};
+    vehicles.forEach((v) => {
+      if (v.coordination) map[v.plate] = v.coordination;
     });
     return map;
   }, [vehicles]);
@@ -411,6 +420,9 @@ export function MaintenanceModal({
                             <p className="text-sm font-bold text-foreground">{rec.plate}</p>
                             {rec.identified_problems && (
                               <InfoTooltip text={rec.identified_problems} />
+                            )}
+                            {coordObjMap[rec.plate] && (
+                              <CoordinationBadge coordination={coordObjMap[rec.plate]} compact />
                             )}
                           </div>
                           <div>
