@@ -104,12 +104,19 @@ export function MaintenanceModal({
     );
   }, [records, searchQuery]);
 
+  const maintenancePlatesSet = useMemo(
+    () => new Set(records.map((r) => r.plate)),
+    [records]
+  );
+
   const filteredVehicles = useMemo(() => {
-    if (selectedCoordinations.length === 0) return vehicles;
-    return vehicles.filter(
-      (v) => v.coordination && selectedCoordinations.includes(v.coordination.id)
-    );
-  }, [vehicles, selectedCoordinations]);
+    const base = selectedCoordinations.length === 0
+      ? vehicles
+      : vehicles.filter(
+          (v) => v.coordination && selectedCoordinations.includes(v.coordination.id)
+        );
+    return base.filter((v) => !maintenancePlatesSet.has(v.plate));
+  }, [vehicles, selectedCoordinations, maintenancePlatesSet]);
 
   const plates = useMemo(
     () => filteredVehicles.map((v) => v.plate).sort(),
@@ -140,6 +147,14 @@ export function MaintenanceModal({
 
   const handleAdd = async () => {
     if (!selectedPlate || !requestedDate || !identifiedProblems.trim()) return;
+    if (maintenancePlatesSet.has(selectedPlate)) {
+      toast({
+        title: 'Veículo já está em manutenção',
+        description: 'Este veículo já possui um registro ativo no Painel Geral.',
+        variant: 'destructive',
+      });
+      return;
+    }
     try {
       await add({
         plate: selectedPlate,
