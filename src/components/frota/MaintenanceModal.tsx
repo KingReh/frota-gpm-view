@@ -421,6 +421,9 @@ export function MaintenanceModal({
                             {rec.identified_problems && (
                               <InfoTooltip text={rec.identified_problems} />
                             )}
+                            {coordObjMap[rec.plate] && (
+                              <CoordinationBadge coordination={coordObjMap[rec.plate]} compact />
+                            )}
                           </div>
                           <div>
                             <p className="text-[10px] text-muted-foreground">
