@@ -390,10 +390,20 @@ export function MaintenanceModal({
                 <div className="space-y-3">
                   {filteredRecords.map((rec) => {
                     const days = getDaysInWorkshop(rec.workshop_entry_date);
+                    const coordColor = coordColorMap[rec.plate];
                     return (
                       <div
                         key={rec.id}
-                        className="p-4 rounded-xl border border-border bg-muted/30 space-y-3"
+                        className="p-4 rounded-xl border space-y-3 transition-all"
+                        style={
+                          coordColor
+                            ? {
+                                background: `linear-gradient(135deg, ${coordColor}0D 0%, ${coordColor}05 60%, hsl(var(--muted) / 0.3) 100%)`,
+                                borderColor: `${coordColor}33`,
+                                boxShadow: `inset 3px 0 0 0 ${coordColor}80, 0 1px 2px ${coordColor}10`,
+                              }
+                            : undefined
+                        }
                       >
                         {/* Header */}
                         <div className="flex items-center justify-between">
