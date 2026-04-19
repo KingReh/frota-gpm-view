@@ -1,12 +1,57 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { format, parseISO, differenceInDays } from 'date-fns';
 
 import type { DashboardData } from '@/hooks/useDashboardData';
+import type { VehicleMaintenance } from '@/hooks/useVehicleMaintenance';
+
+export type CoordinationMap = Record<string, string>;
 
 interface ExportOptions {
   dashboard: Omit<DashboardData, 'isLoading'>;
   filterLabel: string;
+  maintenance?: VehicleMaintenance[];
+  coordinationMap?: CoordinationMap;
+}
+
+const MAINT_HEADERS = [
+  'Placa',
+  'Coordenação',
+  'Modelo',
+  'Tipo Frota',
+  'OS',
+  'Problemas Identificados',
+  'Data Solicitação',
+  'Atendimento GAD',
+  'Entrada Oficina',
+  'Dias na Oficina',
+];
+
+function fmtDate(date: string | null): string {
+  if (!date) return '—';
+  try { return format(parseISO(date), 'dd/MM/yyyy'); } catch { return '—'; }
+}
+
+function daysLabel(entryDate: string | null): string {
+  if (!entryDate) return 'Aguardando';
+  const days = differenceInDays(new Date(), parseISO(entryDate));
+  return `${days} ${days === 1 ? 'dia' : 'dias'}`;
+}
+
+function buildMaintRows(records: VehicleMaintenance[], coordMap: CoordinationMap = {}): string[][] {
+  return records.map((r) => [
+    r.plate,
+    coordMap[r.plate] ?? '—',
+    r.model ?? '—',
+    r.fleet_type ?? '—',
+    r.os_number ? String(r.os_number) : '—',
+    r.identified_problems || '—',
+    fmtDate(r.requested_date),
+    fmtDate(r.gad_service_date),
+    fmtDate(r.workshop_entry_date),
+    daysLabel(r.workshop_entry_date),
+  ]);
 }
 
 function buildWorkbook(opts: ExportOptions) {
