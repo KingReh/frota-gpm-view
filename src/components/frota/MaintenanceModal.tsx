@@ -120,6 +120,16 @@ export function MaintenanceModal({
     return base.filter((v) => !maintenancePlatesSet.has(v.plate));
   }, [vehicles, selectedCoordinations, maintenancePlatesSet]);
 
+  const maintenanceCount = useMemo(() => {
+    if (selectedCoordinations.length === 0) return records.length;
+    const allowedPlates = new Set(
+      vehicles
+        .filter((v) => v.coordination && selectedCoordinations.includes(v.coordination.id))
+        .map((v) => v.plate)
+    );
+    return records.filter((r) => allowedPlates.has(r.plate)).length;
+  }, [records, vehicles, selectedCoordinations]);
+
   const plates = useMemo(
     () => filteredVehicles.map((v) => v.plate).sort(),
     [filteredVehicles]
@@ -267,6 +277,31 @@ export function MaintenanceModal({
 
             {/* Tab 1 - Solicitação */}
             <TabsContent value="request" className="space-y-4 mt-4">
+              <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-border bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/15 shrink-0">
+                    <Wrench className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+                      Em manutenção
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/80 truncate">
+                      {selectedCoordinations.length === 0
+                        ? 'Todas as coordenações'
+                        : `${selectedCoordinations.length} coord. selecionada${selectedCoordinations.length > 1 ? 's' : ''}`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-1 shrink-0">
+                  <span className="text-2xl font-bold text-primary tabular-nums leading-none">
+                    {maintenanceCount}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {maintenanceCount === 1 ? 'veículo' : 'veículos'}
+                  </span>
+                </div>
+              </div>
               <div className="space-y-3 p-4 rounded-xl border border-border bg-muted/30">
                 {/* Vehicle select */}
                 <div className="space-y-1.5">
