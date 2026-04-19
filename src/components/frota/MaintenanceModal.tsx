@@ -120,6 +120,16 @@ export function MaintenanceModal({
     return base.filter((v) => !maintenancePlatesSet.has(v.plate));
   }, [vehicles, selectedCoordinations, maintenancePlatesSet]);
 
+  const maintenanceCount = useMemo(() => {
+    if (selectedCoordinations.length === 0) return records.length;
+    const allowedPlates = new Set(
+      vehicles
+        .filter((v) => v.coordination && selectedCoordinations.includes(v.coordination.id))
+        .map((v) => v.plate)
+    );
+    return records.filter((r) => allowedPlates.has(r.plate)).length;
+  }, [records, vehicles, selectedCoordinations]);
+
   const plates = useMemo(
     () => filteredVehicles.map((v) => v.plate).sort(),
     [filteredVehicles]
