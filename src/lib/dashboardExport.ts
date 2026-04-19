@@ -318,5 +318,43 @@ export async function exportToPDF(opts: ExportOptions) {
     },
   });
 
+  // Page 5: Manutenção
+  const maintenance = opts.maintenance ?? [];
+  const coordMap = opts.coordinationMap ?? {};
+  if (maintenance.length > 0) {
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('GPM Manutenção', pageWidth / 2, 15, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(120);
+    doc.text(
+      `${maintenance.length} veículo(s) em manutenção  |  Filtro: ${filterLabel}`,
+      pageWidth / 2, 21, { align: 'center' }
+    );
+    doc.setTextColor(0);
+
+    autoTable(doc, {
+      startY: 26,
+      head: [MAINT_HEADERS],
+      body: buildMaintRows(maintenance, coordMap),
+      theme: 'grid',
+      headStyles: { fillColor: [30, 41, 59], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8 },
+      columnStyles: {
+        0: { cellWidth: 20 },
+        1: { cellWidth: 28 },
+        4: { halign: 'center', cellWidth: 12 },
+        5: { cellWidth: 50 },
+        6: { halign: 'center', cellWidth: 22 },
+        7: { halign: 'center', cellWidth: 22 },
+        8: { halign: 'center', cellWidth: 22 },
+        9: { halign: 'center', cellWidth: 20 },
+      },
+      margin: { left: 10, right: 10 },
+    });
+  }
+
   doc.save(`dashboard-frota-${Date.now()}.pdf`);
 }
