@@ -96,15 +96,31 @@ export function MaintenanceModal({
   // Search state for panel
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Centralized coordination filter: empty selection = "all coordinations"
+  const allowedCoordinationPlates = useMemo(() => {
+    if (selectedCoordinations.length === 0) return null; // null = no restriction
+    return new Set(
+      vehicles
+        .filter((v) => v.coordination && selectedCoordinations.includes(v.coordination.id))
+        .map((v) => v.plate)
+    );
+  }, [vehicles, selectedCoordinations]);
+
+  // Records filtered by coordination (single source of truth for the panel)
+  const coordinationFilteredRecords = useMemo(() => {
+    if (!allowedCoordinationPlates) return records;
+    return records.filter((r) => allowedCoordinationPlates.has(r.plate));
+  }, [records, allowedCoordinationPlates]);
+
   const filteredRecords = useMemo(() => {
-    if (!searchQuery.trim()) return records;
+    if (!searchQuery.trim()) return coordinationFilteredRecords;
     const q = searchQuery.trim().toUpperCase();
-    return records.filter(
+    return coordinationFilteredRecords.filter(
       (r) =>
         r.plate.toUpperCase().includes(q) ||
         (r.model ?? '').toUpperCase().includes(q)
     );
-  }, [records, searchQuery]);
+  }, [coordinationFilteredRecords, searchQuery]);
 
   const maintenancePlatesSet = useMemo(
     () => new Set(records.map((r) => r.plate)),
@@ -112,23 +128,13 @@ export function MaintenanceModal({
   );
 
   const filteredVehicles = useMemo(() => {
-    const base = selectedCoordinations.length === 0
-      ? vehicles
-      : vehicles.filter(
-          (v) => v.coordination && selectedCoordinations.includes(v.coordination.id)
-        );
+    const base = allowedCoordinationPlates
+      ? vehicles.filter((v) => allowedCoordinationPlates.has(v.plate))
+      : vehicles;
     return base.filter((v) => !maintenancePlatesSet.has(v.plate));
-  }, [vehicles, selectedCoordinations, maintenancePlatesSet]);
+  }, [vehicles, allowedCoordinationPlates, maintenancePlatesSet]);
 
-  const maintenanceCount = useMemo(() => {
-    if (selectedCoordinations.length === 0) return records.length;
-    const allowedPlates = new Set(
-      vehicles
-        .filter((v) => v.coordination && selectedCoordinations.includes(v.coordination.id))
-        .map((v) => v.plate)
-    );
-    return records.filter((r) => allowedPlates.has(r.plate)).length;
-  }, [records, vehicles, selectedCoordinations]);
+  const maintenanceCount = coordinationFilteredRecords.length;
 
   const plates = useMemo(
     () => filteredVehicles.map((v) => v.plate).sort(),
