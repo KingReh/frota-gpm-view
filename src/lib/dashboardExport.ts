@@ -1,12 +1,57 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { format, parseISO, differenceInDays } from 'date-fns';
 
 import type { DashboardData } from '@/hooks/useDashboardData';
+import type { VehicleMaintenance } from '@/hooks/useVehicleMaintenance';
+
+export type CoordinationMap = Record<string, string>;
 
 interface ExportOptions {
   dashboard: Omit<DashboardData, 'isLoading'>;
   filterLabel: string;
+  maintenance?: VehicleMaintenance[];
+  coordinationMap?: CoordinationMap;
+}
+
+const MAINT_HEADERS = [
+  'Placa',
+  'Coordenação',
+  'Modelo',
+  'Tipo Frota',
+  'OS',
+  'Problemas Identificados',
+  'Data Solicitação',
+  'Atendimento GAD',
+  'Entrada Oficina',
+  'Dias na Oficina',
+];
+
+function fmtDate(date: string | null): string {
+  if (!date) return '—';
+  try { return format(parseISO(date), 'dd/MM/yyyy'); } catch { return '—'; }
+}
+
+function daysLabel(entryDate: string | null): string {
+  if (!entryDate) return 'Aguardando';
+  const days = differenceInDays(new Date(), parseISO(entryDate));
+  return `${days} ${days === 1 ? 'dia' : 'dias'}`;
+}
+
+function buildMaintRows(records: VehicleMaintenance[], coordMap: CoordinationMap = {}): string[][] {
+  return records.map((r) => [
+    r.plate,
+    coordMap[r.plate] ?? '—',
+    r.model ?? '—',
+    r.fleet_type ?? '—',
+    r.os_number ? String(r.os_number) : '—',
+    r.identified_problems || '—',
+    fmtDate(r.requested_date),
+    fmtDate(r.gad_service_date),
+    fmtDate(r.workshop_entry_date),
+    daysLabel(r.workshop_entry_date),
+  ]);
 }
 
 function buildWorkbook(opts: ExportOptions) {
@@ -82,6 +127,17 @@ function buildWorkbook(opts: ExportOptions) {
   const wsMfr = XLSX.utils.aoa_to_sheet([mfrHeader, ...mfrRows]);
   wsMfr['!cols'] = [{ wch: 25 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, wsMfr, 'Fabricantes');
+
+  // Sheet 8: Manutenção (já filtrada pela coordenação no caller)
+  const maintenance = opts.maintenance ?? [];
+  const coordMap = opts.coordinationMap ?? {};
+  const maintRows = buildMaintRows(maintenance, coordMap);
+  const wsMaint = XLSX.utils.aoa_to_sheet([MAINT_HEADERS, ...maintRows]);
+  wsMaint['!cols'] = [
+    { wch: 12 }, { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 8 },
+    { wch: 40 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+  ];
+  XLSX.utils.book_append_sheet(wb, wsMaint, 'Manutenção');
 
   return wb;
 }
@@ -261,6 +317,44 @@ export async function exportToPDF(opts: ExportOptions) {
       }
     },
   });
+
+  // Page 5: Manutenção
+  const maintenance = opts.maintenance ?? [];
+  const coordMap = opts.coordinationMap ?? {};
+  if (maintenance.length > 0) {
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('GPM Manutenção', pageWidth / 2, 15, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(120);
+    doc.text(
+      `${maintenance.length} veículo(s) em manutenção  |  Filtro: ${filterLabel}`,
+      pageWidth / 2, 21, { align: 'center' }
+    );
+    doc.setTextColor(0);
+
+    autoTable(doc, {
+      startY: 26,
+      head: [MAINT_HEADERS],
+      body: buildMaintRows(maintenance, coordMap),
+      theme: 'grid',
+      headStyles: { fillColor: [30, 41, 59], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8 },
+      columnStyles: {
+        0: { cellWidth: 20 },
+        1: { cellWidth: 28 },
+        4: { halign: 'center', cellWidth: 12 },
+        5: { cellWidth: 50 },
+        6: { halign: 'center', cellWidth: 22 },
+        7: { halign: 'center', cellWidth: 22 },
+        8: { halign: 'center', cellWidth: 22 },
+        9: { halign: 'center', cellWidth: 20 },
+      },
+      margin: { left: 10, right: 10 },
+    });
+  }
 
   doc.save(`dashboard-frota-${Date.now()}.pdf`);
 }
