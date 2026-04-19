@@ -23,6 +23,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { exportToXLSX, exportToODS, exportToPDF } from '@/lib/dashboardExport';
+import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { toast } from 'sonner';
 import { Footer } from '@/components/layout/Footer';
 
