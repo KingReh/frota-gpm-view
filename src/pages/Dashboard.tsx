@@ -32,6 +32,7 @@ function DashboardPage() {
   const { data: coordinations = [] } = useCoordinations();
   const { data: vehicles = [], lastUpdated, isLoading: vehiclesLoading, isSuccess: isSynced } = useVehicles({ selectedCoordinations });
   const dashboard = useDashboardData(selectedCoordinations);
+  const { records: maintenanceRecords } = useVehicleMaintenance();
 
   const handleToggle = (id: string) => {
     setSelectedCoordinations(prev =>
@@ -46,8 +47,30 @@ function DashboardPage() {
         .map(c => c.name)
         .join(', ');
 
+  // Filter maintenance records by selected coordinations (centralized rule)
+  const filteredMaintenance = (() => {
+    if (selectedCoordinations.length === 0) return maintenanceRecords;
+    const allowed = new Set(
+      vehicles
+        .filter(v => v.coordination && selectedCoordinations.includes(v.coordination.id))
+        .map(v => v.plate)
+    );
+    return maintenanceRecords.filter(r => allowed.has(r.plate));
+  })();
+
+  // Map plate -> coordination name for export labelling
+  const coordinationMap: Record<string, string> = {};
+  vehicles.forEach(v => {
+    if (v.coordination) coordinationMap[v.plate] = v.coordination.name;
+  });
+
   const handleExport = async (format: 'xlsx' | 'ods' | 'pdf') => {
-    const exportOpts = { dashboard, filterLabel };
+    const exportOpts = {
+      dashboard,
+      filterLabel,
+      maintenance: filteredMaintenance,
+      coordinationMap,
+    };
     try {
       toast.loading('Gerando arquivo...', { id: 'export' });
       if (format === 'xlsx') exportToXLSX(exportOpts);
