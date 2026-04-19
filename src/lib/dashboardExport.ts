@@ -128,6 +128,17 @@ function buildWorkbook(opts: ExportOptions) {
   wsMfr['!cols'] = [{ wch: 25 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, wsMfr, 'Fabricantes');
 
+  // Sheet 8: Manutenção (já filtrada pela coordenação no caller)
+  const maintenance = opts.maintenance ?? [];
+  const coordMap = opts.coordinationMap ?? {};
+  const maintRows = buildMaintRows(maintenance, coordMap);
+  const wsMaint = XLSX.utils.aoa_to_sheet([MAINT_HEADERS, ...maintRows]);
+  wsMaint['!cols'] = [
+    { wch: 12 }, { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 8 },
+    { wch: 40 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+  ];
+  XLSX.utils.book_append_sheet(wb, wsMaint, 'Manutenção');
+
   return wb;
 }
 
