@@ -153,14 +153,29 @@ export const DrivingTipsToast = () => {
               </div>
 
               {/* Ticker track */}
-              <div className="flex-1 overflow-hidden relative">
-                <div className="flex animate-ticker whitespace-nowrap">
-                  <span className="text-[11px] text-gray-200 font-medium pr-16">
-                    {tip}
-                  </span>
-                  <span className="text-[11px] text-gray-200 font-medium pr-16" aria-hidden="true">
-                    {tip}
-                  </span>
+              <div
+                className="flex-1 overflow-hidden relative touch-pan-y select-none cursor-grab active:cursor-grabbing"
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+              >
+                <div
+                  ref={trackRef}
+                  className={cn(
+                    "flex animate-ticker whitespace-nowrap",
+                    isPaused && "is-paused"
+                  )}
+                  style={scrubX !== null ? { transform: `translateX(${scrubX}px)` } : undefined}
+                >
+                  <div ref={contentRef} className="flex">
+                    <span className="text-[11px] text-gray-200 font-medium pr-16">
+                      {tip}
+                    </span>
+                    <span className="text-[11px] text-gray-200 font-medium pr-16" aria-hidden="true">
+                      {tip}
+                    </span>
+                  </div>
                 </div>
                 {/* Edge fade */}
                 <div className="pointer-events-none absolute inset-y-0 right-8 w-6 bg-gradient-to-l from-black/70 to-transparent" />
