@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Info, X } from "lucide-react";
+import { Zap, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const FALLBACK_TIPS = [
   "Mantenha sempre a distância de segurança do veículo à frente.",
@@ -24,6 +25,7 @@ export const DrivingTipsToast = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [hasPwaPrompt, setHasPwaPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleDismiss = () => {
     setIsVisible(false);
@@ -32,14 +34,12 @@ export const DrivingTipsToast = () => {
   };
 
   useEffect(() => {
-    // Fetch tip from Google Sheets via edge function
     const fetchTip = async () => {
       try {
         const { data, error } = await supabase.functions.invoke('get-driving-tips');
         if (!error && data?.tip) {
           setTip(data.tip);
         } else {
-          // Fallback to local tips
           setTip(FALLBACK_TIPS[Math.floor(Math.random() * FALLBACK_TIPS.length)]);
         }
       } catch {
@@ -49,12 +49,10 @@ export const DrivingTipsToast = () => {
 
     fetchTip();
 
-    // Detect iOS
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIOS(isIosDevice);
 
-    // Delay appearance (skip if already dismissed this session)
     const timer = setTimeout(() => {
       if (!sessionStorage.getItem('driving-tip-dismissed')) {
         setIsVisible(true);
@@ -73,28 +71,81 @@ export const DrivingTipsToast = () => {
     };
   }, []);
 
-  if (!isVisible) return null;
+  if (!isVisible || !tip) return null;
 
+  // ============== MOBILE: Discrete bottom ticker bar ==============
+  if (isMobile) {
+    return (
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            style={{
+              paddingBottom: "env(safe-area-inset-bottom, 0px)",
+              bottom: hasPwaPrompt ? (isIOS ? 200 : 195) : 0,
+            }}
+            className={cn(
+              "fixed left-0 right-0 z-[55] transition-[bottom] duration-300",
+              "bg-black/70 backdrop-blur-md border-t border-white/10",
+              "shadow-[0_-4px_20px_rgba(0,0,0,0.4)]"
+            )}
+          >
+            <div className="relative flex items-center gap-2 h-8 px-2 overflow-hidden">
+              {/* Icon + Label (fixed on left) */}
+              <div className="flex items-center gap-1.5 shrink-0 pr-2 border-r border-white/10 z-10 bg-black/70">
+                <Zap className="w-3 h-3 text-primary" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-white/60">
+                  Dica
+                </span>
+              </div>
+
+              {/* Ticker track */}
+              <div className="flex-1 overflow-hidden relative">
+                <div className="flex animate-ticker whitespace-nowrap">
+                  <span className="text-[11px] text-gray-200 font-medium pr-16">
+                    {tip}
+                  </span>
+                  <span className="text-[11px] text-gray-200 font-medium pr-16" aria-hidden="true">
+                    {tip}
+                  </span>
+                </div>
+                {/* Edge fade */}
+                <div className="pointer-events-none absolute inset-y-0 right-8 w-6 bg-gradient-to-l from-black/70 to-transparent" />
+              </div>
+
+              {/* Dismiss */}
+              <button
+                onClick={handleDismiss}
+                className="shrink-0 text-white/50 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors z-10"
+                aria-label="Dispensar dica"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  }
+
+  // ============== DESKTOP: Original floating card ==============
   return (
     <AnimatePresence>
       {isVisible && (
         <div
           className={cn(
-            "fixed left-1/2 -translate-x-1/2 md:left-8 md:translate-x-0 md:bottom-8 md:right-auto z-[60] w-full max-w-lg px-4 pointer-events-none transition-all duration-500 ease-in-out",
-            hasPwaPrompt
-              ? (isIOS ? "bottom-[225px] md:bottom-[180px]" : "bottom-[210px] md:bottom-[205px]")
-              : "bottom-4 md:bottom-8"
+            "fixed left-8 z-[60] w-full max-w-lg px-4 pointer-events-none transition-all duration-500 ease-in-out",
+            hasPwaPrompt ? "bottom-[205px]" : "bottom-8"
           )}
         >
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, x: 200, scale: 0.95 }}
-            transition={{
-              type: "spring",
-              stiffness: 400,
-              damping: 30
-            }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.6}
@@ -110,15 +161,12 @@ export const DrivingTipsToast = () => {
               "flex items-start gap-4 group"
             )}
           >
-            {/* Ambient Glow */}
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-primary/5 to-transparent opacity-50 pointer-events-none" />
 
-            {/* Icon */}
             <div className="shrink-0 p-2 rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.3)]">
               <Zap className="w-5 h-5" />
             </div>
 
-            {/* Content */}
             <div className="flex-1 pt-1 min-w-0 overflow-visible">
               <div className="flex items-center justify-between gap-4">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 flex items-center gap-2">
@@ -137,7 +185,6 @@ export const DrivingTipsToast = () => {
               </p>
             </div>
 
-            {/* Bottom Progress/Border Accent */}
             <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           </motion.div>
         </div>
