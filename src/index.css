@@ -151,7 +151,10 @@
     100% { transform: translateX(-50%); }
   }
   .animate-ticker {
-    animation: ticker-slide 35s linear infinite;
+    animation: ticker-slide 22s linear infinite;
     will-change: transform;
+  }
+  .animate-ticker.is-paused {
+    animation-play-state: paused;
   }
 }

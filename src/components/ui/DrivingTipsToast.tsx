@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -27,10 +27,60 @@ export const DrivingTipsToast = () => {
   const [isIOS, setIsIOS] = useState(false);
   const isMobile = useIsMobile();
 
+  // Ticker interaction state (mobile)
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [scrubX, setScrubX] = useState<number | null>(null);
+  const dragStateRef = useRef<{ startX: number; startOffset: number; maxOffset: number } | null>(null);
+
   const handleDismiss = () => {
     setIsVisible(false);
     sessionStorage.setItem('driving-tip-dismissed', 'true');
     setDismissed(true);
+  };
+
+  const getCurrentTranslateX = (): number => {
+    const el = trackRef.current;
+    if (!el) return 0;
+    const transform = window.getComputedStyle(el).transform;
+    if (!transform || transform === 'none') return 0;
+    // matrix(a, b, c, d, tx, ty)
+    const match = transform.match(/matrix.*\((.+)\)/);
+    if (!match) return 0;
+    const parts = match[1].split(',').map(p => parseFloat(p.trim()));
+    return parts.length >= 6 ? parts[4] : 0;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const track = trackRef.current;
+    const content = contentRef.current;
+    if (!track || !content) return;
+    const currentX = getCurrentTranslateX();
+    setScrubX(currentX);
+    setIsPaused(true);
+    // Half of the duplicated track width = single phrase width (negative max offset)
+    const maxOffset = -(content.scrollWidth / 2);
+    dragStateRef.current = { startX: e.clientX, startOffset: currentX, maxOffset };
+    try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* noop */ }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const state = dragStateRef.current;
+    if (!state) return;
+    const delta = e.clientX - state.startX;
+    let next = state.startOffset + delta;
+    // Clamp between maxOffset (end) and 0 (start)
+    if (next > 0) next = 0;
+    if (next < state.maxOffset) next = state.maxOffset;
+    setScrubX(next);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragStateRef.current = null;
+    setIsPaused(false);
+    setScrubX(null);
+    try { (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId); } catch { /* noop */ }
   };
 
   useEffect(() => {
@@ -103,14 +153,29 @@ export const DrivingTipsToast = () => {
               </div>
 
               {/* Ticker track */}
-              <div className="flex-1 overflow-hidden relative">
-                <div className="flex animate-ticker whitespace-nowrap">
-                  <span className="text-[11px] text-gray-200 font-medium pr-16">
-                    {tip}
-                  </span>
-                  <span className="text-[11px] text-gray-200 font-medium pr-16" aria-hidden="true">
-                    {tip}
-                  </span>
+              <div
+                className="flex-1 overflow-hidden relative touch-pan-y select-none cursor-grab active:cursor-grabbing"
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+              >
+                <div
+                  ref={trackRef}
+                  className={cn(
+                    "flex animate-ticker whitespace-nowrap",
+                    isPaused && "is-paused"
+                  )}
+                  style={scrubX !== null ? { transform: `translateX(${scrubX}px)` } : undefined}
+                >
+                  <div ref={contentRef} className="flex">
+                    <span className="text-[11px] text-gray-200 font-medium pr-16">
+                      {tip}
+                    </span>
+                    <span className="text-[11px] text-gray-200 font-medium pr-16" aria-hidden="true">
+                      {tip}
+                    </span>
+                  </div>
                 </div>
                 {/* Edge fade */}
                 <div className="pointer-events-none absolute inset-y-0 right-8 w-6 bg-gradient-to-l from-black/70 to-transparent" />
