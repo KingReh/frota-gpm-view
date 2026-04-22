@@ -25,7 +25,19 @@ export const DrivingTipsToast = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [hasPwaPrompt, setHasPwaPrompt] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const isMobile = useIsMobile();
+  const isMobileBreakpoint = useIsMobile();
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const hover = window.matchMedia('(hover: none)').matches;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsTouchDevice((coarse || hover) && hasTouch);
+  }, []);
+
+  // Real mobile = small viewport AND actual touch device (never true on desktop)
+  const isMobile = isMobileBreakpoint && isTouchDevice;
 
   // Ticker interaction state (mobile)
   const trackRef = useRef<HTMLDivElement | null>(null);
