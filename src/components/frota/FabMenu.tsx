@@ -1,4 +1,5 @@
 import * as React from "react";
+const { useState, useEffect, useRef } = React;
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -48,15 +49,15 @@ interface FabMenuProps {
 }
 
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [transferModalOpen, setTransferModalOpen] = React.useState(false);
-  const [maintenanceModalOpen, setMaintenanceModalOpen] = React.useState(false);
-  const [isOverFooter, setIsOverFooter] = React.useState(false);
-  const fabRef = React.useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [transferModalOpen, setTransferModalOpen] = useState(false);
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
+  const [isOverFooter, setIsOverFooter] = useState(false);
+  const fabRef = useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkOverlap = () => {
       const footer = document.querySelector('footer');
       const fab = fabRef.current?.querySelector('button');
