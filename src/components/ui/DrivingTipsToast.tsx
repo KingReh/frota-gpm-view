@@ -37,8 +37,9 @@ export const DrivingTipsToast = () => {
     setIsTouchDevice((coarse || hover) && hasTouch);
   }, []);
 
-  // Real mobile = small viewport AND actual touch device (never true on desktop)
-  const isMobile = isMobileBreakpoint && isTouchDevice;
+  // Mobile = small viewport (works in real devices and in Lovable's mobile preview emulation).
+  // Touch capability is tracked separately and only used to gate the hold-to-preview gesture.
+  const isMobile = isMobileBreakpoint;
 
   // Ticker interaction state (mobile)
   const trackRef = useRef<HTMLDivElement | null>(null);
