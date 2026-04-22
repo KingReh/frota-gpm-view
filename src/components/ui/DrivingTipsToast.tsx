@@ -164,8 +164,15 @@ export const DrivingTipsToast = () => {
             )}
           >
             <div className="relative flex items-center gap-2 h-8 px-2 overflow-hidden">
-              {/* Icon + Label (fixed on left) */}
-              <div className="flex items-center gap-1.5 shrink-0 pr-2 border-r border-white/10 z-10 bg-black/70">
+              {/* Icon + Label (fixed on left) - hold to preview tip */}
+              <div
+                className="flex items-center gap-1.5 shrink-0 pr-2 border-r border-white/10 z-10 bg-black/70 cursor-pointer select-none touch-none"
+                onPointerDown={handleLabelHoldStart}
+                onPointerUp={handleLabelHoldEnd}
+                onPointerLeave={handleLabelHoldEnd}
+                onPointerCancel={handleLabelHoldEnd}
+                onContextMenu={(e) => e.preventDefault()}
+              >
                 <Zap className="w-3 h-3 text-primary" />
                 <span className="text-[9px] font-bold uppercase tracking-wider text-white/60">
                   Dica
