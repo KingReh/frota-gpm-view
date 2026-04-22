@@ -34,6 +34,26 @@ export const DrivingTipsToast = () => {
   const [scrubX, setScrubX] = useState<number | null>(null);
   const dragStateRef = useRef<{ startX: number; startOffset: number; maxOffset: number } | null>(null);
 
+  // Hold-to-preview modal state (mobile)
+  const [showHoldModal, setShowHoldModal] = useState(false);
+  const holdTimerRef = useRef<number | null>(null);
+
+  const handleLabelHoldStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (holdTimerRef.current) window.clearTimeout(holdTimerRef.current);
+    holdTimerRef.current = window.setTimeout(() => {
+      setShowHoldModal(true);
+    }, 250);
+  };
+
+  const handleLabelHoldEnd = () => {
+    if (holdTimerRef.current) {
+      window.clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+    setShowHoldModal(false);
+  };
+
   const handleDismiss = () => {
     setIsVisible(false);
     sessionStorage.setItem('driving-tip-dismissed', 'true');
