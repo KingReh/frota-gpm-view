@@ -1,5 +1,4 @@
 import * as React from "react";
-const { useState, useEffect, useRef } = React;
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -49,18 +48,18 @@ interface FabMenuProps {
 }
 
 export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinations = [] }: FabMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [transferModalOpen, setTransferModalOpen] = useState(false);
-  const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
-  const [isOverFooter, setIsOverFooter] = useState(false);
-  const fabRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [transferModalOpen, setTransferModalOpen] = React.useState(false);
+  const [maintenanceModalOpen, setMaintenanceModalOpen] = React.useState(false);
+  const [isOverFooter, setIsOverFooter] = React.useState(false);
+  const fabRef = React.useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const checkOverlap = () => {
-      const footer = document.querySelector('footer');
-      const fab = fabRef.current?.querySelector('button');
+      const footer = document.querySelector("footer");
+      const fab = fabRef.current?.querySelector("button");
       if (!footer || !fab) return;
 
       const footerRect = footer.getBoundingClientRect();
@@ -69,13 +68,13 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
       setIsOverFooter(fabRect.bottom > footerRect.top && fabRect.top < footerRect.bottom);
     };
 
-    window.addEventListener('scroll', checkOverlap, { passive: true });
-    window.addEventListener('resize', checkOverlap, { passive: true });
+    window.addEventListener("scroll", checkOverlap, { passive: true });
+    window.addEventListener("resize", checkOverlap, { passive: true });
     checkOverlap();
 
     return () => {
-      window.removeEventListener('scroll', checkOverlap);
-      window.removeEventListener('resize', checkOverlap);
+      window.removeEventListener("scroll", checkOverlap);
+      window.removeEventListener("resize", checkOverlap);
     };
   }, []);
 
