@@ -118,6 +118,9 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl p-0 gap-0 glass-panel border-border/40 shadow-lg bg-card/95 [&>button]:hidden overflow-visible">
+        <DialogDescription className="sr-only">
+          Detalhes completos do veículo selecionado
+        </DialogDescription>
 
         {/* Header / Hero Section */}
         <div className="relative h-48 w-full overflow-hidden rounded-t-lg">

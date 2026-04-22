@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -248,6 +249,9 @@ export function MaintenanceModal({
               <Wrench className="w-5 h-5 text-primary" />
               GPM Manutenção
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Controle de manutenção da frota da gerência
+            </DialogDescription>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs" disabled={records.length === 0}>
