@@ -52,7 +52,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
   const [transferModalOpen, setTransferModalOpen] = React.useState(false);
   const [maintenanceModalOpen, setMaintenanceModalOpen] = React.useState(false);
   const [isOverFooter, setIsOverFooter] = React.useState(false);
-  const fabRef = useRef<HTMLDivElement>(null);
+  const fabRef = React.useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
 
