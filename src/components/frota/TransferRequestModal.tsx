@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -639,6 +640,9 @@ export function TransferRequestModal({
           <DialogTitle className="text-lg font-bold text-foreground">
             {step === 1 ? 'Solicitar Transferência' : 'Confirmar Solicitação'}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Formulário para solicitar transferência de saldo entre veículos
+          </DialogDescription>
         </DialogHeader>
 
         {step === 1 ? (

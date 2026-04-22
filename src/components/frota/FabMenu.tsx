@@ -78,7 +78,8 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
     };
   }, []);
 
-  const handleTransferClick = () => {
+  const handleTransferClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.blur();
     setIsOpen(false);
     if (!gestor) {
       toast({
@@ -176,7 +177,8 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: links.length * 0.05 }}
-                onClick={() => {
+                onClick={(e) => {
+                  e.currentTarget.blur();
                   setIsOpen(false);
                   setMaintenanceModalOpen(true);
                 }}
