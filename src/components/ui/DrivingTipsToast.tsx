@@ -217,6 +217,44 @@ export const DrivingTipsToast = () => {
                 <X className="w-3 h-3" />
               </button>
             </div>
+
+            {/* Hold-to-preview modal */}
+            <AnimatePresence>
+              {showHoldModal && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="fixed inset-0 z-[100] flex items-center justify-center px-6 bg-black/70 backdrop-blur-sm pointer-events-none"
+                >
+                  <motion.div
+                    initial={{ scale: 0.9, y: 10 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                    className={cn(
+                      "relative w-full max-w-sm",
+                      "bg-card border border-border rounded-2xl p-5",
+                      "shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+                    )}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20">
+                        <Zap className="w-4 h-4" />
+                      </div>
+                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Dica do Dia
+                      </h4>
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed font-medium">
+                      {tip}
+                    </p>
+                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
