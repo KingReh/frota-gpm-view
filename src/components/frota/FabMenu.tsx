@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import * as React from "react";
+const { useState, useEffect, useRef } = React;
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
