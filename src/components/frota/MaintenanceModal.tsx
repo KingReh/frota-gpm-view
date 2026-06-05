@@ -235,9 +235,21 @@ export function MaintenanceModal({
     }
   };
 
-  const getDaysInWorkshop = (entryDate: string | null) => {
+  const getWorkshopDurationLabel = (entryDate: string | null): string | null => {
     if (!entryDate) return null;
-    return differenceInDays(new Date(), parseISO(entryDate));
+    const start = parseISO(entryDate);
+    const now = new Date();
+    const totalDays = differenceInDays(now, start);
+    if (totalDays < 1) return 'Em oficina/quebrado';
+
+    const years = differenceInYears(now, start);
+    const remainingDays = differenceInDays(now, addYears(start, years));
+
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years} ${years === 1 ? 'ano' : 'anos'}`);
+    if (remainingDays > 0) parts.push(`${remainingDays} ${remainingDays === 1 ? 'dia' : 'dias'}`);
+
+    return `Em oficina/quebrado há ${parts.join(' e ')}`;
   };
 
   return (
