@@ -541,9 +541,9 @@ export function MaintenanceModal({
                         {/* Workshop time + Return */}
                         <div className="flex items-center justify-between pt-1 border-t border-border/50">
                           <div>
-                            {days !== null ? (
+                            {workshopLabel !== null ? (
                               <p className="text-xs font-medium text-[hsl(var(--balance-medium))]">
-                                Veículo há {days} {days === 1 ? 'dia' : 'dias'} na oficina
+                                {workshopLabel}
                               </p>
                             ) : (
                               <p className="text-[10px] text-muted-foreground italic">
