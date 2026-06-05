@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { format, differenceInDays, parseISO } from 'date-fns';
+import { format, differenceInDays, differenceInYears, addYears, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon, Plus, Wrench, ClipboardList, Info, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import {
@@ -235,9 +235,21 @@ export function MaintenanceModal({
     }
   };
 
-  const getDaysInWorkshop = (entryDate: string | null) => {
+  const getWorkshopDurationLabel = (entryDate: string | null): string | null => {
     if (!entryDate) return null;
-    return differenceInDays(new Date(), parseISO(entryDate));
+    const start = parseISO(entryDate);
+    const now = new Date();
+    const totalDays = differenceInDays(now, start);
+    if (totalDays < 1) return 'Em oficina/quebrado';
+
+    const years = differenceInYears(now, start);
+    const remainingDays = differenceInDays(now, addYears(start, years));
+
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years} ${years === 1 ? 'ano' : 'anos'}`);
+    if (remainingDays > 0) parts.push(`${remainingDays} ${remainingDays === 1 ? 'dia' : 'dias'}`);
+
+    return `Em oficina/quebrado há ${parts.join(' e ')}`;
   };
 
   return (
@@ -469,7 +481,7 @@ export function MaintenanceModal({
                   ) : (
                 <div className="space-y-3">
                   {filteredRecords.map((rec) => {
-                    const days = getDaysInWorkshop(rec.workshop_entry_date);
+                    const workshopLabel = getWorkshopDurationLabel(rec.workshop_entry_date);
                     const coordColor = coordColorMap[rec.plate];
                     return (
                       <div
@@ -529,9 +541,9 @@ export function MaintenanceModal({
                         {/* Workshop time + Return */}
                         <div className="flex items-center justify-between pt-1 border-t border-border/50">
                           <div>
-                            {days !== null ? (
+                            {workshopLabel !== null ? (
                               <p className="text-xs font-medium text-[hsl(var(--balance-medium))]">
-                                Veículo há {days} {days === 1 ? 'dia' : 'dias'} na oficina
+                                {workshopLabel}
                               </p>
                             ) : (
                               <p className="text-[10px] text-muted-foreground italic">
