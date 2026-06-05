@@ -481,7 +481,7 @@ export function MaintenanceModal({
                   ) : (
                 <div className="space-y-3">
                   {filteredRecords.map((rec) => {
-                    const days = getDaysInWorkshop(rec.workshop_entry_date);
+                    const workshopLabel = getWorkshopDurationLabel(rec.workshop_entry_date);
                     const coordColor = coordColorMap[rec.plate];
                     return (
                       <div
