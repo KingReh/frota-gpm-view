@@ -257,7 +257,7 @@ const Index = () => {
       case 'table':
         return <VehicleTable vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
       case 'carousel':
-        return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
+        return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} maintenanceEntryDates={maintenanceEntryDates} />;
       case 'card':
       default:
         return <VehicleGrid vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
