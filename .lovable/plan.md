@@ -1,26 +1,19 @@
+## Contexto
 
+O sistema é de uso interno confiável, com acesso público read-only intencional e sem autenticação. Correções focadas em RLS, hardening de auth ou redução de exposição pública não se aplicam.
 
-# Plano: Campo "Problemas Identificados" na Manutenção
+## Ações
 
-## 1. Banco de Dados
-Adicionar coluna `identified_problems` (text, NOT NULL, default '') à tabela `vehicle_maintenance` via migração.
+1. **Marcar findings do scanner Supabase como ignorados** com justificativa:
+   - `SUPA_auth_otp_long_expiry` — Sistema não usa fluxo de OTP/autenticação para usuários finais; configuração irrelevante.
+   - `SUPA_function_search_path_mutable` (`notify_fuel_balance_update`) — Função interna de trigger; sistema confiável de uso interno, sem superfície de ataque por schema hijacking.
+   - `SUPA_vulnerable_postgres_version` — Upgrade gerenciado pela plataforma Supabase; fora do escopo do código da aplicação.
 
-## 2. Hook `useVehicleMaintenance.ts`
-- Adicionar `identified_problems: string` à interface `VehicleMaintenance`
-- Adicionar `identified_problems: string` à interface `InsertPayload`
+2. **Atualizar `@security-memory`** descrevendo:
+   - App é PWA público read-only para consulta de saldos de frota — acesso anônimo é intencional.
+   - Nunca exigir autenticação para leitura dos dados de saldo.
+   - Riscos aceitos: leitura pública das tabelas de saldo, função trigger sem `search_path` fixo, versão do Postgres conforme política da plataforma, ausência de configurações de OTP.
 
-## 3. Modal `MaintenanceModal.tsx`
+## Sem alterações de código ou banco
 
-**Aba Solicitação:**
-- Novo estado `identifiedProblems`
-- Campo Textarea obrigatório com label "Problemas Identificados"
-- Botão "Adicionar" desabilitado se campo vazio
-- Reset do campo no `resetForm()`
-- Enviar valor no `handleAdd()`
-
-**Aba Painel Geral:**
-- Exibir `InfoTooltip` (componente já existente) ao lado da placa, mostrando o texto dos problemas identificados
-
-## 4. Tipos Supabase
-Atualizar `types.ts` automaticamente após migração.
-
+Nenhum arquivo de código será modificado; nenhuma migration será criada. Apenas operações nos metadados do scanner e na memória de segurança.
