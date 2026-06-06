@@ -97,6 +97,13 @@ const Index = () => {
     ),
     [maintenanceRecords]
   );
+  const maintenanceEntryDates = React.useMemo(() => {
+    const map = new Map<string, string | null>();
+    maintenanceRecords
+      .filter(r => !!r.workshop_entry_date)
+      .forEach(r => map.set(r.plate, r.workshop_entry_date));
+    return map;
+  }, [maintenanceRecords]);
 
   const isSynced = !isFetching;
   const isLoading = loadingCoordinations || loadingVehicles;
@@ -250,7 +257,7 @@ const Index = () => {
       case 'table':
         return <VehicleTable vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
       case 'carousel':
-        return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
+        return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} maintenanceEntryDates={maintenanceEntryDates} />;
       case 'card':
       default:
         return <VehicleGrid vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
