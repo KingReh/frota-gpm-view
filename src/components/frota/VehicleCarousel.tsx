@@ -109,6 +109,7 @@ export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryD
                     size="large"
                     hideTelemetry={true}
                     isInMaintenance={maintenancePlates?.has(vehicle.plate)}
+                    maintenanceEntryDate={maintenanceEntryDates?.get(vehicle.plate) ?? null}
                     onClick={() => setSelectedVehicle(vehicle)}
                   />
                 </div>
