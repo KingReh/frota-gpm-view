@@ -86,7 +86,7 @@ export function VehicleCarousel({ vehicles, maintenancePlates }: VehicleCarousel
 
         <Carousel
           setApi={setApi}
-          className="w-full max-w-5xl z-10"
+          className="w-full max-w-6xl z-10"
           opts={{
             align: 'center',
             loop: true,
@@ -96,11 +96,11 @@ export function VehicleCarousel({ vehicles, maintenancePlates }: VehicleCarousel
             skipSnaps: true,
           }}
         >
-          <CarouselContent className="-ml-4 md:-ml-8">
+          <CarouselContent className="-ml-4 md:-ml-6">
             {vehicles.map((vehicle, index) => (
-              <CarouselItem key={vehicle.plate} className="pl-4 md:pl-8 basis-[85%] md:basis-1/2 lg:basis-[60%]">
+              <CarouselItem key={vehicle.plate} className="pl-4 md:pl-6 basis-[85%] md:basis-[42%] lg:basis-[34%] xl:basis-[30%]">
                 <div
-                  className="py-4 md:py-8 transition-[transform,opacity] duration-150 ease-out will-change-transform"
+                  className="py-4 md:py-6 transition-[transform,opacity] duration-150 ease-out will-change-transform"
                   style={getSlideStyle(index)}
                 >
                   <VehicleCard
