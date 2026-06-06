@@ -111,15 +111,43 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
             )}
           </div>
 
-          {/* Maintenance Overlay */}
+          {/* Maintenance Overlay (clickable to toggle badge) */}
           {isInMaintenance && (
-            <div className="absolute inset-0 z-20 pointer-events-none animate-[pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite]">
-              <img
-                src="/manutencao.png"
-                alt="Em manutenção"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <>
+              <button
+                type="button"
+                aria-label="Ver status de manutenção"
+                className="absolute inset-0 z-20 animate-[pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite] cursor-pointer focus:outline-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMaintenanceBadge((v) => !v);
+                }}
+              >
+                <img
+                  src="/manutencao.png"
+                  alt="Em manutenção"
+                  className="w-full h-full object-cover pointer-events-none"
+                />
+              </button>
+              {showMaintenanceBadge && (
+                <div
+                  className="absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 animate-in fade-in zoom-in-95 duration-200"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex items-center gap-2.5 rounded-full border border-yellow-400/60 bg-yellow-400/15 backdrop-blur-md px-4 py-2 shadow-[0_8px_32px_-4px_hsl(48_96%_50%/0.5)]">
+                    <Wrench className="w-4 h-4 text-yellow-300 shrink-0" />
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-yellow-200/90">
+                        Em oficina
+                      </span>
+                      <span className="text-xs font-bold text-yellow-50">
+                        Quebrado há {formatDaysSince(maintenanceEntryDate)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Bottom Overlay Gradient */}
