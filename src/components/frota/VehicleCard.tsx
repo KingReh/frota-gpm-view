@@ -19,12 +19,14 @@ interface VehicleCardProps {
   compact?: boolean;
   hideTelemetry?: boolean;
   isInMaintenance?: boolean;
+  maintenanceEntryDate?: string | null;
   onClick?: () => void;
 }
 
-export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, isInMaintenance = false, onClick }: VehicleCardProps) {
+export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, isInMaintenance = false, maintenanceEntryDate = null, onClick }: VehicleCardProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
+  const [showMaintenanceBadge, setShowMaintenanceBadge] = React.useState(false);
   const isLarge = size === 'large';
   const balanceValue = parseBalance(vehicle.balance);
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
