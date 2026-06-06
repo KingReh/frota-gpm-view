@@ -16,9 +16,10 @@ import { cn } from '@/lib/utils';
 interface VehicleCarouselProps {
   vehicles: VehicleWithDetails[];
   maintenancePlates?: Set<string>;
+  maintenanceEntryDates?: Map<string, string | null>;
 }
 
-export function VehicleCarousel({ vehicles, maintenancePlates }: VehicleCarouselProps) {
+export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryDates }: VehicleCarouselProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
