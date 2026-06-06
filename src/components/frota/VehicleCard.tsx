@@ -141,7 +141,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                         Inoperante
                       </span>
                       <span className="text-xs font-bold text-yellow-50">
-                        Em oficiona/quebrado há {formatDaysSince(maintenanceEntryDate)}
+                        Quebrado há {formatDaysSince(maintenanceEntryDate)}
                       </span>
                     </div>
                   </div>
