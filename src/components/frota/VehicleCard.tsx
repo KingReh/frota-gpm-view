@@ -286,3 +286,15 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
     </div>
   );
 }
+
+function formatDaysSince(iso: string | null | undefined): string {
+  if (!iso) return 'data indisponível';
+  const entry = new Date(iso);
+  if (isNaN(entry.getTime())) return 'data indisponível';
+  const now = new Date();
+  const ms = now.getTime() - entry.getTime();
+  const days = Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
+  if (days === 0) return 'menos de 1 dia';
+  if (days === 1) return '1 dia';
+  return `${days} dias`;
+}
