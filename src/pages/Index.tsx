@@ -97,6 +97,13 @@ const Index = () => {
     ),
     [maintenanceRecords]
   );
+  const maintenanceEntryDates = React.useMemo(() => {
+    const map = new Map<string, string | null>();
+    maintenanceRecords
+      .filter(r => !!r.workshop_entry_date)
+      .forEach(r => map.set(r.plate, r.workshop_entry_date));
+    return map;
+  }, [maintenanceRecords]);
 
   const isSynced = !isFetching;
   const isLoading = loadingCoordinations || loadingVehicles;
