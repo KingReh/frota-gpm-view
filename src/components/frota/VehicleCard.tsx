@@ -138,10 +138,10 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                     <Wrench className="w-4 h-4 text-yellow-300 shrink-0" />
                     <div className="flex flex-col leading-tight">
                       <span className="text-[9px] font-black uppercase tracking-widest text-yellow-200/90">
-                        Em oficina
+                        Inoperante
                       </span>
                       <span className="text-xs font-bold text-yellow-50">
-                        Quebrado há {formatDaysSince(maintenanceEntryDate)}
+                        Em oficiona/quebrado há {formatDaysSince(maintenanceEntryDate)}
                       </span>
                     </div>
                   </div>
