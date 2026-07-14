@@ -56,6 +56,16 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
 
+  const showMaquinarioSul = React.useMemo(() => {
+    if (!selectedCoordinations.length) return false;
+    const selectedNames = coordinations
+      .filter(c => selectedCoordinations.includes(c.id))
+      .map(c => c.name.trim().toUpperCase());
+    if (!selectedNames.length) return false;
+    const allowed = new Set(["CPR SUL", "CMA SUL"]);
+    return selectedNames.every(n => allowed.has(n));
+  }, [coordinations, selectedCoordinations]);
+
   React.useEffect(() => {
     const checkOverlap = () => {
       const footer = document.querySelector("footer");
