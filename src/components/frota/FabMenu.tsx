@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings, Tractor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
 import { MaintenanceModal } from "./MaintenanceModal";
@@ -55,6 +55,16 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
   const fabRef = React.useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
+
+  const showMaquinarioSul = React.useMemo(() => {
+    if (!selectedCoordinations.length) return false;
+    const selectedNames = coordinations
+      .filter(c => selectedCoordinations.includes(c.id))
+      .map(c => c.name.trim().toUpperCase());
+    if (!selectedNames.length) return false;
+    const allowed = new Set(["CPR SUL", "CMA SUL"]);
+    return selectedNames.every(n => allowed.has(n));
+  }, [coordinations, selectedCoordinations]);
 
   React.useEffect(() => {
     const checkOverlap = () => {
@@ -221,6 +231,36 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                   <span className="text-[10px] text-muted-foreground truncate">Saldo entre veículos ou saldo novo</span>
                 </div>
               </motion.button>
+
+              {/* Controle de Maquinário SUL (conditional) */}
+              {showMaquinarioSul && (
+                <motion.a
+                  href="https://controle-de-abastecimento.ai.studio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: (links.length + 2) * 0.05 }}
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-xl",
+                    "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
+                    "border border-transparent transition-all duration-200 group",
+                  )}
+                >
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <Tractor className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-semibold text-foreground leading-tight truncate">
+                      Controle de Maquinário SUL
+                    </span>
+                    <span className="text-[10px] text-muted-foreground truncate">
+                      Gestão de abastecimentos dos cartões de maquinário da SUL.
+                    </span>
+                  </div>
+                </motion.a>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
