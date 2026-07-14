@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings, Tractor } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
 import { MaintenanceModal } from "./MaintenanceModal";
