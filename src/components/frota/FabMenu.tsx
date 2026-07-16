@@ -235,7 +235,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
               {/* Controle de Maquinário SUL (conditional) */}
               {showMaquinarioSul && (
                 <motion.a
-                  href="https://controle-de-abastecimento.ai.studio"
+                  href="https://compesamaquinariosul.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, x: 20 }}
