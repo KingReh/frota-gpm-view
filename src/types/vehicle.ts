@@ -63,6 +63,6 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   viewMode: 'carousel',
   selectedCoordinations: [],
   activeTab: 'fleet',
-  sortOption: 'plate_asc',
+  sortOption: 'balance_desc',
   favoritePlates: [],
 };
