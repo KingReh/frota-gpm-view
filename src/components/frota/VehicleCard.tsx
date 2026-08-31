@@ -182,14 +182,14 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
               </div>
 
               {showDescription && vehicle.description && (
-                <div className="mt-3 sm:mt-4 w-full rounded-xl border border-primary/15 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 px-3 py-2.5 shadow-[inset_0_1px_0_0_hsl(var(--primary)/0.1)]">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15">
-                      <Info className="h-3 w-3 text-primary" />
+                <div className="mt-3 sm:mt-4 w-full rounded-2xl border border-primary/15 bg-primary/10 px-4 py-3 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/15 ring-1 ring-primary/20">
+                      <Info className="h-3.5 w-3.5 text-primary" />
                     </div>
-                    <span className="text-xs sm:text-sm font-semibold leading-snug text-foreground/95 line-clamp-3 text-center w-full">
+                    <p className="text-xs sm:text-sm font-semibold leading-relaxed text-foreground/95 line-clamp-3 break-words">
                       {vehicle.description}
-                    </span>
+                    </p>
                   </div>
                 </div>
               )}
