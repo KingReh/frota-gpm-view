@@ -179,15 +179,20 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 <h3 className="text-foreground text-sm sm:text-base md:text-lg font-bold tracking-tight line-clamp-1 opacity-90">
                   {vehicle.model || 'Protótipo não identificado'}
                 </h3>
-                {showDescription && vehicle.description && (
-                  <div className="mt-2 sm:mt-3 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-2 shadow-sm">
-                    <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                    <span className="text-[10px] sm:text-xs font-semibold leading-snug text-foreground/90 line-clamp-3">
+              </div>
+
+              {showDescription && vehicle.description && (
+                <div className="mt-3 sm:mt-4 w-full rounded-xl border border-primary/15 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 px-3 py-2.5 shadow-[inset_0_1px_0_0_hsl(var(--primary)/0.1)]">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/15">
+                      <Info className="h-3 w-3 text-primary" />
+                    </div>
+                    <span className="text-xs sm:text-sm font-semibold leading-snug text-foreground/95 line-clamp-3 text-center w-full">
                       {vehicle.description}
                     </span>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Technical Badges */}
               <div className="flex flex-col items-end gap-2 sm:gap-3 shrink-0">
