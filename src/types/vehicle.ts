@@ -37,6 +37,7 @@ export interface VehicleWithDetails extends VehicleData {
   image_url: string | null;
   vehicle_id: string | null;
   fuel_type: string | null;
+  description: string | null;
 }
 
 export type ViewMode = 'table' | 'card' | 'carousel';
