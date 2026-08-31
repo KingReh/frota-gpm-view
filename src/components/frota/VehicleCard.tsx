@@ -20,10 +20,11 @@ interface VehicleCardProps {
   hideTelemetry?: boolean;
   isInMaintenance?: boolean;
   maintenanceEntryDate?: string | null;
+  showDescription?: boolean;
   onClick?: () => void;
 }
 
-export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, isInMaintenance = false, maintenanceEntryDate = null, onClick }: VehicleCardProps) {
+export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, isInMaintenance = false, maintenanceEntryDate = null, showDescription = false, onClick }: VehicleCardProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
   const [showMaintenanceBadge, setShowMaintenanceBadge] = React.useState(false);
@@ -178,6 +179,14 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 <h3 className="text-foreground text-sm sm:text-base md:text-lg font-bold tracking-tight line-clamp-1 opacity-90">
                   {vehicle.model || 'Protótipo não identificado'}
                 </h3>
+                {showDescription && vehicle.description && (
+                  <div className="mt-2 sm:mt-3 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-2 shadow-sm">
+                    <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    <span className="text-[10px] sm:text-xs font-semibold leading-snug text-foreground/90 line-clamp-3">
+                      {vehicle.description}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Technical Badges */}

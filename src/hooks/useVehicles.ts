@@ -10,6 +10,7 @@ interface VehicleWithCoordination {
   plate: string;
   coordination_id: string | null;
   fuel_type: string | null;
+  description: string | null;
   coordinations: {
     id: string;
     name: string;
@@ -58,6 +59,7 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
           plate,
           coordination_id,
           fuel_type,
+          description,
           coordinations (
             id,
             name,
@@ -83,6 +85,7 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
           coordination_id: v.coordination_id,
           coordination: v.coordinations as Coordination | null,
           fuel_type: v.fuel_type,
+          description: v.description,
         }]) || []
       );
 
@@ -109,6 +112,7 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
           coordination: vehicle?.coordination || null,
           image_url: vehicle?.id ? imageMap.get(vehicle.id) || null : null,
           fuel_type: vehicle?.fuel_type || null,
+          description: vehicle?.description || null,
         };
       });
 
