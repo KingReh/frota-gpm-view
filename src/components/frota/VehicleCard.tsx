@@ -203,9 +203,9 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
 
             {/* Description Section */}
             {showDescription && vehicle.description && (
-              <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-2 shadow-sm">
+              <div className="flex items-start justify-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-2.5 py-2 shadow-sm">
                 <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                <span className="text-[10px] sm:text-xs font-semibold leading-snug text-foreground/90 line-clamp-3">
+                <span className="flex-1 text-center text-[10px] sm:text-xs font-semibold leading-snug text-foreground/90 line-clamp-3">
                   {vehicle.description}
                 </span>
               </div>
