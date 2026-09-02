@@ -20,13 +20,13 @@ export function CoordinationBarChart({ data }: CoordinationBarChartProps) {
             tickLine={false}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
+            contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px', color: 'hsl(var(--popover-foreground))' }}
             formatter={(value: number, _name: string, props: any) => {
-              const color = props?.payload?.color || '#fff';
+              const color = props?.payload?.color || 'hsl(var(--popover-foreground))';
               return [<span style={{ color }}>{value} veículos</span>];
             }}
-            labelStyle={{ color: '#fff', fontWeight: 600 }}
-            itemStyle={{ color: '#fff' }}
+            labelStyle={{ color: 'hsl(var(--popover-foreground))', fontWeight: 600 }}
+            itemStyle={{ color: 'hsl(var(--popover-foreground))' }}
           />
           <Bar dataKey="count" radius={[0, 6, 6, 0]} animationDuration={800}>
             {data.map((entry, i) => (
