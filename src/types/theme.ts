@@ -57,12 +57,12 @@ export const THEMES: ThemeConfig[] = [
     previewColors: {
       primary: '#F59E0B',
       secondary: '#F97316',
-      background: '#0B0E14',
-      card: '#12161F',
+      background: '#151009',
+      card: '#1E1710',
       text: '#FDF6E2',
-      border: '#2A303C',
+      border: '#3B3125',
     },
-    metaThemeColor: '#0B0E14',
+    metaThemeColor: '#151009',
   },
   {
     id: 'linear-indigo',

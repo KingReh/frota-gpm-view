@@ -53,15 +53,15 @@
   }
 
   [data-theme="bloomberg-amber"] {
-    /* Bloomberg Terminal - Deep Onyx & Warm Gold */
-    --background: 220 25% 6%; /* #0B0E14 */
-    --foreground: 45 20% 96%;
+    /* Bloomberg Terminal - Warm Onyx & Amber Gold */
+    --background: 28 18% 7%; /* #150F0A warm charcoal */
+    --foreground: 45 22% 96%;
 
-    --card: 220 20% 9%; /* #12161F */
-    --card-foreground: 45 20% 96%;
+    --card: 28 16% 10%; /* #1E170F */
+    --card-foreground: 45 22% 96%;
 
-    --popover: 220 20% 9%;
-    --popover-foreground: 45 20% 96%;
+    --popover: 28 16% 10%;
+    --popover-foreground: 45 22% 96%;
 
     --primary: 38 92% 50%; /* #F59E0B Bloomberg Amber */
     --primary-foreground: 220 25% 6%;
@@ -69,17 +69,17 @@
     --secondary: 24 95% 53%; /* #F97316 Warm Orange */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 16%;
-    --muted-foreground: 220 10% 62%;
+    --muted: 28 14% 17%;
+    --muted-foreground: 35 12% 65%;
 
     --accent: 38 92% 50%;
-    --accent-foreground: 220 25% 6%;
+    --accent-foreground: 28 20% 7%;
 
     --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
+    --border: 30 16% 20%;
+    --input: 30 16% 20%;
     --ring: 38 92% 50%;
 
     --radius: 0.75rem;
@@ -88,9 +88,9 @@
     --balance-medium: 38 92% 50%;
     --balance-low: 0 84% 60%;
 
-    --surface-elevated: 220 18% 12%;
-    --surface-overlay: 220 25% 4%;
-    --surface-interactive: 220 16% 15%;
+    --surface-elevated: 28 15% 13%;
+    --surface-overlay: 28 22% 5%;
+    --surface-interactive: 28 14% 16%;
 
     --accent-fuel: 24 95% 53%;
     --accent-status: 38 92% 50%;
