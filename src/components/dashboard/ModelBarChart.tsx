@@ -24,9 +24,9 @@ export function ModelBarChart({ data }: ModelBarChartProps) {
           />
           <YAxis tick={{ fontSize: 11, fill: 'hsl(215, 20%, 65%)' }} axisLine={false} tickLine={false} />
           <Tooltip
-            contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
+            contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px', color: 'hsl(var(--popover-foreground))' }}
             formatter={(value: number) => [`${value} veículos`]}
-            labelStyle={{ color: '#fff', fontWeight: 600 }}
+            labelStyle={{ color: 'hsl(var(--popover-foreground))', fontWeight: 600 }}
           />
           <Bar dataKey="count" fill="hsl(207, 100%, 35%)" radius={[6, 6, 0, 0]} animationDuration={800} />
         </BarChart>

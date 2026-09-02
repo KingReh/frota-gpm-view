@@ -12,7 +12,7 @@ export function CoordinationBalanceLineChart({ data }: CoordinationBalanceLineCh
       <h3 className="text-xs uppercase tracking-[0.15em] text-muted-foreground font-medium mb-4">Saldo por Coordenação</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={sorted} margin={{ left: 10, right: 20, top: 10, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 14%, 25%)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis
             dataKey="name"
             tick={{ fontSize: 10, fill: 'hsl(215, 20%, 65%)' }}
@@ -30,16 +30,16 @@ export function CoordinationBalanceLineChart({ data }: CoordinationBalanceLineCh
             tickFormatter={(v: number) => `R$${(v / 1000).toFixed(0)}k`}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: 'hsl(220, 18%, 13%)', border: '1px solid hsl(220, 14%, 25%)', borderRadius: '12px', fontSize: '12px', color: '#fff' }}
+            contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '12px', fontSize: '12px', color: 'hsl(var(--popover-foreground))' }}
             formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Saldo']}
-            labelStyle={{ color: '#fff', fontWeight: 600 }}
+            labelStyle={{ color: 'hsl(var(--popover-foreground))', fontWeight: 600 }}
           />
           <Line
             type="monotone"
             dataKey="totalBalance"
             stroke="hsl(207, 100%, 35%)"
             strokeWidth={3}
-            dot={{ fill: 'hsl(207, 100%, 35%)', r: 5, strokeWidth: 2, stroke: 'hsl(220, 18%, 13%)' }}
+            dot={{ fill: 'hsl(207, 100%, 35%)', r: 5, strokeWidth: 2, stroke: 'hsl(var(--popover))' }}
             activeDot={{ r: 7, fill: 'hsl(190, 100%, 50%)' }}
             animationDuration={1000}
           />
