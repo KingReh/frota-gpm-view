@@ -135,19 +135,19 @@ export const THEMES: ThemeConfig[] = [
   {
     id: 'solaris-cyan',
     name: 'Solaris Cyber',
-    tagline: 'Ciano Neon & Dark Tech',
-    description: 'Visual futurista de alta densidade técnica com contraste vibrante em tons de ciano neon e teal.',
+    tagline: 'Ciano-Magenta Neon & Void',
+    description: 'Atmosfera cyberpunk de alta intensidade: fundo quase negro, ciano neon elétrico e magenta como contraste cromático.',
     type: 'dark',
     category: 'Moderno',
     previewColors: {
-      primary: '#06B6D4',
-      secondary: '#38BDF8',
-      background: '#0B131B',
-      card: '#121C27',
-      text: '#F0FDFA',
+      primary: '#00E5FF',
+      secondary: '#F472ED',
+      background: '#05080C',
+      card: '#0A1420',
+      text: '#F0FCFE',
       border: '#1F3347',
     },
-    metaThemeColor: '#0B131B',
+    metaThemeColor: '#05080C',
   },
 ];
 

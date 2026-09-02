@@ -278,48 +278,48 @@
   }
 
   [data-theme="solaris-cyan"] {
-    /* Solaris Cyber - Dark Tech & Neon Cyan */
-    --background: 210 25% 8%; /* #0B131B */
-    --foreground: 190 40% 98%;
+    /* Solaris Cyber - Deep Void & Neon Cyan-Magenta */
+    --background: 210 45% 4%; /* #05080C near-black with deep cyan tint */
+    --foreground: 186 60% 97%; /* #F0FCFE ice cyan white */
 
-    --card: 210 22% 12%; /* #121C27 */
-    --card-foreground: 190 40% 98%;
+    --card: 210 38% 9%; /* #0A1420 elevated cyan-navy */
+    --card-foreground: 186 60% 97%;
 
-    --popover: 210 22% 12%;
-    --popover-foreground: 190 40% 98%;
+    --popover: 210 38% 10%;
+    --popover-foreground: 186 60% 97%;
 
-    --primary: 188 95% 45%; /* #06B6D4 Neon Cyan */
-    --primary-foreground: 210 25% 8%;
+    --primary: 186 100% 52%; /* #00E5FF electric neon cyan */
+    --primary-foreground: 210 50% 4%;
 
-    --secondary: 160 85% 45%; /* #10B981 Mint */
-    --secondary-foreground: 210 25% 8%;
+    --secondary: 310 90% 62%; /* #F472ED electric magenta */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 18% 20%;
-    --muted-foreground: 200 15% 65%;
+    --muted: 210 30% 15%;
+    --muted-foreground: 195 20% 62%;
 
-    --accent: 188 95% 45%;
-    --accent-foreground: 210 25% 8%;
+    --accent: 186 100% 52%;
+    --accent-foreground: 210 50% 4%;
 
-    --destructive: 0 72% 45%;
+    --destructive: 0 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 18% 22%;
-    --input: 210 18% 22%;
-    --ring: 188 95% 45%;
+    --border: 210 30% 20%;
+    --input: 210 30% 18%;
+    --ring: 186 100% 52%;
 
     --radius: 0.75rem;
 
-    --balance-high: 160 85% 45%;
-    --balance-medium: 48 96% 53%;
-    --balance-low: 0 84% 60%;
+    --balance-high: 160 90% 50%;
+    --balance-medium: 42 100% 58%;
+    --balance-low: 0 85% 62%;
 
-    --surface-elevated: 210 20% 15%;
-    --surface-overlay: 210 25% 6%;
-    --surface-interactive: 210 18% 18%;
+    --surface-elevated: 210 32% 12%;
+    --surface-overlay: 210 45% 3%;
+    --surface-interactive: 210 28% 16%;
 
-    --accent-fuel: 25 95% 53%;
-    --accent-status: 188 95% 45%;
-    --accent-favorite: 45 93% 58%;
+    --accent-fuel: 25 100% 55%;
+    --accent-status: 186 100% 52%;
+    --accent-favorite: 45 100% 60%;
   }
 }
 
