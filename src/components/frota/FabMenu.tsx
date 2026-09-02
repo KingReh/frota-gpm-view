@@ -1,11 +1,12 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings, Tractor } from "lucide-react";
+import { Menu, X, FileText, MapPin, Key, Wrench, ArrowLeftRight, Map, Settings, Tractor, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TransferRequestModal } from "./TransferRequestModal";
 import { MaintenanceModal } from "./MaintenanceModal";
 import { useGestorFrota } from "@/hooks/useGestorFrota";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/contexts/ThemeContext";
 import type { VehicleWithDetails, Coordination } from "@/types/vehicle";
 
 const links = [
@@ -55,6 +56,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
   const fabRef = React.useRef<HTMLDivElement>(null);
   const { data: gestor } = useGestorFrota();
   const { toast } = useToast();
+  const { openThemeSelector, themeConfig } = useTheme();
 
   const showMaquinarioSul = React.useMemo(() => {
     if (!selectedCoordinations.length) return false;
@@ -113,8 +115,8 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
           className={cn(
             "w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-primary/30",
             "bg-primary text-primary-foreground",
-            "border border-white/10 transition-colors duration-300",
-            isOpen && "bg-muted text-foreground shadow-black/40",
+            "border border-border/50 transition-colors duration-300",
+            isOpen && "bg-muted text-foreground shadow-black/20",
           )}
           aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
         >
@@ -232,6 +234,41 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                 </div>
               </motion.button>
 
+              {/* Personalizar Tema button */}
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (links.length + 2) * 0.05 }}
+                onClick={(e) => {
+                  e.currentTarget.blur();
+                  setIsOpen(false);
+                  openThemeSelector();
+                }}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-left",
+                  "bg-surface-interactive/50 hover:bg-primary/10 hover:border-primary/20",
+                  "border border-transparent transition-all duration-200 group",
+                )}
+              >
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                  <Palette className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm font-semibold text-foreground leading-tight truncate">
+                      Personalizar Tema
+                    </span>
+                    <span
+                      className="w-2 h-2 rounded-full border border-card shadow-xs"
+                      style={{ backgroundColor: themeConfig.previewColors.primary }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-muted-foreground truncate">
+                    Tema ativo: {themeConfig.name}
+                  </span>
+                </div>
+              </motion.button>
+
               {/* Controle de Maquinário SUL (conditional) */}
               {showMaquinarioSul && (
                 <motion.a
@@ -240,7 +277,7 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: (links.length + 2) * 0.05 }}
+                  transition={{ delay: (links.length + 3) * 0.05 }}
                   onClick={() => setIsOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-xl",

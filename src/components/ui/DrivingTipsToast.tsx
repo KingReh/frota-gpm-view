@@ -139,15 +139,15 @@ export const DrivingTipsToast = () => {
             }}
             className={cn(
               "fixed left-0 right-0 z-[55] transition-[bottom] duration-300",
-              "bg-black/70 backdrop-blur-md border-t border-white/10",
-              "shadow-[0_-4px_20px_rgba(0,0,0,0.4)]"
+              "bg-card/95 backdrop-blur-md border-t border-border",
+              "shadow-[0_-4px_20px_rgba(0,0,0,0.1)]"
             )}
           >
             <div className="relative flex items-center gap-2 h-8 px-2 overflow-hidden">
               {/* Icon + Label (fixed on left) */}
-              <div className="flex items-center gap-1.5 shrink-0 pr-2 border-r border-white/10 z-10 bg-black/70">
+              <div className="flex items-center gap-1.5 shrink-0 pr-2 border-r border-border z-10 bg-card">
                 <Zap className="w-3 h-3 text-primary" />
-                <span className="text-[9px] font-bold uppercase tracking-wider text-white/60">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                   Dica
                 </span>
               </div>
@@ -169,22 +169,22 @@ export const DrivingTipsToast = () => {
                   style={scrubX !== null ? { transform: `translateX(${scrubX}px)` } : undefined}
                 >
                   <div ref={contentRef} className="flex">
-                    <span className="text-[11px] text-gray-200 font-medium pr-16">
+                    <span className="text-[11px] text-foreground font-medium pr-16">
                       {tip}
                     </span>
-                    <span className="text-[11px] text-gray-200 font-medium pr-16" aria-hidden="true">
+                    <span className="text-[11px] text-foreground font-medium pr-16" aria-hidden="true">
                       {tip}
                     </span>
                   </div>
                 </div>
                 {/* Edge fade */}
-                <div className="pointer-events-none absolute inset-y-0 right-8 w-6 bg-gradient-to-l from-black/70 to-transparent" />
+                <div className="pointer-events-none absolute inset-y-0 right-8 w-6 bg-gradient-to-l from-card to-transparent" />
               </div>
 
               {/* Dismiss */}
               <button
                 onClick={handleDismiss}
-                className="shrink-0 text-white/50 hover:text-white p-1 rounded-md hover:bg-white/10 transition-colors z-10"
+                className="shrink-0 text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted transition-colors z-10"
                 aria-label="Dispensar dica"
               >
                 <X className="w-3 h-3" />
@@ -221,8 +221,8 @@ export const DrivingTipsToast = () => {
             }}
             className={cn(
               "pointer-events-auto relative overflow-visible",
-              "bg-black/40 backdrop-blur-xl border border-white/10",
-              "p-4 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]",
+              "bg-card/90 backdrop-blur-xl border border-border",
+              "p-4 rounded-xl shadow-xl",
               "flex items-start gap-4 group"
             )}
           >
@@ -234,18 +234,18 @@ export const DrivingTipsToast = () => {
 
             <div className="flex-1 pt-1 min-w-0 overflow-visible">
               <div className="flex items-center justify-between gap-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1 flex items-center gap-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-2">
                   Dica do Dia
                   <span className="w-1 h-1 rounded-full bg-primary/50 animate-pulse" />
                 </h4>
                 <button
                   onClick={handleDismiss}
-                  className="text-white/40 hover:text-white transition-colors p-1 rounded-md hover:bg-white/10 shrink-0"
+                  className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-sm text-gray-200 leading-relaxed font-medium break-words whitespace-normal">
+              <p className="text-sm text-foreground leading-relaxed font-medium break-words whitespace-normal">
                 {tip}
               </p>
             </div>

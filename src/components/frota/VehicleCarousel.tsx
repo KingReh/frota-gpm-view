@@ -120,8 +120,8 @@ export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryD
 
           {/* Custom Controls */}
           <div className="flex justify-center gap-4 mt-8">
-            <CarouselPrevious className="static translate-y-0 bg-zinc-800/90 border-white/10 text-white hover:bg-primary hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200" />
-            <CarouselNext className="static translate-y-0 bg-zinc-800/90 border-white/10 text-white hover:bg-primary hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200" />
+            <CarouselPrevious className="static translate-y-0 bg-card border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200 shadow-md" />
+            <CarouselNext className="static translate-y-0 bg-card border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200 shadow-md" />
           </div>
         </Carousel>
 
@@ -130,10 +130,12 @@ export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryD
           {Array.from({ length: Math.min(count, 12) }).map((_, i) => (
             <div
               key={i}
-              className="h-1.5 rounded-full transition-[width,background-color] duration-200"
+              className={cn(
+                "h-1.5 rounded-full transition-[width,background-color] duration-200",
+                current === i + 1 ? "bg-primary" : "bg-muted-foreground/30"
+              )}
               style={{
                 width: current === i + 1 ? 40 : 12,
-                backgroundColor: current === i + 1 ? "hsl(207, 100%, 35%)" : "rgba(255, 255, 255, 0.1)"
               }}
             />
           ))}

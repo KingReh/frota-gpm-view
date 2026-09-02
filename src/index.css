@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Premium Dark Mode - Brightened */
-    --background: 220 20% 10%; /* #161A21 - lighter base */
+  :root,
+  [data-theme="compesa-default"] {
+    /* COMPESA Padrão - Dark Corporate Navy */
+    --background: 220 20% 10%; /* #161A21 */
     --foreground: 210 40% 98%;
 
-    --card: 220 18% 13%; /* #1C2028 - lighter cards */
+    --card: 220 18% 13%; /* #1C2028 */
     --card-foreground: 210 40% 98%;
 
     --popover: 220 18% 13%;
@@ -20,7 +21,7 @@
     --secondary: 190 100% 50%; /* #00D4FF Electric Blue */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 220 16% 22%; /* brighter muted */
+    --muted: 220 16% 22%;
     --muted-foreground: 215 20% 65%;
 
     --accent: 220 16% 22%;
@@ -29,7 +30,7 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 14% 25%; /* more visible borders */
+    --border: 220 14% 25%;
     --input: 220 14% 25%;
     --ring: 207 100% 35%;
 
@@ -50,6 +51,276 @@
     --accent-status: 185 85% 50%;
     --accent-favorite: 45 93% 58%;
   }
+
+  [data-theme="bloomberg-amber"] {
+    /* Bloomberg Terminal - Deep Onyx & Warm Gold */
+    --background: 220 25% 6%; /* #0B0E14 */
+    --foreground: 45 20% 96%;
+
+    --card: 220 20% 9%; /* #12161F */
+    --card-foreground: 45 20% 96%;
+
+    --popover: 220 20% 9%;
+    --popover-foreground: 45 20% 96%;
+
+    --primary: 38 92% 50%; /* #F59E0B Bloomberg Amber */
+    --primary-foreground: 220 25% 6%;
+
+    --secondary: 24 95% 53%; /* #F97316 Warm Orange */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 15% 16%;
+    --muted-foreground: 220 10% 62%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 220 25% 6%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 38 92% 50%;
+
+    --radius: 0.75rem;
+
+    --balance-high: 142 71% 45%;
+    --balance-medium: 38 92% 50%;
+    --balance-low: 0 84% 60%;
+
+    --surface-elevated: 220 18% 12%;
+    --surface-overlay: 220 25% 4%;
+    --surface-interactive: 220 16% 15%;
+
+    --accent-fuel: 24 95% 53%;
+    --accent-status: 38 92% 50%;
+    --accent-favorite: 45 93% 58%;
+  }
+
+  [data-theme="linear-indigo"] {
+    /* Linear Midnight - Midnight Slate & Electric Indigo */
+    --background: 235 24% 9%; /* #0F111A */
+    --foreground: 230 35% 97%;
+
+    --card: 235 20% 13%; /* #161926 */
+    --card-foreground: 230 35% 97%;
+
+    --popover: 235 20% 13%;
+    --popover-foreground: 230 35% 97%;
+
+    --primary: 243 75% 59%; /* #6366F1 Linear Indigo */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 270 70% 60%; /* #A855F7 Violet */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 235 15% 20%;
+    --muted-foreground: 235 15% 65%;
+
+    --accent: 243 75% 59%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 235 15% 23%;
+    --input: 235 15% 23%;
+    --ring: 243 75% 59%;
+
+    --radius: 0.75rem;
+
+    --balance-high: 142 71% 45%;
+    --balance-medium: 48 96% 53%;
+    --balance-low: 0 84% 60%;
+
+    --surface-elevated: 235 18% 16%;
+    --surface-overlay: 235 25% 7%;
+    --surface-interactive: 235 16% 19%;
+
+    --accent-fuel: 25 95% 53%;
+    --accent-status: 243 75% 59%;
+    --accent-favorite: 45 93% 58%;
+  }
+
+  [data-theme="grafana-emerald"] {
+    /* Grafana Esmeralda - Observability Carbon & Mint */
+    --background: 160 20% 7%; /* #0D1412 */
+    --foreground: 150 30% 97%;
+
+    --card: 160 18% 11%; /* #131F1C */
+    --card-foreground: 150 30% 97%;
+
+    --popover: 160 18% 11%;
+    --popover-foreground: 150 30% 97%;
+
+    --primary: 158 80% 42%; /* #10B981 Emerald */
+    --primary-foreground: 160 20% 7%;
+
+    --secondary: 172 80% 50%; /* #14B8A6 Mint */
+    --secondary-foreground: 160 20% 7%;
+
+    --muted: 160 14% 18%;
+    --muted-foreground: 155 15% 65%;
+
+    --accent: 158 80% 42%;
+    --accent-foreground: 160 20% 7%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 160 15% 20%;
+    --input: 160 15% 20%;
+    --ring: 158 80% 42%;
+
+    --radius: 0.75rem;
+
+    --balance-high: 158 80% 42%;
+    --balance-medium: 48 96% 53%;
+    --balance-low: 0 84% 60%;
+
+    --surface-elevated: 160 16% 14%;
+    --surface-overlay: 160 22% 5%;
+    --surface-interactive: 160 15% 17%;
+
+    --accent-fuel: 25 95% 53%;
+    --accent-status: 172 80% 50%;
+    --accent-favorite: 45 93% 58%;
+  }
+
+  [data-theme="stripe-light"] {
+    /* Stripe Alabaster - Executive High Contrast Light Mode */
+    --background: 210 20% 98%; /* #F8FAFC */
+    --foreground: 222.2 47.4% 11.2%; /* #0F172A - Deep Slate Black */
+
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 221.2 83.2% 53.3%; /* #2563EB Vibrant Executive Royal Blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 199 89% 48%; /* #0284C7 Sky Blue */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96.1%; /* #F1F5F9 */
+    --muted-foreground: 215.4 16.3% 44%; /* #5F7188 */
+
+    --accent: 210 40% 95%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214.3 31.8% 88%; /* #CBD5E1 - Crisp clean borders */
+    --input: 214.3 31.8% 88%;
+    --ring: 221.2 83.2% 53.3%;
+
+    --radius: 0.75rem;
+
+    --balance-high: 142 71% 35%;
+    --balance-medium: 38 92% 40%;
+    --balance-low: 0 84% 50%;
+
+    --surface-elevated: 0 0% 100%;
+    --surface-overlay: 210 30% 95%;
+    --surface-interactive: 214 32% 93%;
+
+    --accent-fuel: 25 95% 45%;
+    --accent-status: 221.2 83.2% 53.3%;
+    --accent-favorite: 38 92% 45%;
+  }
+
+  [data-theme="crimson-titanium"] {
+    /* Titânio Carmesim - Dark Titanium & Ruby Crimson */
+    --background: 0 0% 8%; /* #121214 */
+    --foreground: 0 0% 97%;
+
+    --card: 0 0% 12%; /* #1A1A1E */
+    --card-foreground: 0 0% 97%;
+
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 97%;
+
+    --primary: 350 85% 55%; /* #F43F5E Ruby Crimson */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 15 90% 55%; /* #FF5722 Fiery Coral */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 350 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 22%;
+    --input: 0 0% 22%;
+    --ring: 350 85% 55%;
+
+    --radius: 0.75rem;
+
+    --balance-high: 142 71% 45%;
+    --balance-medium: 48 96% 53%;
+    --balance-low: 0 84% 60%;
+
+    --surface-elevated: 0 0% 15%;
+    --surface-overlay: 0 0% 6%;
+    --surface-interactive: 0 0% 18%;
+
+    --accent-fuel: 15 90% 55%;
+    --accent-status: 350 85% 55%;
+    --accent-favorite: 45 93% 58%;
+  }
+
+  [data-theme="solaris-cyan"] {
+    /* Solaris Cyber - Dark Tech & Neon Cyan */
+    --background: 210 25% 8%; /* #0B131B */
+    --foreground: 190 40% 98%;
+
+    --card: 210 22% 12%; /* #121C27 */
+    --card-foreground: 190 40% 98%;
+
+    --popover: 210 22% 12%;
+    --popover-foreground: 190 40% 98%;
+
+    --primary: 188 95% 45%; /* #06B6D4 Neon Cyan */
+    --primary-foreground: 210 25% 8%;
+
+    --secondary: 160 85% 45%; /* #10B981 Mint */
+    --secondary-foreground: 210 25% 8%;
+
+    --muted: 210 18% 20%;
+    --muted-foreground: 200 15% 65%;
+
+    --accent: 188 95% 45%;
+    --accent-foreground: 210 25% 8%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 18% 22%;
+    --input: 210 18% 22%;
+    --ring: 188 95% 45%;
+
+    --radius: 0.75rem;
+
+    --balance-high: 160 85% 45%;
+    --balance-medium: 48 96% 53%;
+    --balance-low: 0 84% 60%;
+
+    --surface-elevated: 210 20% 15%;
+    --surface-overlay: 210 25% 6%;
+    --surface-interactive: 210 18% 18%;
+
+    --accent-fuel: 25 95% 53%;
+    --accent-status: 188 95% 45%;
+    --accent-favorite: 45 93% 58%;
+  }
 }
 
 @layer base {
@@ -59,6 +330,7 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Global premium scrollbar for all scrollable elements */
@@ -88,6 +360,7 @@
 @layer utilities {
   .glass-panel {
     @apply bg-card border border-border shadow-lg;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
   /* Safe area utilities for notched/punch-hole devices */
@@ -109,7 +382,7 @@
   }
   
   .text-glow {
-    text-shadow: 0 0 20px rgba(0, 102, 179, 0.5);
+    text-shadow: 0 0 20px hsl(var(--primary) / 0.5);
   }
 
   .mesh-bg {

@@ -33,30 +33,30 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
 
   if (vehicles.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 text-center glass-panel rounded-[32px] border border-white/10 bg-black/40 backdrop-blur-xl mx-4">
+      <div className="flex flex-col items-center justify-center py-32 text-center glass-panel rounded-[32px] border border-border bg-card/50 backdrop-blur-xl mx-4">
         <div className="p-8 rounded-full bg-primary/10 border border-primary/20 mb-8">
-          <Car className="w-12 h-12 text-primary opacity-50" />
+          <Car className="w-12 h-12 text-primary opacity-80" />
         </div>
-        <p className="text-xl font-bold text-white tracking-tight">Vazio técnico</p>
-        <p className="text-sm text-zinc-500 mt-2">Nenhum registro encontrado para estes parâmetros</p>
+        <p className="text-xl font-bold text-foreground tracking-tight">Vazio técnico</p>
+        <p className="text-sm text-muted-foreground mt-2">Nenhum registro encontrado para estes parâmetros</p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="glass-panel rounded-xl sm:rounded-2xl overflow-hidden backdrop-blur-xl border border-white/10 bg-black/20 shadow-2xl mx-0">
+      <div className="glass-panel rounded-xl sm:rounded-2xl overflow-hidden backdrop-blur-xl border border-border shadow-2xl mx-0">
         <div className="overflow-x-auto scrollbar-hide">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-white/10 hover:bg-transparent bg-white/5">
-                <TableHead className="w-[100px] sm:w-[112px] md:w-[144px] text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 pl-2 sm:pl-4 md:pl-8">Placa</TableHead>
-                <TableHead className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 px-2 sm:px-4 md:px-0">Modelo</TableHead>
-                <TableHead className="hidden lg:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Concessionária</TableHead>
-                <TableHead className="hidden md:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Tipo</TableHead>
-                <TableHead className="hidden sm:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6">Unidade</TableHead>
-                <TableHead className="hidden xl:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-zinc-500 py-6 text-right">Limite Próx. Período</TableHead>
-                <TableHead className="text-right text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-zinc-500 py-4 sm:py-6 pr-2 sm:pr-4 md:pr-8">Saldo</TableHead>
+              <TableRow className="border-b border-border hover:bg-transparent bg-muted/40">
+                <TableHead className="w-[100px] sm:w-[112px] md:w-[144px] text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-muted-foreground py-4 sm:py-6 pl-2 sm:pl-4 md:pl-8">Placa</TableHead>
+                <TableHead className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-muted-foreground py-4 sm:py-6 px-2 sm:px-4 md:px-0">Modelo</TableHead>
+                <TableHead className="hidden lg:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground py-6">Concessionária</TableHead>
+                <TableHead className="hidden md:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground py-6">Tipo</TableHead>
+                <TableHead className="hidden sm:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground py-6">Unidade</TableHead>
+                <TableHead className="hidden xl:table-cell text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground py-6 text-right">Limite Próx. Período</TableHead>
+                <TableHead className="text-right text-[9px] sm:text-[10px] uppercase tracking-[0.15em] sm:tracking-[0.2em] font-black text-muted-foreground py-4 sm:py-6 pr-2 sm:pr-4 md:pr-8">Saldo</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -66,7 +66,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.02, type: "spring", stiffness: 100 }}
                   key={vehicle.plate}
-                  className="border-b border-white/5 hover:bg-white/[0.03] transition-all group relative"
+                  className="border-b border-border/50 hover:bg-muted/40 transition-all group relative"
                 >
                   <TableCell className="pl-2 sm:pl-4 md:pl-8 py-2.5 sm:py-3 md:py-4 relative">
                     {/* Horizontal row highlight line */}
@@ -80,7 +80,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                           "h-6 w-6 rounded-md transition-all shrink-0",
                           preferences.favoritePlates?.includes(vehicle.plate)
                             ? "text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10"
-                            : "text-zinc-600 hover:text-yellow-400 hover:bg-white/5 opacity-0 group-hover:opacity-100 focus:opacity-100" // Hide until hover for cleaner look
+                            : "text-muted-foreground/60 hover:text-yellow-400 hover:bg-muted/50 opacity-0 group-hover:opacity-100 focus:opacity-100" // Hide until hover for cleaner look
                         )}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -91,7 +91,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                       </Button>
 
                       <button
-                        className="bg-white/5 border border-white/10 px-2 md:px-4 py-1.5 rounded text-white font-mono font-bold tracking-widest text-[11px] md:text-sm shadow-inner group-hover:border-primary/40 transition-colors inline-block cursor-pointer hover:bg-primary/10 active:scale-95"
+                        className="bg-muted/60 border border-border px-2 md:px-4 py-1.5 rounded text-foreground font-mono font-bold tracking-widest text-[11px] md:text-sm shadow-inner group-hover:border-primary/40 transition-colors inline-block cursor-pointer hover:bg-primary/10 active:scale-95"
                         title="Clique para copiar a placa"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -126,20 +126,20 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                     </div>
                   </TableCell>
                   <TableCell className="py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-0">
-                    <span className="text-[10px] sm:text-[11px] md:text-sm font-bold text-white/90 group-hover:text-white transition-colors truncate max-w-[60px] sm:max-w-[72px] md:max-w-none block">
+                    <span className="text-[10px] sm:text-[11px] md:text-sm font-bold text-foreground group-hover:text-primary transition-colors truncate max-w-[60px] sm:max-w-[72px] md:max-w-none block">
                       {vehicle.model || 'N/A'}
                     </span>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell py-4">
-                    <div className="flex items-center gap-2 text-zinc-400">
-                      <Building2 className="w-3.5 h-3.5 opacity-50" />
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Building2 className="w-3.5 h-3.5 opacity-70" />
                       <span className="text-[11px] font-medium truncate max-w-[120px]">
                         {vehicle.manufacturer || 'Não informado'}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell className="hidden md:table-cell py-4">
-                    <Badge variant="outline" className="border-white/5 bg-white/5 text-[9px] uppercase tracking-wider text-zinc-400">
+                    <Badge variant="outline" className="border-border bg-muted/50 text-[9px] uppercase tracking-wider text-muted-foreground">
                       {vehicle.fleet_type || 'Geral'}
                     </Badge>
                   </TableCell>
@@ -147,12 +147,12 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                     {vehicle.coordination ? (
                       <CoordinationBadge coordination={vehicle.coordination} />
                     ) : (
-                      <span className="text-zinc-600 text-xs">-</span>
+                      <span className="text-muted-foreground text-xs">-</span>
                     )}
                   </TableCell>
-                  <TableCell className="hidden xl:table-cell py-4 text-right font-mono text-[11px] text-zinc-500">
+                  <TableCell className="hidden xl:table-cell py-4 text-right font-mono text-[11px] text-muted-foreground">
                     {vehicle.next_period_limit ? (
-                      <span className="text-zinc-400 font-bold">
+                      <span className="text-foreground/80 font-bold">
                         {parseBalance(vehicle.next_period_limit).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                       </span>
                     ) : '-'}
@@ -160,7 +160,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                   <TableCell className="text-right py-2 sm:py-3 md:py-4 pr-2 sm:pr-4 md:pr-8">
                     <div className="flex items-center justify-end gap-3">
                       <div className="inline-flex items-center gap-2 md:gap-4">
-                        <span className="font-mono font-black text-[10px] sm:text-[11px] md:text-sm text-white tracking-tight">
+                        <span className="font-mono font-black text-[10px] sm:text-[11px] md:text-sm text-foreground tracking-tight">
                           {isBalanceMasked(vehicle.plate) ? '••••••' : parseBalance(vehicle.balance).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </span>
                         <div className="h-1 w-1 md:h-2 md:w-2 rounded-full bg-primary shadow-[0_0_8px_rgba(0,102,179,0.8)] animate-pulse hidden xs:block" />
@@ -168,7 +168,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-9 w-9 min-w-[36px] min-h-[36px] sm:h-8 sm:w-8 md:h-10 md:w-10 text-zinc-500 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 rounded-lg md:rounded-xl transition-all"
+                        className="h-9 w-9 min-w-[36px] min-h-[36px] sm:h-8 sm:w-8 md:h-10 md:w-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-transparent hover:border-border rounded-lg md:rounded-xl transition-all"
                         onClick={() => setSelectedVehicle(vehicle)}
                       >
                         <Info className="h-4 w-4 md:h-5 md:w-5" />

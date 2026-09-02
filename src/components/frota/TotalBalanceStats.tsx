@@ -37,12 +37,12 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
     if (vehicles.length === 0 && totalFleetBalance === 0) return null;
 
     return (
-        <div className="space-y-4 sm:space-y-6 md:space-y-8 p-2.5 sm:p-4 md:p-6 lg:p-8 mesh-bg rounded-2xl overflow-hidden border border-white/5">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8 p-2.5 sm:p-4 md:p-6 lg:p-8 mesh-bg rounded-2xl overflow-hidden border border-border/50">
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6 md:gap-8">
                 {/* Main Dashboard Card */}
                 <div className="md:col-span-2 lg:col-span-2 glass-panel p-3 sm:p-6 md:p-8 rounded-2xl relative overflow-hidden group border-l-4 border-l-primary shadow-lg">
                     <div className="absolute right-[-20px] top-[-20px] opacity-5 group-hover:opacity-10 transition-opacity duration-700">
-                        <Wallet className="w-48 h-48 rotate-12" />
+                        <Wallet className="w-48 h-48 rotate-12 text-foreground" />
                     </div>
 
                     <div className="relative z-10 space-y-6">
@@ -55,32 +55,32 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                     Somatório da Frota GPM
                                 </p>
                             </div>
-                            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-white tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent break-all sm:break-normal">
+                            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-mono font-bold text-foreground tracking-tighter break-all sm:break-normal">
                                 {formatCurrency(totalFleetBalance)}
                             </h3>
-                            <p className="text-[10px] text-muted-foreground/60 font-mono uppercase tracking-widest">
+                            <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
                                 Esse somatório inclui os veículos indefinidos, reservas e toda a frota das coordenações.
                             </p>
                         </div>
 
-                        <div className="pt-4 border-t border-white/10 space-y-2">
+                        <div className="pt-4 border-t border-border/60 space-y-2">
                             <div className="flex items-center justify-between">
                                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Saldo das coordenações selecionadas</p>
-                                <span className="text-sm font-bold text-white font-mono bg-white/5 px-2 py-0.5 rounded">
+                                <span className="text-sm font-bold text-foreground font-mono bg-muted/60 border border-border/50 px-2 py-0.5 rounded">
                                     {formatCurrency(stats.selectedTotal)}
                                 </span>
                             </div>
 
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20 w-fit">
-                                <TrendingUp className="w-3 h-3 text-emerald-400" />
-                                <span className="text-xs font-bold text-emerald-400 font-mono">{vehicles.length}</span>
-                                <span className="text-[9px] text-emerald-400/80 uppercase tracking-widest font-bold">Veículos Selecionados</span>
+                                <TrendingUp className="w-3 h-3 text-emerald-500" />
+                                <span className="text-xs font-bold text-emerald-500 font-mono">{vehicles.length}</span>
+                                <span className="text-[9px] text-emerald-600/90 dark:text-emerald-400/80 uppercase tracking-widest font-bold">Veículos Selecionados</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="absolute bottom-4 right-4 opacity-20 invisible md:visible">
-                        <div className="w-16 h-1 border-t border-r border-white/40 rounded-tr-lg" />
+                        <div className="w-16 h-1 border-t border-r border-border/60 rounded-tr-lg" />
                     </div>
                 </div>
 
@@ -89,9 +89,9 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2 min-w-0">
                             <div className="w-1.5 h-6 bg-primary rounded-full shrink-0" />
-                            <h4 className="text-[10px] md:text-xs uppercase tracking-widest md:tracking-[0.3em] font-bold text-white/70 leading-tight break-words">Breakdown por Coordenação</h4>
+                            <h4 className="text-[10px] md:text-xs uppercase tracking-widest md:tracking-[0.3em] font-bold text-foreground/80 leading-tight break-words">Breakdown por Coordenação</h4>
                         </div>
-                        <span className="text-[10px] font-mono text-muted-foreground bg-white/5 px-2 py-1 rounded border border-white/5 whitespace-nowrap shrink-0 ml-2">
+                        <span className="text-[10px] font-mono text-muted-foreground bg-muted/60 px-2 py-1 rounded border border-border/50 whitespace-nowrap shrink-0 ml-2">
                             {Object.keys(stats.byCoordination).length} Coordenações
                         </span>
                     </div>
@@ -100,7 +100,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                         {Object.entries(stats.byCoordination).map(([name, data]) => (
                             <div
                                 key={name}
-                                className="min-w-[200px] sm:min-w-[240px] glass-panel p-4 sm:p-6 rounded-2xl border border-white/5 flex flex-col justify-between group/card relative"
+                                className="min-w-[200px] sm:min-w-[240px] glass-panel p-4 sm:p-6 rounded-2xl border border-border/50 flex flex-col justify-between group/card relative"
                             >
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                             className="w-3 h-3 rounded-full"
                                             style={{ backgroundColor: data.color }}
                                         />
-                                        <span className="text-xs font-bold text-white/90 uppercase tracking-wider truncate max-w-[120px]" title={name}>
+                                        <span className="text-xs font-bold text-foreground uppercase tracking-wider truncate max-w-[120px]" title={name}>
                                             {name}
                                         </span>
                                     </div>
@@ -118,7 +118,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                 <div className="space-y-1">
                                     <p className={cn(
                                         "text-xl font-mono font-bold tracking-tighter",
-                                        data.total > 0 ? "text-white" : "text-red-400"
+                                        data.total > 0 ? "text-foreground" : "text-destructive"
                                     )}>
                                         {formatCurrency(data.total)}
                                     </p>
@@ -126,7 +126,7 @@ export function TotalBalanceStats({ vehicles, totalFleetBalance }: TotalBalanceS
                                         <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-bold">
                                             {data.count} Veículos
                                         </p>
-                                        <div className="h-0.5 flex-1 mx-4 bg-white/5 rounded-full overflow-hidden">
+                                        <div className="h-0.5 flex-1 mx-4 bg-muted/60 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all duration-1000"
                                                 style={{

@@ -26,6 +26,7 @@ import { exportToXLSX, exportToODS, exportToPDF } from '@/lib/dashboardExport';
 import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { toast } from 'sonner';
 import { Footer } from '@/components/layout/Footer';
+import { ThemeToggleButton } from '@/components/theme/ThemeToggleButton';
 
 function DashboardPage() {
   const [selectedCoordinations, setSelectedCoordinations] = useState<string[]>([]);
@@ -119,16 +120,16 @@ function DashboardPage() {
   return (
     <div className="min-h-screen bg-background mesh-bg">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-50 px-3 md:px-6 flex items-center justify-between glass-panel border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 h-16 z-50 px-3 md:px-6 flex items-center justify-between glass-panel border-b border-border/60">
         <div className="flex items-center gap-3">
           <Link
             to="/"
             className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
           >
-            <ArrowLeft className="w-5 h-5 text-white" />
+            <ArrowLeft className="w-5 h-5 text-primary-foreground" />
           </Link>
           <div className="flex flex-col">
-            <h1 className="text-lg font-bold tracking-tight leading-none text-white">
+            <h1 className="text-lg font-bold tracking-tight leading-none text-foreground">
               Dashboard
             </h1>
             <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-mono">
@@ -137,8 +138,11 @@ function DashboardPage() {
           </div>
         </div>
 
-        {/* Export + Sync Status */}
+        {/* Export + Theme + Sync Status */}
         <div className="flex items-center gap-2">
+          {/* Theme Selector */}
+          <ThemeToggleButton showLabel={true} />
+
           {/* Export button - desktop only in header */}
           <div className="hidden md:block">
             <DropdownMenu>

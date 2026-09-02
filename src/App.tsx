@@ -12,6 +12,8 @@ import NotFound from "./pages/NotFound";
 import InstallPrompt from "./components/pwa/InstallPrompt";
 import UpdatePrompt from "./components/pwa/UpdatePrompt";
 import OneSignalInit from "./components/pwa/OneSignalInit";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeSelectorModal } from "./components/theme/ThemeSelectorModal";
 
 const queryClient = new QueryClient();
 
@@ -32,16 +34,19 @@ function AnimatedRoutes() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <InstallPrompt />
-      <UpdatePrompt />
-      <OneSignalInit />
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AnimatedRoutes />
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <ThemeSelectorModal />
+        <InstallPrompt />
+        <UpdatePrompt />
+        <OneSignalInit />
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <AnimatedRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

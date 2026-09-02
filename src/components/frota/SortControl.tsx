@@ -74,7 +74,7 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-10 min-h-[44px] md:h-10 bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all gap-2 min-w-[140px] justify-between select-none"
+                    className="h-10 min-h-[44px] md:h-10 bg-card border-border text-foreground hover:text-primary hover:bg-muted/50 transition-all gap-2 min-w-[140px] justify-between select-none shadow-sm"
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                     onTouchMove={handleTouchMove}
@@ -89,54 +89,54 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
                     <ArrowDownUp className="w-3 h-3 opacity-50" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px] bg-black/90 backdrop-blur-xl border-white/10 text-zinc-300">
-                <DropdownMenuLabel className="text-xs uppercase tracking-widest text-zinc-500 font-bold">Ordenar por</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
+            <DropdownMenuContent align="end" className="w-[200px] bg-popover/95 backdrop-blur-xl border-border text-popover-foreground shadow-2xl">
+                <DropdownMenuLabel className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Ordenar por</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-border" />
 
                 <DropdownMenuItem
                     onClick={() => onSortChange('plate_asc')}
-                    className={cn("focus:bg-white/10 focus:text-white cursor-pointer gap-2", currentSort === 'plate_asc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'plate_asc' && "text-primary font-bold")}
                 >
                     <ArrowDownAZ className="w-4 h-4" />
                     <span>Placa (A-Z)</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => onSortChange('plate_desc')}
-                    className={cn("focus:bg-white/10 focus:text-white cursor-pointer gap-2", currentSort === 'plate_desc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'plate_desc' && "text-primary font-bold")}
                 >
                     <ArrowUpAZ className="w-4 h-4" />
                     <span>Placa (Z-A)</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuSeparator className="bg-border" />
 
                 <DropdownMenuItem
                     onClick={() => onSortChange('balance_desc')}
-                    className={cn("focus:bg-white/10 focus:text-white cursor-pointer gap-2", currentSort === 'balance_desc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'balance_desc' && "text-primary font-bold")}
                 >
                     <DollarSign className="w-4 h-4" />
                     <span>Saldo (Maior)</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => onSortChange('balance_asc')}
-                    className={cn("focus:bg-white/10 focus:text-white cursor-pointer gap-2", currentSort === 'balance_asc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'balance_asc' && "text-primary font-bold")}
                 >
                     <DollarSign className="w-4 h-4" />
                     <span>Saldo (Menor)</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuSeparator className="bg-border" />
 
                 <DropdownMenuItem
                     onClick={() => onSortChange('coordination_asc')}
-                    className={cn("focus:bg-white/10 focus:text-white cursor-pointer gap-2", currentSort === 'coordination_asc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'coordination_asc' && "text-primary font-bold")}
                 >
                     <Building2 className="w-4 h-4" />
                     <span>Coordenação (A-Z)</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => onSortChange('coordination_desc')}
-                    className={cn("focus:bg-white/10 focus:text-white cursor-pointer gap-2", currentSort === 'coordination_desc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'coordination_desc' && "text-primary font-bold")}
                 >
                     <Building2 className="w-4 h-4" />
                     <span>Coordenação (Z-A)</span>

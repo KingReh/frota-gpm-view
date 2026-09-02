@@ -1,9 +1,10 @@
-import { Car, Grid, LayoutList, MonitorPlay, RefreshCw, Clock, BarChart3, Upload, RefreshCcw } from "lucide-react";
+import { Car, RefreshCw, Clock, BarChart3, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { format, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { ThemeToggleButton } from "@/components/theme/ThemeToggleButton";
 
 interface HeaderProps {
     viewMode: "table" | "card" | "carousel";
@@ -13,24 +14,24 @@ interface HeaderProps {
     recentlyUpdated?: boolean;
 }
 
-export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, recentlyUpdated }: HeaderProps) => {
+export const Header = ({ isSynced = true, lastUpdated, recentlyUpdated }: HeaderProps) => {
     const { toast } = useToast();
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 px-1.5 sm:px-3 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-white/10 h-14 sm:h-16 pt-safe">
+        <header className="fixed top-0 left-0 right-0 z-50 px-1.5 sm:px-3 md:px-6 lg:px-8 flex items-center justify-between glass-panel border-b border-border/60 h-14 sm:h-16 pt-safe">
             {/* Brand Identity */}
             <div className="flex items-center gap-2 sm:gap-3">
-                <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
-                    <Car className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 transition-transform duration-300">
+                    <Car className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     {recentlyUpdated && (
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500" />
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
                         </span>
                     )}
                 </div>
                 <div className="flex flex-col">
-                    <h1 className="text-base sm:text-lg font-bold tracking-tight leading-none text-white">
+                    <h1 className="text-base sm:text-lg font-bold tracking-tight leading-none text-foreground">
                         COMPESA
                         <span className="text-primary ml-1">GPM</span>
                     </h1>
@@ -40,7 +41,10 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 </div>
             </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                {/* Theme Selector Button */}
+                <ThemeToggleButton showLabel={true} />
+
                 {/* Atualizar Saldo - desktop only */}
                 <button
                     onClick={() => {
@@ -50,7 +54,7 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                             variant: "destructive",
                         });
                     }}
-                    className="hidden md:flex items-center gap-2 h-9 px-3 rounded-xl bg-white/5 border border-white/10 hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 group"
+                    className="hidden md:flex items-center gap-2 h-9 px-3 rounded-xl bg-muted/40 border border-border/70 hover:bg-destructive/20 hover:border-destructive/30 transition-all duration-300 group"
                     title="Atualizar Saldo"
                 >
                     <Upload className="w-4 h-4 text-muted-foreground group-hover:text-destructive transition-colors" />
@@ -60,14 +64,14 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
                 {/* Dashboard Link - hidden on mobile */}
                 <Link
                     to="/dashboard"
-                    className="hidden md:flex w-9 h-9 rounded-xl bg-white/5 border border-white/10 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
+                    className="hidden md:flex w-9 h-9 rounded-xl bg-muted/40 border border-border/70 items-center justify-center hover:bg-primary/20 hover:border-primary/30 transition-all duration-300"
                     title="Dashboard"
                 >
                     <BarChart3 className="w-4 h-4 text-muted-foreground" />
                 </Link>
 
                 {/* Sync Status - Adaptive Layout */}
-                <div className="flex flex-col items-end mr-0 sm:mr-1 md:mr-4">
+                <div className="flex flex-col items-end mr-0 sm:mr-1 md:mr-2">
                     {/* Desktop: Full Status */}
                     <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
                         <RefreshCw
@@ -120,14 +124,3 @@ export const Header = ({ viewMode, setViewMode, isSynced = true, lastUpdated, re
         </header>
     );
 };
-
-
-
-
-
-
-
-
-
-
-

@@ -54,7 +54,7 @@ export function TelemetryBar({ vehicles }: TelemetryBarProps) {
                     </div>
                     <div>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Saldo Total</p>
-                        <p className="text-xl font-mono font-bold text-white tracking-tight">{formatCurrency(stats.total)}</p>
+                        <p className="text-xl font-mono font-bold text-foreground tracking-tight">{formatCurrency(stats.total)}</p>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@ export function TelemetryBar({ vehicles }: TelemetryBarProps) {
                     </div>
                     <div>
                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Veículos Ativos</p>
-                        <p className="text-xl font-mono font-bold text-white tracking-tight">{stats.count}</p>
+                        <p className="text-xl font-mono font-bold text-foreground tracking-tight">{stats.count}</p>
                     </div>
                 </div>
             </div>

@@ -47,7 +47,7 @@ export function Gauge({ value, max = 1000, label, size = 'md', maskedDisplay, cl
                         stroke="currentColor"
                         strokeWidth={sizeMetrics.stroke}
                         strokeLinecap="round"
-                        className="text-white/5"
+                        className="text-muted/40"
                     />
 
                     {/* Progress Arc */}
@@ -73,11 +73,11 @@ export function Gauge({ value, max = 1000, label, size = 'md', maskedDisplay, cl
 
                 {/* Center Content: Dominant Value + Subtle Percentage */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pt-3">
-                    <span className={cn("font-mono font-black text-foreground drop-shadow-[0_4px_2px_rgba(0,0,0,0.8)] tracking-tighter", sizeMetrics.currencyFont)}>
+                    <span className={cn("font-mono font-black text-foreground tracking-tighter", sizeMetrics.currencyFont)}>
                         {maskedDisplay ?? formatCurrency(value).replace('R$', '').trim()}
                     </span>
                     {!maskedDisplay && (
-                      <span className={cn("font-mono font-bold text-foreground/20 select-none", sizeMetrics.percentFont)}>
+                      <span className={cn("font-mono font-bold text-muted-foreground/60 select-none", sizeMetrics.percentFont)}>
                           {percentage.toFixed(0)}%
                       </span>
                     )}
@@ -86,7 +86,7 @@ export function Gauge({ value, max = 1000, label, size = 'md', maskedDisplay, cl
 
             {/* Label repositioned below the gauge - tighter spacing */}
             {label && (
-                <span className={cn("uppercase tracking-[0.4em] text-zinc-500 font-black font-mono mt-0 text-center", sizeMetrics.labelFont)}>
+                <span className={cn("uppercase tracking-[0.4em] text-muted-foreground font-black font-mono mt-0 text-center", sizeMetrics.labelFont)}>
                     {label}
                 </span>
             )}
