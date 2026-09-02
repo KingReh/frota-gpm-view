@@ -98,48 +98,48 @@
   }
 
   [data-theme="linear-indigo"] {
-    /* Linear Midnight - Midnight Slate & Electric Indigo */
-    --background: 235 24% 9%; /* #0F111A */
-    --foreground: 230 35% 97%;
+    /* Linear Midnight - Deep Indigo Slate & Electric Violet */
+    --background: 240 30% 7%; /* #0C0D18 */
+    --foreground: 240 40% 98%;
 
-    --card: 235 20% 13%; /* #161926 */
-    --card-foreground: 230 35% 97%;
+    --card: 241 26% 11%; /* #14152366 */
+    --card-foreground: 240 40% 98%;
 
-    --popover: 235 20% 13%;
-    --popover-foreground: 230 35% 97%;
+    --popover: 241 26% 12%;
+    --popover-foreground: 240 40% 98%;
 
-    --primary: 243 75% 59%; /* #6366F1 Linear Indigo */
+    --primary: 245 80% 65%; /* #6E6BF5 Linear Indigo */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 70% 60%; /* #A855F7 Violet */
+    --secondary: 272 78% 66%; /* #B168F9 Violet */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 235 15% 20%;
-    --muted-foreground: 235 15% 65%;
+    --muted: 240 18% 18%;
+    --muted-foreground: 240 18% 70%;
 
-    --accent: 243 75% 59%;
+    --accent: 245 80% 65%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 48%;
+    --destructive: 352 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 235 15% 23%;
-    --input: 235 15% 23%;
-    --ring: 243 75% 59%;
+    --border: 243 20% 22%;
+    --input: 243 20% 22%;
+    --ring: 245 80% 65%;
 
     --radius: 0.75rem;
 
-    --balance-high: 142 71% 45%;
-    --balance-medium: 48 96% 53%;
-    --balance-low: 0 84% 60%;
+    --balance-high: 152 65% 50%;
+    --balance-medium: 42 95% 58%;
+    --balance-low: 352 82% 62%;
 
-    --surface-elevated: 235 18% 16%;
-    --surface-overlay: 235 25% 7%;
-    --surface-interactive: 235 16% 19%;
+    --surface-elevated: 241 22% 15%;
+    --surface-overlay: 240 32% 5%;
+    --surface-interactive: 242 20% 18%;
 
-    --accent-fuel: 25 95% 53%;
-    --accent-status: 243 75% 59%;
-    --accent-favorite: 45 93% 58%;
+    --accent-fuel: 20 92% 58%;
+    --accent-status: 245 80% 65%;
+    --accent-favorite: 45 93% 62%;
   }
 
   [data-theme="grafana-emerald"] {
