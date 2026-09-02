@@ -324,6 +324,13 @@
 }
 
 @layer utilities {
+  /* Titânio Carmesim — mesh com brilho rubro profundo e sombra titânio */
+  [data-theme="crimson-titanium"] .mesh-bg {
+    background-image:
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.11) 0px, transparent 55%),
+      radial-gradient(at 100% 0%, hsl(0 0% 0% / 0.25) 0px, transparent 50%);
+  }
+
   /* Solaris Cyber — neutraliza o tom avermelhado/rosado do mesh-bg
      trocando o gradiente secundário magenta por um ciano-profundo */
   [data-theme="solaris-cyan"] .mesh-bg {
