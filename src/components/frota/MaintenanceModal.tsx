@@ -370,7 +370,7 @@ export function MaintenanceModal({
                 {/* OS Number - only for PROPRIO */}
                 {isProprio && (
                   <div className="space-y-1.5">
-                    <Label className="text-xs text-muted-foreground">​OS (Ordem de Serviço gerada no Alpha)</Label>
+                    <Label className="text-xs text-muted-foreground">OS (Ordem de Serviço gerada no Alpha)</Label>
                     <Input
                       type="number"
                       value={osNumber}

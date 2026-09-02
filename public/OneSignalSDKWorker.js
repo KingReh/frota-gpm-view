@@ -5,7 +5,15 @@ self.addEventListener('message', (event) => {
   }
 });
 
-importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+// Load OneSignal worker only on allowed production hostnames
+try {
+  const host = self.location.hostname;
+  if (host === 'frotagpm.vercel.app') {
+    importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+  }
+} catch (err) {
+  console.warn('OneSignal SW script skipped:', err);
+}
 
 // ============= Cache logic =============
 const CACHE_NAME = 'frota-gpm-v3';

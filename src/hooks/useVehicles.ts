@@ -23,9 +23,10 @@ interface VehicleWithCoordination {
 interface UseVehiclesOptions {
   selectedCoordinations?: string[];
   onRealtimeUpdate?: () => void;
+  enableRealtime?: boolean;
 }
 
-export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: UseVehiclesOptions = {}) {
+export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate, enableRealtime = false }: UseVehiclesOptions = {}) {
   const queryClient = useQueryClient();
   const hasLoadedRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -162,24 +163,35 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate }: Us
 
   // Realtime subscription for vehicle_data updates
   useEffect(() => {
-    const channel = supabase
-      .channel('vehicle_data_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'vehicle_data',
-        },
-        handleRealtimeChange
-      )
-      .subscribe();
+    if (!enableRealtime) return;
 
-    return () => {
-      supabase.removeChannel(channel);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [queryClient, handleRealtimeChange]);
+    try {
+      const channelName = `vehicle_data_${Math.random().toString(36).substring(2, 9)}_${Date.now()}`;
+      const channel = supabase
+        .channel(channelName)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'vehicle_data',
+          },
+          handleRealtimeChange
+        )
+        .subscribe();
+
+      return () => {
+        try {
+          supabase.removeChannel(channel);
+        } catch (e) {
+          console.warn('Error removing channel:', e);
+        }
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+      };
+    } catch (err) {
+      console.warn('Realtime subscription error:', err);
+    }
+  }, [enableRealtime, handleRealtimeChange]);
 
   return {
     ...query,

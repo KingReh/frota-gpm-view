@@ -88,7 +88,7 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
   const { records: maintenanceRecords } = useVehicleMaintenance();
-  const { data: allVehicles = [], undefinedVehicles = [] } = useVehicles({ selectedCoordinations: [] });
+  const { data: allVehicles = [], undefinedVehicles = [] } = useVehicles({ selectedCoordinations: [], enableRealtime: false });
   const { data: coordinations = [] } = useCoordinations();
   const [maintenanceModalOpen, setMaintenanceModalOpen] = useState(false);
 

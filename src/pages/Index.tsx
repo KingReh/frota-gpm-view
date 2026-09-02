@@ -86,6 +86,7 @@ const Index = () => {
   } = useVehicles({
     selectedCoordinations: preferences.selectedCoordinations,
     onRealtimeUpdate,
+    enableRealtime: true,
   });
 
   const { records: maintenanceRecords } = useVehicleMaintenance();

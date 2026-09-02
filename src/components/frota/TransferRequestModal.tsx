@@ -340,7 +340,9 @@ export function TransferRequestModal({
   const handleSend = async () => {
     try {
       await navigator.clipboard.writeText(editedMessage);
-    } catch {}
+    } catch {
+      // Ignore clipboard write failure if permissions are restricted
+    }
 
     if (gestor.status_telefone) {
       try {

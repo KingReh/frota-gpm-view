@@ -1,0 +1,8 @@
+{
+  "name": "Frota GPM - COMPESA",
+  "description": "Consulta de saldo de combustível para condutores da frota COMPESA",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
