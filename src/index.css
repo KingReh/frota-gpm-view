@@ -323,6 +323,16 @@
   }
 }
 
+@layer utilities {
+  /* Solaris Cyber — neutraliza o tom avermelhado/rosado do mesh-bg
+     trocando o gradiente secundário magenta por um ciano-profundo */
+  [data-theme="solaris-cyan"] .mesh-bg {
+    background-image:
+      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(200 100% 45% / 0.08) 0px, transparent 50%);
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
