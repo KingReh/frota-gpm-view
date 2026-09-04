@@ -81,9 +81,9 @@ export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryD
     );
   }
 
-  return (
+    return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-[60vh] relative py-16">
+      <div className="flex flex-col items-center justify-start relative pt-1 sm:pt-2 md:pt-3 pb-8 sm:pb-12 w-full">
 
         <Carousel
           setApi={setApi}
@@ -101,7 +101,7 @@ export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryD
             {vehicles.map((vehicle, index) => (
               <CarouselItem key={vehicle.plate} className="pl-4 md:pl-6 basis-[85%] md:basis-[42%] lg:basis-[34%] xl:basis-[30%]">
                 <div
-                  className="py-4 md:py-6 transition-[transform,opacity] duration-150 ease-out will-change-transform"
+                  className="py-2 md:py-3 transition-[transform,opacity] duration-150 ease-out will-change-transform"
                   style={getSlideStyle(index)}
                 >
                   <VehicleCard
@@ -119,14 +119,14 @@ export function VehicleCarousel({ vehicles, maintenancePlates, maintenanceEntryD
           </CarouselContent>
 
           {/* Custom Controls */}
-          <div className="flex justify-center gap-4 mt-8">
-            <CarouselPrevious className="static translate-y-0 bg-card border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200 shadow-md" />
-            <CarouselNext className="static translate-y-0 bg-card border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary h-12 w-12 md:h-14 md:w-14 rounded-2xl transition-colors duration-200 shadow-md" />
+          <div className="flex justify-center gap-4 mt-6 md:mt-8">
+            <CarouselPrevious className="static translate-y-0 bg-card border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary h-11 w-11 md:h-12 md:w-12 rounded-2xl transition-colors duration-200 shadow-md" />
+            <CarouselNext className="static translate-y-0 bg-card border-border text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary h-11 w-11 md:h-12 md:w-12 rounded-2xl transition-colors duration-200 shadow-md" />
           </div>
         </Carousel>
 
         {/* Counter / Pager */}
-        <div className="mt-12 flex items-center gap-3">
+        <div className="mt-6 md:mt-8 flex items-center gap-3">
           {Array.from({ length: Math.min(count, 12) }).map((_, i) => (
             <div
               key={i}

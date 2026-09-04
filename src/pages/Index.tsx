@@ -327,7 +327,12 @@ const Index = () => {
         <Tabs
           value={preferences.activeTab}
           onValueChange={(value) => setActiveTab(value as FleetTab)}
-          className="space-y-5 sm:space-y-6 md:space-y-8"
+          className={cn(
+            "transition-all duration-300",
+            preferences.viewMode === 'carousel'
+              ? "space-y-2 sm:space-y-3"
+              : "space-y-5 sm:space-y-6 md:space-y-8"
+          )}
         >
           {/* 3. Main Control Bar: Tabs + View Selection + Search */}
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2 sm:gap-3 md:gap-6 lg:gap-8 glass-panel p-2 sm:p-3 md:p-4 rounded-xl md:rounded-[24px] sticky top-[calc(3.5rem+env(safe-area-inset-top,0px))] sm:top-16 md:top-20 z-40 bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-300">
@@ -414,20 +419,38 @@ const Index = () => {
             </div>
           </div>
 
-          <TabsContent value="fleet" className="space-y-8 focus-visible:ring-0">
-            <div className="min-h-[500px]">
+          <TabsContent
+            value="fleet"
+            className={cn(
+              "focus-visible:ring-0",
+              preferences.viewMode === 'carousel' ? "space-y-2 mt-1 sm:mt-2" : "space-y-8"
+            )}
+          >
+            <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
               {renderVehicleContent(filteredVehicles)}
             </div>
           </TabsContent>
 
-          <TabsContent value="undefined" className="space-y-8 focus-visible:ring-0">
-            <div className="min-h-[500px]">
+          <TabsContent
+            value="undefined"
+            className={cn(
+              "focus-visible:ring-0",
+              preferences.viewMode === 'carousel' ? "space-y-2 mt-1 sm:mt-2" : "space-y-8"
+            )}
+          >
+            <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
               {renderVehicleContent(filteredUndefined)}
             </div>
           </TabsContent>
 
-          <TabsContent value="favorites" className="space-y-8 focus-visible:ring-0">
-            <div className="min-h-[500px]">
+          <TabsContent
+            value="favorites"
+            className={cn(
+              "focus-visible:ring-0",
+              preferences.viewMode === 'carousel' ? "space-y-2 mt-1 sm:mt-2" : "space-y-8"
+            )}
+          >
+            <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
               {renderVehicleContent(filteredFavorites)}
             </div>
           </TabsContent>
