@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -11,7 +11,6 @@ import {
 import { ArrowDownAZ, ArrowUpAZ, ArrowDownUp, DollarSign, Building2, Car } from "lucide-react";
 import type { SortOption } from "@/types/vehicle";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SortControlProps {
     currentSort: SortOption;
@@ -19,68 +18,34 @@ interface SortControlProps {
 }
 
 export function SortControl({ currentSort, onSortChange }: SortControlProps) {
-    const isMobile = useIsMobile();
     const [open, setOpen] = useState(false);
-    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const handleTouchStart = useCallback(() => {
-        if (!isMobile) return;
-        longPressTimer.current = setTimeout(() => {
-            setOpen(true);
-            // Vibrate for haptic feedback if available
-            if (navigator.vibrate) navigator.vibrate(30);
-        }, 500);
-    }, [isMobile]);
-
-    const handleTouchEnd = useCallback(() => {
-        if (longPressTimer.current) {
-            clearTimeout(longPressTimer.current);
-            longPressTimer.current = null;
-        }
-    }, []);
-
-    const handleTouchMove = useCallback(() => {
-        if (longPressTimer.current) {
-            clearTimeout(longPressTimer.current);
-            longPressTimer.current = null;
-        }
-    }, []);
     const getSortLabel = (sort: SortOption) => {
         switch (sort) {
-            case 'plate_asc': return 'Placa (A-Z)';
-            case 'plate_desc': return 'Placa (Z-A)';
             case 'balance_desc': return 'Saldo (Maior)';
             case 'balance_asc': return 'Saldo (Menor)';
+            case 'plate_asc': return 'Placa (A-Z)';
+            case 'plate_desc': return 'Placa (Z-A)';
             case 'coordination_asc': return 'Coordenação (A-Z)';
             case 'coordination_desc': return 'Coordenação (Z-A)';
-            default: return 'Ordenar';
+            default: return 'Saldo (Maior)';
         }
     };
 
     const getSortIcon = (sort: SortOption) => {
+        if (sort.includes('balance')) return <DollarSign className="w-4 h-4 mr-2 text-primary" />;
         if (sort.includes('plate')) return <Car className="w-4 h-4 mr-2" />;
-        if (sort.includes('balance')) return <DollarSign className="w-4 h-4 mr-2" />;
         if (sort.includes('coordination')) return <Building2 className="w-4 h-4 mr-2" />;
-        return <ArrowDownUp className="w-4 h-4 mr-2" />;
+        return <DollarSign className="w-4 h-4 mr-2 text-primary" />;
     };
 
     return (
-        <DropdownMenu open={open} onOpenChange={(v) => {
-            // On mobile, only allow programmatic open (via long-press)
-            if (isMobile && v) return;
-            setOpen(v);
-        }}>
+        <DropdownMenu open={open} onOpenChange={setOpen}>
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="outline"
                     size="sm"
                     className="h-10 min-h-[44px] md:h-10 bg-card border-border text-foreground hover:text-primary hover:bg-muted/50 transition-all gap-2 min-w-[140px] justify-between select-none shadow-sm"
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                    onTouchMove={handleTouchMove}
-                    onClick={(e) => {
-                        if (isMobile) e.preventDefault();
-                    }}
                 >
                     <div className="flex items-center">
                         {getSortIcon(currentSort)}
@@ -89,20 +54,37 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
                     <ArrowDownUp className="w-3 h-3 opacity-50" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px] bg-popover/95 backdrop-blur-xl border-border text-popover-foreground shadow-2xl">
+            <DropdownMenuContent align="end" className="w-[220px] bg-popover/95 backdrop-blur-xl border-border text-popover-foreground shadow-2xl">
                 <DropdownMenuLabel className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Ordenar por</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border" />
 
                 <DropdownMenuItem
+                    onClick={() => onSortChange('balance_desc')}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'balance_desc' && "text-primary font-bold bg-primary/10")}
+                >
+                    <DollarSign className="w-4 h-4" />
+                    <span>Saldo (Maior para menor)</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => onSortChange('balance_asc')}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'balance_asc' && "text-primary font-bold bg-primary/10")}
+                >
+                    <DollarSign className="w-4 h-4" />
+                    <span>Saldo (Menor para maior)</span>
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator className="bg-border" />
+
+                <DropdownMenuItem
                     onClick={() => onSortChange('plate_asc')}
-                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'plate_asc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'plate_asc' && "text-primary font-bold bg-primary/10")}
                 >
                     <ArrowDownAZ className="w-4 h-4" />
                     <span>Placa (A-Z)</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => onSortChange('plate_desc')}
-                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'plate_desc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'plate_desc' && "text-primary font-bold bg-primary/10")}
                 >
                     <ArrowUpAZ className="w-4 h-4" />
                     <span>Placa (Z-A)</span>
@@ -111,32 +93,15 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
                 <DropdownMenuSeparator className="bg-border" />
 
                 <DropdownMenuItem
-                    onClick={() => onSortChange('balance_desc')}
-                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'balance_desc' && "text-primary font-bold")}
-                >
-                    <DollarSign className="w-4 h-4" />
-                    <span>Saldo (Maior)</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => onSortChange('balance_asc')}
-                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'balance_asc' && "text-primary font-bold")}
-                >
-                    <DollarSign className="w-4 h-4" />
-                    <span>Saldo (Menor)</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator className="bg-border" />
-
-                <DropdownMenuItem
                     onClick={() => onSortChange('coordination_asc')}
-                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'coordination_asc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'coordination_asc' && "text-primary font-bold bg-primary/10")}
                 >
                     <Building2 className="w-4 h-4" />
                     <span>Coordenação (A-Z)</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => onSortChange('coordination_desc')}
-                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'coordination_desc' && "text-primary font-bold")}
+                    className={cn("focus:bg-muted focus:text-foreground cursor-pointer gap-2", currentSort === 'coordination_desc' && "text-primary font-bold bg-primary/10")}
                 >
                     <Building2 className="w-4 h-4" />
                     <span>Coordenação (Z-A)</span>

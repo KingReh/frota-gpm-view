@@ -35,20 +35,26 @@ function filterBySearch(vehicles: VehicleWithDetails[], search: string): Vehicle
 function sortVehicles(vehicles: VehicleWithDetails[], sortOption: SortOption): VehicleWithDetails[] {
   return [...vehicles].sort((a, b) => {
     switch (sortOption) {
+      case 'balance_desc': {
+        const diff = parseBalance(b.balance) - parseBalance(a.balance);
+        return diff !== 0 ? diff : a.plate.localeCompare(b.plate);
+      }
+      case 'balance_asc': {
+        const diff = parseBalance(a.balance) - parseBalance(b.balance);
+        return diff !== 0 ? diff : a.plate.localeCompare(b.plate);
+      }
       case 'plate_asc':
         return a.plate.localeCompare(b.plate);
       case 'plate_desc':
         return b.plate.localeCompare(a.plate);
-      case 'balance_asc':
-        return parseBalance(a.balance) - parseBalance(b.balance);
-      case 'balance_desc':
-        return parseBalance(b.balance) - parseBalance(a.balance);
       case 'coordination_asc':
         return (a.coordination?.name || '').localeCompare(b.coordination?.name || '');
       case 'coordination_desc':
         return (b.coordination?.name || '').localeCompare(a.coordination?.name || '');
-      default:
-        return 0;
+      default: {
+        const diff = parseBalance(b.balance) - parseBalance(a.balance);
+        return diff !== 0 ? diff : a.plate.localeCompare(b.plate);
+      }
     }
   });
 }
