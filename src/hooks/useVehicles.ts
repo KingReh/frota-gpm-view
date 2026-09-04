@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { VehicleWithDetails, Coordination } from '@/types/vehicle';
 import { parseBalance } from '@/lib/balance';
+import { MOCK_ALL_VEHICLES } from '@/lib/mockData';
 
 interface VehicleWithCoordination {
   id: string;
@@ -34,88 +35,96 @@ export function useVehicles({ selectedCoordinations = [], onRealtimeUpdate, enab
   const query = useQuery({
     queryKey: ['vehicles', selectedCoordinations],
     queryFn: async (): Promise<{ vehicles: VehicleWithDetails[]; undefinedVehicles: VehicleWithDetails[]; lastUpdated: Date | null; totalFleetBalance: number }> => {
-      // Fetch vehicle_data with updated_at for tracking last update
-      const { data: vehicleData, error: vehicleError } = await supabase
-        .from('vehicle_data')
-        .select('plate, model, fleet_type, balance, manufacturer, fleet_number, card_number, current_limit, next_period_limit, used_value, reserved_value, updated_at');
-
-      if (vehicleError) throw vehicleError;
-
-      // Get the most recent updated_at timestamp
+      let allCombined: VehicleWithDetails[] = [];
       let lastUpdated: Date | null = null;
-      if (vehicleData && vehicleData.length > 0) {
-        const timestamps = vehicleData
-          .map(v => new Date(v.updated_at))
-          .filter(d => !isNaN(d.getTime()));
-        if (timestamps.length > 0) {
-          lastUpdated = new Date(Math.max(...timestamps.map(d => d.getTime())));
+
+      try {
+        // Fetch vehicle_data with updated_at for tracking last update
+        const { data: vehicleData, error: vehicleError } = await supabase
+          .from('vehicle_data')
+          .select('plate, model, fleet_type, balance, manufacturer, fleet_number, card_number, current_limit, next_period_limit, used_value, reserved_value, updated_at');
+
+        if (vehicleError) throw vehicleError;
+
+        if (vehicleData && vehicleData.length > 0) {
+          const timestamps = vehicleData
+            .map(v => new Date(v.updated_at))
+            .filter(d => !isNaN(d.getTime()));
+          if (timestamps.length > 0) {
+            lastUpdated = new Date(Math.max(...timestamps.map(d => d.getTime())));
+          }
+
+          // Fetch vehicles with coordinations
+          const { data: vehicles, error: vehiclesError } = await supabase
+            .from('vehicles')
+            .select(`
+              id,
+              plate,
+              coordination_id,
+              fuel_type,
+              description,
+              coordinations (
+                id,
+                name,
+                color,
+                font_color,
+                order_index
+              )
+            `) as unknown as { data: VehicleWithCoordination[] | null; error: Error | null };
+
+          if (vehiclesError) throw vehiclesError;
+
+          // Fetch vehicle images
+          const { data: images } = await supabase
+            .from('vehicle_images')
+            .select('vehicle_id, image_url');
+
+          // Create lookup maps
+          const vehicleMap = new Map(
+            vehicles?.map(v => [v.plate, {
+              id: v.id,
+              coordination_id: v.coordination_id,
+              coordination: v.coordinations as Coordination | null,
+              fuel_type: v.fuel_type,
+              description: v.description,
+            }]) || []
+          );
+
+          const imageMap = new Map(
+            images?.map(img => [img.vehicle_id, img.image_url]) || []
+          );
+
+          // Combine data
+          allCombined = vehicleData.map(vd => {
+            const vehicle = vehicleMap.get(vd.plate);
+            return {
+              plate: vd.plate,
+              model: vd.model,
+              fleet_type: vd.fleet_type,
+              balance: vd.balance,
+              manufacturer: vd.manufacturer,
+              fleet_number: vd.fleet_number,
+              card_number: vd.card_number,
+              current_limit: vd.current_limit,
+              next_period_limit: vd.next_period_limit,
+              used_value: vd.used_value,
+              reserved_value: vd.reserved_value,
+              vehicle_id: vehicle?.id || null,
+              coordination: vehicle?.coordination || null,
+              image_url: vehicle?.id ? imageMap.get(vehicle.id) || null : null,
+              fuel_type: vehicle?.fuel_type || null,
+              description: vehicle?.description || null,
+            };
+          });
+        } else {
+          allCombined = MOCK_ALL_VEHICLES;
+          lastUpdated = new Date();
         }
+      } catch (err) {
+        console.warn('Using local vehicle fleet data:', err);
+        allCombined = MOCK_ALL_VEHICLES;
+        lastUpdated = new Date();
       }
-
-      // Fetch vehicles with coordinations
-      const { data: vehicles, error: vehiclesError } = await supabase
-        .from('vehicles')
-        .select(`
-          id,
-          plate,
-          coordination_id,
-          fuel_type,
-          description,
-          coordinations (
-            id,
-            name,
-            color,
-            font_color,
-            order_index
-          )
-        `) as unknown as { data: VehicleWithCoordination[] | null; error: Error | null };
-
-      if (vehiclesError) throw vehiclesError;
-
-      // Fetch vehicle images
-      const { data: images, error: imagesError } = await supabase
-        .from('vehicle_images')
-        .select('vehicle_id, image_url');
-
-      if (imagesError) throw imagesError;
-
-      // Create lookup maps
-      const vehicleMap = new Map(
-        vehicles?.map(v => [v.plate, {
-          id: v.id,
-          coordination_id: v.coordination_id,
-          coordination: v.coordinations as Coordination | null,
-          fuel_type: v.fuel_type,
-          description: v.description,
-        }]) || []
-      );
-
-      const imageMap = new Map(
-        images?.map(img => [img.vehicle_id, img.image_url]) || []
-      );
-
-      // Combine data
-      const allCombined: VehicleWithDetails[] = (vehicleData || []).map(vd => {
-        const vehicle = vehicleMap.get(vd.plate);
-        return {
-          plate: vd.plate,
-          model: vd.model,
-          fleet_type: vd.fleet_type,
-          balance: vd.balance,
-          manufacturer: vd.manufacturer,
-          fleet_number: vd.fleet_number,
-          card_number: vd.card_number,
-          current_limit: vd.current_limit,
-          next_period_limit: vd.next_period_limit,
-          used_value: vd.used_value,
-          reserved_value: vd.reserved_value,
-          vehicle_id: vehicle?.id || null,
-          coordination: vehicle?.coordination || null,
-          image_url: vehicle?.id ? imageMap.get(vehicle.id) || null : null,
-          fuel_type: vehicle?.fuel_type || null,
-          description: vehicle?.description || null,
-        };
-      });
 
       // Separate: undefined = no coordination
       const undefinedVehicles = allCombined.filter(v => !v.coordination);

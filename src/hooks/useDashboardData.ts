@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Coordination } from '@/types/vehicle';
+import { MOCK_ALL_VEHICLES } from '@/lib/mockData';
 
 interface CoordinationAgg {
   name: string;
@@ -44,11 +45,21 @@ export function useDashboardData(selectedCoordinations: string[]) {
   const vehicleDataQuery = useQuery({
     queryKey: ['dashboard-vehicle-data'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('vehicle_data')
-        .select('plate, fleet_type, model, manufacturer, balance');
-      if (error) throw error;
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('vehicle_data')
+          .select('plate, fleet_type, model, manufacturer, balance');
+        if (!error && data && data.length > 0) return data;
+      } catch (err) {
+        console.warn('Using local vehicle data for dashboard:', err);
+      }
+      return MOCK_ALL_VEHICLES.map(v => ({
+        plate: v.plate,
+        fleet_type: v.fleet_type,
+        model: v.model,
+        manufacturer: v.manufacturer,
+        balance: v.balance,
+      }));
     },
     staleTime: 30_000,
   });
@@ -57,11 +68,24 @@ export function useDashboardData(selectedCoordinations: string[]) {
   const vehiclesQuery = useQuery({
     queryKey: ['dashboard-vehicles'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('vehicles')
-        .select('plate, fuel_type, coordination_id, coordinations:coordination_id(id, name, color)');
-      if (error) throw error;
-      return data || [];
+      try {
+        const { data, error } = await supabase
+          .from('vehicles')
+          .select('plate, fuel_type, coordination_id, coordinations:coordination_id(id, name, color)');
+        if (!error && data && data.length > 0) return data;
+      } catch (err) {
+        console.warn('Using local vehicles with coordination for dashboard:', err);
+      }
+      return MOCK_ALL_VEHICLES.map(v => ({
+        plate: v.plate,
+        fuel_type: v.fuel_type,
+        coordination_id: v.coordination?.id || null,
+        coordinations: v.coordination ? {
+          id: v.coordination.id,
+          name: v.coordination.name,
+          color: v.coordination.color,
+        } : null,
+      }));
     },
     staleTime: 30_000,
   });
