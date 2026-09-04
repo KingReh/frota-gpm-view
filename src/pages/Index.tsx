@@ -374,8 +374,8 @@ const Index = () => {
               <div className="hidden md:block w-px h-8 bg-white/10" />
 
               {/* View Selection & Sort */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-full md:w-auto">
+              <div className="flex flex-row items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
+                <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-auto shrink-0">
                   {[
                     { mode: 'table', icon: LayoutList, title: 'Visualização em tabela' },
                     { mode: 'card', icon: Grid, title: 'visualização em cards' },
@@ -385,7 +385,7 @@ const Index = () => {
                       key={item.mode}
                       onClick={() => setViewMode(item.mode as any)}
                       className={cn(
-                        "p-1.5 md:p-2 rounded-md transition-all duration-300 flex-1 md:flex-none flex justify-center",
+                        "p-1.5 md:p-2 rounded-md transition-all duration-300 flex-none flex justify-center",
                         preferences.viewMode === item.mode
                           ? "bg-primary text-white shadow-lg shadow-primary/20"
                           : "text-zinc-500 hover:text-white hover:bg-white/5"
@@ -400,18 +400,19 @@ const Index = () => {
                 <SortControl
                   currentSort={preferences.sortOption}
                   onSortChange={setSortOption}
+                  className="w-auto shrink-0"
                 />
-              </div>
 
-              {/* Export Button */}
-              <button
-                onClick={handleExportBalance}
-                className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 min-h-[44px] rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group w-full sm:w-auto"
-                title="Compartilhar ou copiar saldo"
-              >
-                <Share className="w-4 h-4 group-hover:scale-110 transition-transform shrink-0" />
-                <span className="text-xs sm:text-sm font-medium">Enviar/Copiar</span>
-              </button>
+                {/* Export Button */}
+                <button
+                  onClick={handleExportBalance}
+                  className="flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 md:px-4 py-1.5 sm:py-2 min-h-[38px] sm:min-h-[40px] md:min-h-[44px] rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 text-white/80 hover:text-white transition-all border border-white/5 hover:border-white/10 group w-auto shrink-0 ml-auto sm:ml-0"
+                  title="Compartilhar ou copiar saldo"
+                >
+                  <Share className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform shrink-0" />
+                  <span className="text-xs sm:text-sm font-medium hidden xs:inline sm:inline">Enviar/Copiar</span>
+                </button>
+              </div>
             </div>
 
             <div className="w-full lg:w-auto min-w-0 lg:min-w-[300px]">

@@ -15,9 +15,10 @@ import { cn } from "@/lib/utils";
 interface SortControlProps {
     currentSort: SortOption;
     onSortChange: (option: SortOption) => void;
+    className?: string;
 }
 
-export function SortControl({ currentSort, onSortChange }: SortControlProps) {
+export function SortControl({ currentSort, onSortChange, className }: SortControlProps) {
     const [open, setOpen] = useState(false);
 
     const getSortLabel = (sort: SortOption) => {
@@ -33,10 +34,10 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
     };
 
     const getSortIcon = (sort: SortOption) => {
-        if (sort.includes('balance')) return <DollarSign className="w-4 h-4 mr-2 text-primary" />;
-        if (sort.includes('plate')) return <Car className="w-4 h-4 mr-2" />;
-        if (sort.includes('coordination')) return <Building2 className="w-4 h-4 mr-2" />;
-        return <DollarSign className="w-4 h-4 mr-2 text-primary" />;
+        if (sort.includes('balance')) return <DollarSign className="w-3.5 h-3.5 mr-1.5 text-primary shrink-0" />;
+        if (sort.includes('plate')) return <Car className="w-3.5 h-3.5 mr-1.5 shrink-0" />;
+        if (sort.includes('coordination')) return <Building2 className="w-3.5 h-3.5 mr-1.5 shrink-0" />;
+        return <DollarSign className="w-3.5 h-3.5 mr-1.5 text-primary shrink-0" />;
     };
 
     return (
@@ -45,13 +46,16 @@ export function SortControl({ currentSort, onSortChange }: SortControlProps) {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="h-10 min-h-[44px] md:h-10 bg-card border-border text-foreground hover:text-primary hover:bg-muted/50 transition-all gap-2 min-w-[140px] justify-between select-none shadow-sm"
+                    className={cn(
+                        "h-9 sm:h-10 min-h-[38px] sm:min-h-[40px] md:h-10 bg-card border-border text-foreground hover:text-primary hover:bg-muted/50 transition-all gap-1.5 sm:gap-2 px-2.5 sm:px-3 text-xs w-auto max-w-full justify-between select-none shadow-sm touch-manipulation",
+                        className
+                    )}
                 >
-                    <div className="flex items-center">
+                    <div className="flex items-center min-w-0">
                         {getSortIcon(currentSort)}
-                        <span className="text-xs font-medium">{getSortLabel(currentSort)}</span>
+                        <span className="text-[11px] sm:text-xs font-medium truncate">{getSortLabel(currentSort)}</span>
                     </div>
-                    <ArrowDownUp className="w-3 h-3 opacity-50" />
+                    <ArrowDownUp className="w-3 h-3 opacity-50 shrink-0 ml-1" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[220px] bg-popover/95 backdrop-blur-xl border-border text-popover-foreground shadow-2xl">
