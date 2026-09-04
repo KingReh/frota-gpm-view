@@ -73,7 +73,13 @@ export function Gauge({ value, max = 1000, label, size = 'md', maskedDisplay, cl
 
                 {/* Center Content: Dominant Value + Subtle Percentage */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pt-3">
-                    <span className={cn("font-mono font-black text-foreground tracking-tighter", sizeMetrics.currencyFont)}>
+                    <span
+                        className={cn(
+                            "font-mono font-black text-foreground tracking-tighter",
+                            "drop-shadow-[0_4px_6px_rgba(0,0,0,0.45)] [text-shadow:0_1px_1px_rgba(0,0,0,0.35),0_2px_3px_rgba(0,0,0,0.4),0_4px_8px_rgba(0,0,0,0.6),0_8px_16px_rgba(0,0,0,0.65),0_14px_24px_rgba(0,0,0,0.45)]",
+                            sizeMetrics.currencyFont
+                        )}
+                    >
                         {maskedDisplay ?? formatCurrency(value).replace('R$', '').trim()}
                     </span>
                     {!maskedDisplay && (
