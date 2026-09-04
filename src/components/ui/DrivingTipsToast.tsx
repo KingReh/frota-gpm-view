@@ -91,7 +91,7 @@ export const DrivingTipsToast = () => {
   const handleShare = async () => {
     if (!currentTip) return;
     const shareData = {
-      title: "Dica do Dia - Gestão de Frotas\n",
+      title: "Dica do Dia - Gestão de Frotas\n\n",
       text: `💡 Dica do Dia:\n"${currentTip}`,
     };
 
