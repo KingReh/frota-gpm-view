@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, X, ChevronUp, RefreshCw, Copy, Check, Pause, Play } from "lucide-react";
+import { Zap, X, ChevronUp, RefreshCw, Copy, Check, Pause, Play, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -56,10 +56,25 @@ export const DrivingTipsToast = () => {
     setDismissed(true);
   };
 
-  const handleNextTip = () => {
+  const handleNextTip = async () => {
     setIsSpinning(true);
     setTimeout(() => setIsSpinning(false), 450);
-    setTipIndex((prev) => (prev + 1) % tipsList.length);
+    if (tipsList.length > 1) {
+      setTipIndex((prev) => {
+        let next = Math.floor(Math.random() * tipsList.length);
+        if (next === prev) next = (prev + 1) % tipsList.length;
+        return next;
+      });
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('get-driving-tips');
+      if (!error && data?.tip) {
+        setTipsList((prev) => (prev.includes(data.tip) ? prev : [...prev, data.tip]));
+      }
+    } catch {
+      /* noop */
+    }
   };
 
   const handleCopy = async () => {
@@ -70,6 +85,34 @@ export const DrivingTipsToast = () => {
       setTimeout(() => setIsCopied(false), 2000);
     } catch {
       /* noop */
+    }
+  };
+
+  const handleShare = async () => {
+    if (!currentTip) return;
+    const shareData = {
+      title: "Dica do Dia - Gestão de Frotas",
+      text: `💡 Dica do Dia:\n"${currentTip}`,
+      url: typeof window !== "undefined" ? window.location.href : undefined,
+    };
+
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share(shareData);
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== "AbortError") {
+          await handleCopy();
+        }
+      }
+    } else {
+      // Fallback para navegadores/dispositivos sem Web Share API
+      try {
+        await navigator.clipboard.writeText(shareData.text);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      } catch {
+        await handleCopy();
+      }
     }
   };
 
@@ -123,6 +166,32 @@ export const DrivingTipsToast = () => {
 
   useEffect(() => {
     const fetchTip = async () => {
+      // 1. Try to load all tips directly from Google Sheets so the full collection (90+ tips) is available
+      try {
+        const response = await fetch(
+          "https://docs.google.com/spreadsheets/d/15a3TdMn-Onn6B_rCnXgBD3M_L96CoGyhSskmMbjlqHw/gviz/tq?tqx=out:csv&sheet=Sheet1"
+        );
+        if (response.ok) {
+          const csvText = await response.text();
+          const lines = csvText.split('\n').filter(line => line.trim());
+          const loadedTips: string[] = [];
+          for (let i = 1; i < lines.length; i++) {
+            const match = lines[i].match(/"((?:[^"]|"")*)"/);
+            if (match && match[1].trim()) {
+              loadedTips.push(match[1].replace(/""/g, '"').trim());
+            }
+          }
+          if (loadedTips.length > 0) {
+            setTipsList(loadedTips);
+            setTipIndex(Math.floor(Math.random() * loadedTips.length));
+            return;
+          }
+        }
+      } catch {
+        /* proceed to edge function fallback */
+      }
+
+      // 2. Fallback to Supabase Edge Function
       try {
         const { data, error } = await supabase.functions.invoke('get-driving-tips');
         if (!error && data?.tip) {
@@ -143,7 +212,8 @@ export const DrivingTipsToast = () => {
     setIsIOS(isIosDevice);
 
     const timer = setTimeout(() => {
-      if (!sessionStorage.getItem('driving-tip-dismissed')) {
+      const isMobileDevice = window.matchMedia("(max-width: 768px)").matches;
+      if (isMobileDevice || !sessionStorage.getItem('driving-tip-dismissed')) {
         setIsVisible(true);
       }
     }, 1000);
@@ -159,6 +229,13 @@ export const DrivingTipsToast = () => {
       window.removeEventListener('pwa-prompt-visibility', handlePwaVisibility as EventListener);
     };
   }, []);
+
+  // Ensure Dica do Dia is always visible on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setIsVisible(true);
+    }
+  }, [isMobile]);
 
   if (!isVisible || !currentTip) return null;
 
@@ -253,8 +330,8 @@ export const DrivingTipsToast = () => {
                 <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-card via-card/90 to-transparent z-10" />
               </div>
 
-              {/* Controls on the right (Pause/Play, Refresh, Dismiss) */}
-              <div className="flex items-center gap-0.5 shrink-0 pl-1 z-20 bg-card/95">
+              {/* Controls on the right (Pause/Play) */}
+              <div className="flex items-center shrink-0 pl-1 pr-0.5 z-20 bg-card/95">
                 {/* Play/Pause Button */}
                 <button
                   type="button"
@@ -262,39 +339,11 @@ export const DrivingTipsToast = () => {
                     e.stopPropagation();
                     setIsPaused((prev) => !prev);
                   }}
-                  className="w-6 h-6 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all"
+                  className="w-7 h-7 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition-all cursor-pointer"
                   aria-label={isPaused ? "Retomar rolagem da dica" : "Pausar rolagem da dica"}
                   title={isPaused ? "Retomar" : "Pausar"}
                 >
-                  {isPaused ? <Play className="w-3 h-3 text-primary" /> : <Pause className="w-3 h-3" />}
-                </button>
-
-                {/* Next Tip Button */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNextTip();
-                  }}
-                  className="w-6 h-6 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all"
-                  aria-label="Próxima dica"
-                  title="Próxima dica"
-                >
-                  <RefreshCw className={cn("w-3 h-3", isSpinning && "animate-spin")} />
-                </button>
-
-                {/* Dismiss Button */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDismiss();
-                  }}
-                  className="w-6 h-6 flex items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 active:scale-95 transition-all ml-0.5"
-                  aria-label="Dispensar dica"
-                  title="Dispensar dica"
-                >
-                  <X className="w-3.5 h-3.5" />
+                  {isPaused ? <Play className="w-3.5 h-3.5 text-primary" /> : <Pause className="w-3.5 h-3.5" />}
                 </button>
               </div>
             </div>
@@ -340,13 +389,19 @@ export const DrivingTipsToast = () => {
                       <span className="text-xs font-mono font-bold uppercase tracking-wider text-foreground">
                         Dica do Dia
                       </span>
-                      <span className="text-[11px] text-muted-foreground font-mono bg-muted/60 px-1.5 py-0.5 rounded">
-                        {tipIndex + 1}/{tipsList.length}
-                      </span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleShare}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                      aria-label="Compartilhar dica"
+                      title="Compartilhar dica"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
                     <button
                       type="button"
                       onClick={handleNextTip}
@@ -392,22 +447,13 @@ export const DrivingTipsToast = () => {
                     )}
                   </button>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleDismiss}
-                      className="text-xs text-muted-foreground hover:text-destructive px-2.5 py-1.5 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer"
-                    >
-                      Dispensar hoje
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsExpanded(false)}
-                      className="text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 px-3.5 py-1.5 rounded-lg shadow-sm transition-all active:scale-95 cursor-pointer"
-                    >
-                      Entendido
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsExpanded(false)}
+                    className="text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/70 px-3.5 py-1.5 rounded-lg border border-border/40 transition-all active:scale-95 cursor-pointer"
+                  >
+                    Entendido
+                  </button>
                 </div>
               </motion.div>
             </div>
@@ -460,27 +506,16 @@ return (
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1 flex items-center gap-2">
                   Dica do Dia
                   <span className="w-1 h-1 rounded-full bg-primary/50 animate-pulse" />
-                  <span className="text-[10px] text-muted-foreground font-mono font-normal">
-                    ({tipIndex + 1}/{tipsList.length})
-                  </span>
                 </h4>
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
                     onClick={handleNextTip}
-                    className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
+                    className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted cursor-pointer"
                     title="Próxima dica"
                     aria-label="Próxima dica"
                   >
                     <RefreshCw className={cn("w-3.5 h-3.5", isSpinning && "animate-spin")} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDismiss}
-                    className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
-                    aria-label="Fechar"
-                  >
-                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
