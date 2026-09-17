@@ -34,7 +34,10 @@ export function ThemeSelectorModal({ open, onOpenChange }: ThemeSelectorModalPro
   const isOpen = open !== undefined ? open : isThemeModalOpen;
   const handleOpenChange = onOpenChange || setIsThemeModalOpen;
 
+  const hasLightThemes = availableThemes.some((t) => t.type === 'light');
+
   const filteredThemes = availableThemes.filter((t) => {
+    if (!hasLightThemes) return true;
     if (activeFilter === 'dark') return t.type === 'dark';
     if (activeFilter === 'light') return t.type === 'light';
     return true;
@@ -81,43 +84,45 @@ export function ThemeSelectorModal({ open, onOpenChange }: ThemeSelectorModalPro
           </div>
 
           {/* Filter Bar */}
-          <div className="flex items-center gap-1.5 pt-3">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={cn(
-                'px-3 py-1 text-xs font-medium rounded-lg transition-colors',
-                activeFilter === 'all'
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              )}
-            >
-              Todos ({availableThemes.length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('dark')}
-              className={cn(
-                'px-3 py-1 text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors',
-                activeFilter === 'dark'
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              )}
-            >
-              <Moon className="w-3 h-3" />
-              Escuros ({availableThemes.filter((t) => t.type === 'dark').length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('light')}
-              className={cn(
-                'px-3 py-1 text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors',
-                activeFilter === 'light'
-                  ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              )}
-            >
-              <Sun className="w-3 h-3" />
-              Claros ({availableThemes.filter((t) => t.type === 'light').length})
-            </button>
-          </div>
+          {hasLightThemes && (
+            <div className="flex items-center gap-1.5 pt-3">
+              <button
+                onClick={() => setActiveFilter('all')}
+                className={cn(
+                  'px-3 py-1 text-xs font-medium rounded-lg transition-colors',
+                  activeFilter === 'all'
+                    ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                )}
+              >
+                Todos ({availableThemes.length})
+              </button>
+              <button
+                onClick={() => setActiveFilter('dark')}
+                className={cn(
+                  'px-3 py-1 text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors',
+                  activeFilter === 'dark'
+                    ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                )}
+              >
+                <Moon className="w-3 h-3" />
+                Escuros ({availableThemes.filter((t) => t.type === 'dark').length})
+              </button>
+              <button
+                onClick={() => setActiveFilter('light')}
+                className={cn(
+                  'px-3 py-1 text-xs font-medium rounded-lg flex items-center gap-1.5 transition-colors',
+                  activeFilter === 'light'
+                    ? 'bg-primary text-primary-foreground font-semibold shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                )}
+              >
+                <Sun className="w-3 h-3" />
+                Claros ({availableThemes.filter((t) => t.type === 'light').length})
+              </button>
+            </div>
+          )}
         </DialogHeader>
 
         {/* Theme Grid */}

@@ -5,7 +5,6 @@ export type ThemeId =
   | 'bloomberg-amber'
   | 'linear-indigo'
   | 'grafana-emerald'
-  | 'stripe-light'
   | 'crimson-titanium'
   | 'solaris-cyan';
 
@@ -15,7 +14,7 @@ export interface ThemeConfig {
   tagline: string;
   description: string;
   type: ThemeType;
-  category: 'Oficial' | 'Financeiro' | 'Moderno' | 'Observabilidade' | 'Claro' | 'Performance';
+  category: 'Oficial' | 'Financeiro' | 'Moderno' | 'Observabilidade' | 'Performance';
   isDefault?: boolean;
   previewColors: {
     primary: string;
@@ -97,23 +96,6 @@ export const THEMES: ThemeConfig[] = [
       border: '#223832',
     },
     metaThemeColor: '#0D1412',
-  },
-  {
-    id: 'stripe-light',
-    name: 'Stripe Alabaster',
-    tagline: 'Claro Executivo de Alto Contraste',
-    description: 'Modo claro cristalino e corporativo. Excelente para visualização externa sob luz solar direta.',
-    type: 'light',
-    category: 'Claro',
-    previewColors: {
-      primary: '#1D4ED8',
-      secondary: '#0284C7',
-      background: '#F8FAFC',
-      card: '#FFFFFF',
-      text: '#0F172A',
-      border: '#CBD5E1',
-    },
-    metaThemeColor: '#F8FAFC',
   },
   {
     id: 'crimson-titanium',

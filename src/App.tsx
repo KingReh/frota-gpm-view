@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,16 +17,15 @@ import OneSignalInit from "./components/pwa/OneSignalInit";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ThemeSelectorModal } from "./components/theme/ThemeSelectorModal";
 
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 1000 * 60 * 5,
-        retry: 1,
-        refetchOnWindowFocus: false,
-      },
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
+      refetchOnWindowFocus: false,
     },
-  });
+  },
+});
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -44,8 +43,6 @@ function AnimatedRoutes() {
 }
 
 const App = () => {
-  const [queryClient] = useState(createQueryClient);
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
