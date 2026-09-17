@@ -27,6 +27,8 @@ import { useVehicleMaintenance } from '@/hooks/useVehicleMaintenance';
 import { toast } from 'sonner';
 import { Footer } from '@/components/layout/Footer';
 import { ThemeToggleButton } from '@/components/theme/ThemeToggleButton';
+import { SmoothScrollContainer } from '@/components/layout/SmoothScrollContainer';
+import { Parallax, RevealOnScroll } from '@/components/layout/Parallax';
 
 function DashboardPage() {
   const [selectedCoordinations, setSelectedCoordinations] = useState<string[]>([]);
@@ -118,8 +120,14 @@ function DashboardPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-background mesh-bg">
-      {/* Header */}
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background with subtle parallax depth */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div data-speed="0.8" className="absolute inset-0 mesh-bg will-change-transform" />
+        <div data-speed="0.85" className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none will-change-transform" />
+      </div>
+
+      {/* Fixed Header */}
       <header className="fixed top-0 left-0 right-0 h-16 z-50 px-3 md:px-6 flex items-center justify-between glass-panel border-b border-border/60">
         <div className="flex items-center gap-3">
           <Link
@@ -203,110 +211,126 @@ function DashboardPage() {
         </div>
       </header>
 
-      {/* Content */}
-      <main className="pt-20 pb-10 px-3 md:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6">
-        {/* End of month alert */}
-        <EndOfMonthAlert />
-        {/* Filters + Export (mobile) */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <CoordinationFilters
-            coordinations={coordinations}
-            selectedIds={selectedCoordinations}
-            onToggle={handleToggle}
-            onClear={() => setSelectedCoordinations([])}
-            onSelectAll={(ids) => setSelectedCoordinations(ids)}
-          />
-          {/* Export button - mobile only, next to filters */}
-          <div className="md:hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-10 gap-1.5 border-white/10 bg-black/40 backdrop-blur-md text-muted-foreground hover:bg-white/5 text-sm"
-                >
-                  <Download className="w-4 h-4" />
-                  Exportar
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem onClick={() => handleExport('xlsx')} className="gap-2 cursor-pointer">
-                  <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-                  Exportar XLSX
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport('ods')} className="gap-2 cursor-pointer">
-                  <FileSpreadsheet className="w-4 h-4 text-blue-500" />
-                  Exportar ODS
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 cursor-pointer">
-                  <FileText className="w-4 h-4 text-red-500" />
-                  Exportar PDF
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+      {/* Smooth Scroll Content Area */}
+      <SmoothScrollContainer contentKey={selectedCoordinations.join(',')} className="relative z-10">
+        <main className="pt-20 pb-10 px-3 md:px-6 lg:px-8 max-w-[1400px] mx-auto space-y-6 w-full">
+          {/* End of month alert */}
+          <EndOfMonthAlert />
+          {/* Filters + Export (mobile) */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <CoordinationFilters
+              coordinations={coordinations}
+              selectedIds={selectedCoordinations}
+              onToggle={handleToggle}
+              onClear={() => setSelectedCoordinations([])}
+              onSelectAll={(ids) => setSelectedCoordinations(ids)}
+            />
+            {/* Export button - mobile only, next to filters */}
+            <div className="md:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-10 gap-1.5 border-white/10 bg-black/40 backdrop-blur-md text-muted-foreground hover:bg-white/5 text-sm"
+                  >
+                    <Download className="w-4 h-4" />
+                    Exportar
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuItem onClick={() => handleExport('xlsx')} className="gap-2 cursor-pointer">
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
+                    Exportar XLSX
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('ods')} className="gap-2 cursor-pointer">
+                    <FileSpreadsheet className="w-4 h-4 text-blue-500" />
+                    Exportar ODS
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 cursor-pointer">
+                    <FileText className="w-4 h-4 text-red-500" />
+                    Exportar PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        </div>
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          <StatCard label="Total de Veículos" value={dashboard.totalVehicles} icon={Car} delay={0} tooltip="Quantidade total de veículos cadastrados na frota." />
-          <StatCard label="Próprios" value={dashboard.ownedCount} icon={Truck} accentColor="hsl(207, 100%, 35%)" delay={50} tooltip="Veículos que são patrimônio próprio da empresa." />
-          <StatCard label="Locados" value={dashboard.rentedCount} icon={Truck} accentColor="hsl(190, 100%, 50%)" delay={100} tooltip="Veículos alugados de terceiros para uso da frota." />
-          <StatCard label="Modelos" value={dashboard.distinctModels} icon={LayoutGrid} accentColor="hsl(207, 80%, 50%)" delay={150} tooltip="Quantidade de modelos distintos presentes na frota." />
-          <StatCard label="Combustíveis" value={dashboard.distinctFuelTypes} icon={Fuel} accentColor="hsl(25, 95%, 53%)" delay={200} tooltip="Tipos diferentes de combustível utilizados pela frota." />
-          <StatCard label="Fabricantes" value={dashboard.distinctManufacturers} icon={Factory} accentColor="hsl(207, 60%, 65%)" delay={250} tooltip="Quantidade de fabricantes distintos dos veículos." />
-          <StatCard label="Saldo Zero" value={dashboard.zeroBalanceCount} icon={AlertTriangle} accentColor="hsl(0, 84%, 60%)" delay={300} tooltip="Veículos cujo saldo de abastecimento está zerado." />
-          <StatCard label="Saldo Positivo" value={dashboard.positiveBalanceCount} icon={CircleDollarSign} accentColor="hsl(142, 71%, 45%)" delay={350} tooltip="Veículos que ainda possuem saldo disponível para abastecimento." />
-        </div>
+          {/* Stat Cards */}
+          <RevealOnScroll delay={0.05} yOffset={16}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+              <StatCard label="Total de Veículos" value={dashboard.totalVehicles} icon={Car} delay={0} tooltip="Quantidade total de veículos cadastrados na frota." />
+              <StatCard label="Próprios" value={dashboard.ownedCount} icon={Truck} accentColor="hsl(207, 100%, 35%)" delay={50} tooltip="Veículos que são patrimônio próprio da empresa." />
+              <StatCard label="Locados" value={dashboard.rentedCount} icon={Truck} accentColor="hsl(190, 100%, 50%)" delay={100} tooltip="Veículos alugados de terceiros para uso da frota." />
+              <StatCard label="Modelos" value={dashboard.distinctModels} icon={LayoutGrid} accentColor="hsl(207, 80%, 50%)" delay={150} tooltip="Quantidade de modelos distintos presentes na frota." />
+              <StatCard label="Combustíveis" value={dashboard.distinctFuelTypes} icon={Fuel} accentColor="hsl(25, 95%, 53%)" delay={200} tooltip="Tipos diferentes de combustível utilizados pela frota." />
+              <StatCard label="Fabricantes" value={dashboard.distinctManufacturers} icon={Factory} accentColor="hsl(207, 60%, 65%)" delay={250} tooltip="Quantidade de fabricantes distintos dos veículos." />
+              <StatCard label="Saldo Zero" value={dashboard.zeroBalanceCount} icon={AlertTriangle} accentColor="hsl(0, 84%, 60%)" delay={300} tooltip="Veículos cujo saldo de abastecimento está zerado." />
+              <StatCard label="Saldo Positivo" value={dashboard.positiveBalanceCount} icon={CircleDollarSign} accentColor="hsl(142, 71%, 45%)" delay={350} tooltip="Veículos que ainda possuem saldo disponível para abastecimento." />
+            </div>
+          </RevealOnScroll>
 
-        {/* Charts Row 1: Donuts + Coordination Bar */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <FleetTypeChart data={dashboard.byFleetType} />
-          <FuelTypeChart data={dashboard.byFuelType} />
-          <CoordinationBarChart data={dashboard.byCoordination} />
-        </div>
+          {/* Charts Row 1: Donuts + Coordination Bar with subtle depth */}
+          <Parallax speed={1.02}>
+            <RevealOnScroll delay={0.08} yOffset={20}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <FleetTypeChart data={dashboard.byFleetType} />
+                <FuelTypeChart data={dashboard.byFuelType} />
+                <CoordinationBarChart data={dashboard.byCoordination} />
+              </div>
+            </RevealOnScroll>
+          </Parallax>
 
-        {/* Charts Row 2: Models + Manufacturers + Balance Line */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ModelBarChart data={dashboard.byModel} />
-          <ManufacturerBarChart data={dashboard.byManufacturer} />
-          <CoordinationBalanceLineChart data={dashboard.byCoordination} />
-        </div>
+          {/* Charts Row 2: Models + Manufacturers + Balance Line with complementary depth */}
+          <Parallax speed={0.98}>
+            <RevealOnScroll delay={0.12} yOffset={20}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <ModelBarChart data={dashboard.byModel} />
+                <ManufacturerBarChart data={dashboard.byManufacturer} />
+                <CoordinationBalanceLineChart data={dashboard.byCoordination} />
+              </div>
+            </RevealOnScroll>
+          </Parallax>
 
-        {/* Detail Tables */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <DetailTable
-            title="Coordenações"
-            columns={[
-              { key: 'name', label: 'Coordenação' },
-              { key: 'count', label: 'Veículos', align: 'right' },
-              { key: 'balance', label: 'Saldo Total', align: 'right' },
-            ]}
-            rows={coordTableRows}
-            delay={800}
-          />
-          <DetailTable
-            title="Modelos"
-            columns={[
-              { key: 'name', label: 'Modelo' },
-              { key: 'count', label: 'Quantidade', align: 'right' },
-            ]}
-            rows={modelTableRows}
-            delay={900}
-          />
-          <DetailTable
-            title="Fabricantes"
-            columns={[
-              { key: 'name', label: 'Fabricante' },
-              { key: 'count', label: 'Quantidade', align: 'right' },
-            ]}
-            rows={mfrTableRows}
-            delay={1000}
-          />
-        </div>
-      </main>
+          {/* Detail Tables */}
+          <RevealOnScroll delay={0.16} yOffset={24}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <DetailTable
+                title="Coordenações"
+                columns={[
+                  { key: 'name', label: 'Coordenação' },
+                  { key: 'count', label: 'Veículos', align: 'right' },
+                  { key: 'balance', label: 'Saldo Total', align: 'right' },
+                ]}
+                rows={coordTableRows}
+                delay={800}
+              />
+              <DetailTable
+                title="Modelos"
+                columns={[
+                  { key: 'name', label: 'Modelo' },
+                  { key: 'count', label: 'Quantidade', align: 'right' },
+                ]}
+                rows={modelTableRows}
+                delay={900}
+              />
+              <DetailTable
+                title="Fabricantes"
+                columns={[
+                  { key: 'name', label: 'Fabricante' },
+                  { key: 'count', label: 'Quantidade', align: 'right' },
+                ]}
+                rows={mfrTableRows}
+                delay={1000}
+              />
+            </div>
+          </RevealOnScroll>
+        </main>
 
-      <Footer />
+        <Footer />
+      </SmoothScrollContainer>
+
+      {/* Fixed Overlays */}
       <DrivingTipsToast />
       <FabMenu
         vehicles={vehicles}

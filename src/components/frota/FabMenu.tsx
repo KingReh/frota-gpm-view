@@ -69,25 +69,18 @@ export function FabMenu({ vehicles = [], coordinations = [], selectedCoordinatio
   }, [coordinations, selectedCoordinations]);
 
   React.useEffect(() => {
-    const checkOverlap = () => {
-      const footer = document.querySelector("footer");
-      const fab = fabRef.current?.querySelector("button");
-      if (!footer || !fab) return;
+    const footer = document.querySelector("footer");
+    if (!footer) return;
 
-      const footerRect = footer.getBoundingClientRect();
-      const fabRect = fab.getBoundingClientRect();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsOverFooter(entry.isIntersecting);
+      },
+      { rootMargin: "0px 0px -40px 0px", threshold: 0.05 }
+    );
 
-      setIsOverFooter(fabRect.bottom > footerRect.top && fabRect.top < footerRect.bottom);
-    };
-
-    window.addEventListener("scroll", checkOverlap, { passive: true });
-    window.addEventListener("resize", checkOverlap, { passive: true });
-    checkOverlap();
-
-    return () => {
-      window.removeEventListener("scroll", checkOverlap);
-      window.removeEventListener("resize", checkOverlap);
-    };
+    observer.observe(footer);
+    return () => observer.disconnect();
   }, []);
 
   const handleTransferClick = (e: React.MouseEvent<HTMLButtonElement>) => {

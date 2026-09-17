@@ -17,7 +17,6 @@ import type { VehicleWithDetails } from '@/types/vehicle';
 import { cn } from '@/lib/utils';
 import { parseBalance } from '@/lib/balance';
 import { isBalanceMasked } from '@/lib/maskedPlates';
-import { motion } from 'framer-motion';
 import { Info, Building2, Car, Star, Wrench } from 'lucide-react';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 
@@ -61,12 +60,13 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
             </TableHeader>
             <TableBody>
               {vehicles.map((vehicle, index) => (
-                <motion.tr
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.02, type: "spring", stiffness: 100 }}
+                <tr
                   key={vehicle.plate}
-                  className="border-b border-border/50 hover:bg-muted/40 transition-all group relative"
+                  style={index < 20 ? { animationDelay: `${Math.min(index * 20, 200)}ms` } : undefined}
+                  className={cn(
+                    "border-b border-border/50 hover:bg-muted/40 transition-colors group relative",
+                    index < 20 && "animate-in fade-in slide-in-from-left-2 duration-300 fill-mode-backwards"
+                  )}
                 >
                   <TableCell className="pl-2 sm:pl-4 md:pl-8 py-2.5 sm:py-3 md:py-4 relative">
                     {/* Horizontal row highlight line */}
@@ -175,7 +175,7 @@ export function VehicleTable({ vehicles, maintenancePlates }: VehicleTableProps)
                       </Button>
                     </div>
                   </TableCell>
-                </motion.tr>
+                </tr>
               ))}
             </TableBody>
           </Table>

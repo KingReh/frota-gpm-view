@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Car, Building2, Info, Gauge as GaugeIcon, Fuel, Zap, Star, Wrench } from 'lucide-react';
+import { Car, Info, Gauge as GaugeIcon, Fuel, Zap, Star, Wrench, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,206 +24,214 @@ interface VehicleCardProps {
   onClick?: () => void;
 }
 
-export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTelemetry = false, isInMaintenance = false, maintenanceEntryDate = null, showDescription = false, onClick }: VehicleCardProps) {
+export function VehicleCard({
+  vehicle,
+  size = 'normal',
+  compact = false,
+  hideTelemetry = false,
+  isInMaintenance = false,
+  maintenanceEntryDate = null,
+  showDescription = false,
+  onClick,
+}: VehicleCardProps) {
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
   const [showMaintenanceBadge, setShowMaintenanceBadge] = React.useState(false);
+  const [copied, setCopied] = React.useState(false);
   const isLarge = size === 'large';
   const balanceValue = parseBalance(vehicle.balance);
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
   const masked = isBalanceMasked(vehicle.plate);
 
-  return (
-    <div className="relative transition-opacity duration-300">
-      <Card
-        className={cn(
-          "relative overflow-hidden group border border-border/40 bg-card shadow-lg transition-colors duration-500",
-          "rounded-[24px] overflow-hidden",
-          isLarge ? "h-full" : compact ? "min-h-[160px]" : "min-h-[320px]"
-        )}
-      >
-        {/* Cinematic Header / Image Container */}
-        <div className={cn(
-          "relative w-full overflow-hidden bg-surface-overlay flex items-center justify-center",
-          isLarge ? "h-64" : compact ? "h-32" : "h-48"
-        )}>
-          {/* Dynamic Mesh Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-background/80 via-transparent to-primary/5 z-0" />
+  const handleCopyPlate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(vehicle.plate);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+    toast({ description: `Placa ${vehicle.plate} copiada!` });
+  };
 
-          {/* Branding / Badge Slot (Top Left) */}
-          {vehicle.coordination && (
-            <div className="absolute left-3 sm:left-6 top-3 sm:top-6 z-30">
-              <CoordinationBadge
-                coordination={vehicle.coordination}
-                compact={compact}
-                className="shadow-2xl"
-              />
-            </div>
+  /* =========================================================================
+     1. LARGE CAROUSEL VIEW (Preserved for VehicleCarousel compatibility)
+     ========================================================================= */
+  if (isLarge) {
+    return (
+      <div className="relative transition-opacity duration-300">
+        <Card
+          className={cn(
+            "relative overflow-hidden group border border-border/40 bg-card shadow-lg transition-colors duration-500",
+            "rounded-[24px] overflow-hidden h-full"
           )}
+        >
+          {/* Cinematic Header / Image Container */}
+          <div className="relative w-full overflow-hidden bg-surface-overlay flex items-center justify-center h-64">
+            <div className="absolute inset-0 bg-gradient-to-tr from-background/80 via-transparent to-primary/5 z-0" />
 
-          {/* Action Slot (Top Right) */}
-          <div className="absolute right-3 sm:right-6 top-3 sm:top-6 z-30 flex gap-1.5 sm:gap-2">
-            <Button
-              size="icon"
-              variant="ghost"
-              className={cn(
-                "h-10 w-10 rounded-xl bg-surface-elevated border transition-all duration-300",
-                isFavorite
-                  ? "border-accent-favorite/50 text-accent-favorite hover:bg-accent-favorite/20"
-                  : "border-border/40 text-muted-foreground hover:text-accent-favorite hover:bg-muted/30 hover:border-accent-favorite/30"
-              )}
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite(vehicle.plate);
-              }}
-            >
-              <Star className={cn("h-5 w-5", isFavorite && "fill-current")} />
-            </Button>
+            {/* Coordination Badge */}
+            {vehicle.coordination && (
+              <div className="absolute left-3 sm:left-6 top-3 sm:top-6 z-30">
+                <CoordinationBadge
+                  coordination={vehicle.coordination}
+                  compact={compact}
+                  className="shadow-2xl"
+                />
+              </div>
+            )}
 
-            {onClick && (
+            {/* Action Slot */}
+            <div className="absolute right-3 sm:right-6 top-3 sm:top-6 z-30 flex gap-1.5 sm:gap-2">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-10 w-10 rounded-xl bg-surface-elevated border border-border/40 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300"
+                className={cn(
+                  "h-10 w-10 rounded-xl bg-surface-elevated border transition-all duration-300",
+                  isFavorite
+                    ? "border-accent-favorite/50 text-accent-favorite hover:bg-accent-favorite/20"
+                    : "border-border/40 text-muted-foreground hover:text-accent-favorite hover:bg-muted/30 hover:border-accent-favorite/30"
+                )}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onClick();
+                  toggleFavorite(vehicle.plate);
                 }}
               >
-                <Info className="h-5 w-5" />
+                <Star className={cn("h-5 w-5", isFavorite && "fill-current")} />
               </Button>
-            )}
-          </div>
 
-          {/* Main Vehicle Image */}
-          <div className="relative z-10 w-full h-full p-4 flex items-center justify-center">
-            {vehicle.image_url ? (
-              <img
-                src={vehicle.image_url}
-                alt={`Veículo ${vehicle.plate}`}
-                className="max-h-full max-w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
-                loading="lazy"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground/30">
-                <Car className="w-16 h-16" />
-                <span className="text-[10px] uppercase tracking-widest font-black">No Visualization</span>
-              </div>
-            )}
-          </div>
-
-          {/* Maintenance Overlay (clickable to toggle badge) */}
-          {isInMaintenance && (
-            <>
-              <button
-                type="button"
-                aria-label="Ver status de manutenção"
-                className="absolute inset-0 z-20 animate-[pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite] cursor-pointer focus:outline-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMaintenanceBadge((v) => !v);
-                }}
-              >
-                <img
-                  src="/manutencao.png"
-                  alt="Em manutenção"
-                  className="w-full h-full object-cover pointer-events-none"
-                />
-              </button>
-              {showMaintenanceBadge && (
-                <div
-                  className="absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 animate-in fade-in zoom-in-95 duration-200"
-                  onClick={(e) => e.stopPropagation()}
+              {onClick && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-10 w-10 rounded-xl bg-surface-elevated border border-border/40 text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] transition-all duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClick();
+                  }}
                 >
-                  <div className="flex items-center gap-2.5 rounded-full border border-yellow-400/60 bg-yellow-400/15 backdrop-blur-md px-4 py-2 shadow-[0_8px_32px_-4px_hsl(48_96%_50%/0.5)]">
-                    <Wrench className="w-4 h-4 text-yellow-300 shrink-0" />
-                    <div className="flex flex-col leading-tight">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-yellow-200/90">
-                        Inoperante
-                      </span>
-                      <span className="text-xs font-bold text-yellow-50">
-                        Quebrado há {formatDaysSince(maintenanceEntryDate)}
+                  <Info className="h-5 w-5" />
+                </Button>
+              )}
+            </div>
+
+            {/* Main Vehicle Image */}
+            <div className="relative z-10 w-full h-full p-4 flex items-center justify-center">
+              {vehicle.image_url ? (
+                <img
+                  src={vehicle.image_url}
+                  alt={`Veículo ${vehicle.plate}`}
+                  className="max-h-full max-w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground/30">
+                  <Car className="w-16 h-16" />
+                  <span className="text-[10px] uppercase tracking-widest font-black">No Visualization</span>
+                </div>
+              )}
+            </div>
+
+            {/* Maintenance Overlay */}
+            {isInMaintenance && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Ver status de manutenção"
+                  className="absolute inset-0 z-20 animate-[pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite] cursor-pointer focus:outline-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowMaintenanceBadge((v) => !v);
+                  }}
+                >
+                  <img
+                    src="/manutencao.png"
+                    alt="Em manutenção"
+                    className="w-full h-full object-cover pointer-events-none"
+                  />
+                </button>
+                {showMaintenanceBadge && (
+                  <div
+                    className="absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 animate-in fade-in zoom-in-95 duration-200"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center gap-2.5 rounded-full border border-yellow-400/60 bg-yellow-400/15 backdrop-blur-md px-4 py-2 shadow-[0_8px_32px_-4px_hsl(48_96%_50%/0.5)]">
+                      <Wrench className="w-4 h-4 text-yellow-300 shrink-0" />
+                      <div className="flex flex-col leading-tight">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-yellow-200/90">
+                          Inoperante
+                        </span>
+                        <span className="text-xs font-bold text-yellow-50">
+                          Quebrado há {formatDaysSince(maintenanceEntryDate)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background via-background/40 to-transparent z-10" />
+          </div>
+
+          {/* Content Section */}
+          <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 relative z-20">
+            <div className="flex flex-col gap-4 sm:gap-6">
+              <div className="flex items-end justify-between gap-3 sm:gap-4">
+                <div className="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="h-1 w-4 bg-primary rounded-full" />
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Identificação</span>
+                  </div>
+                  <button
+                    className="bg-surface-overlay border border-border/40 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.15em] sm:tracking-[0.2em] text-lg sm:text-xl md:text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
+                    title="Clique para copiar a placa"
+                    onClick={handleCopyPlate}
+                  >
+                    {vehicle.plate}
+                  </button>
+                  <h3 className="text-foreground text-sm sm:text-base md:text-lg font-bold tracking-tight line-clamp-1 opacity-90">
+                    {vehicle.model || 'Protótipo não identificado'}
+                  </h3>
+                </div>
+
+                <div className="flex flex-col items-end gap-2 sm:gap-3 shrink-0">
+                  <div className="flex flex-col items-end">
+                    <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Combustível</span>
+                    <div className="flex items-center gap-2 text-foreground/80 bg-muted/20 px-3 py-1 rounded-md border border-border/20">
+                      <Fuel className="w-3 h-3 text-accent-fuel" />
+                      <span className="text-[10px] uppercase font-bold tracking-wider truncate max-w-[120px]">
+                        {simplifyFuelType(vehicle.fuel_type)}
                       </span>
                     </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-
-          {/* Bottom Overlay Gradient */}
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background via-background/40 to-transparent z-10" />
-        </div>
-
-        {/* Content Section */}
-        <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 md:space-y-8 relative z-20">
-          {/* Main Info Row */}
-          <div className="flex flex-col gap-4 sm:gap-6">
-            <div className="flex items-end justify-between gap-3 sm:gap-4">
-              <div className="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="h-1 w-4 bg-primary rounded-full" />
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-black">Identificação</span>
-                </div>
-                <button
-                  className="bg-surface-overlay border border-border/40 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-foreground font-mono font-bold tracking-[0.15em] sm:tracking-[0.2em] text-lg sm:text-xl md:text-2xl shadow-inner group-hover:border-primary/40 transition-colors cursor-pointer hover:bg-primary/10 active:scale-95"
-                  title="Clique para copiar a placa"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigator.clipboard.writeText(vehicle.plate);
-                    toast({ description: `Placa ${vehicle.plate} copiada!` });
-                  }}
-                >
-                  {vehicle.plate}
-                </button>
-                <h3 className="text-foreground text-sm sm:text-base md:text-lg font-bold tracking-tight line-clamp-1 opacity-90">
-                  {vehicle.model || 'Protótipo não identificado'}
-                </h3>
-              </div>
-
-              {/* Technical Badges */}
-              <div className="flex flex-col items-end gap-2 sm:gap-3 shrink-0">
-                <div className="flex flex-col items-end">
-                  <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Combustível</span>
-                  <div className="flex items-center gap-2 text-foreground/80 bg-muted/20 px-3 py-1 rounded-md border border-border/20">
-                    <Fuel className="w-3 h-3 text-accent-fuel" />
-                    <span className="text-[10px] uppercase font-bold tracking-wider truncate max-w-[120px]">
-                      {simplifyFuelType(vehicle.fuel_type)}
-                    </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Tipo de Frota</span>
+                    <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary text-[9px] uppercase tracking-wider py-0.5 px-3 rounded-md">
+                      {vehicle.fleet_type || 'Geral'}
+                    </Badge>
                   </div>
                 </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Tipo de Frota</span>
-                  <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary text-[9px] uppercase tracking-wider py-0.5 px-3 rounded-md">
-                    {vehicle.fleet_type || 'Geral'}
-                  </Badge>
-                </div>
               </div>
+
+              {showDescription && (
+                <div className={cn(
+                  "flex items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 shadow-sm min-h-[1.75rem]",
+                  vehicle.description ? "bg-primary/10" : "bg-transparent border-transparent shadow-none"
+                )}>
+                  {vehicle.description ? (
+                    <>
+                      <Info className="shrink-0 h-3 w-3 text-primary" />
+                      <span className="flex-1 text-center text-[10px] sm:text-xs font-semibold leading-snug text-foreground/90 line-clamp-2">
+                        {vehicle.description}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="sr-only">Sem descrição</span>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Description Section */}
-            {showDescription && (
-              <div className={cn(
-                "flex items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-2.5 py-1 shadow-sm min-h-[1.75rem]",
-                vehicle.description ? "bg-primary/10" : "bg-transparent border-transparent shadow-none"
-              )}>
-                {vehicle.description ? (
-                  <>
-                    <Info className="shrink-0 h-3 w-3 text-primary" />
-                    <span className="flex-1 text-center text-[10px] sm:text-xs font-semibold leading-snug text-foreground/90 line-clamp-2">
-                      {vehicle.description}
-                    </span>
-                  </>
-                ) : (
-                  <span className="sr-only">Sem descrição</span>
-                )}
-              </div>
-            )}
-
-          </div>
-
-          {/* Telemetry / Balance Grid */}
-          {!compact && (
+            {/* Gauge */}
             <div className={cn(
               "grid gap-8 items-center pt-8 border-t border-border/20",
               hideTelemetry ? "grid-cols-1" : "grid-cols-2"
@@ -255,7 +263,7 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 "flex relative transition-all duration-500",
                 hideTelemetry ? "justify-center scale-125 py-4" : "justify-end"
               )}>
-              {masked ? (
+                {masked ? (
                   <Gauge
                     value={balanceValue}
                     max={parseBalance(vehicle.next_period_limit) || parseBalance(vehicle.current_limit) || 1000}
@@ -273,37 +281,209 @@ export function VehicleCard({ vehicle, size = 'normal', compact = false, hideTel
                 )}
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Compact View Stats */}
-          {compact && (
-            <div className="space-y-4 pt-4 border-t border-border/20">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-col">
-                  <span className="text-[7px] text-muted-foreground uppercase font-black">Concessionária</span>
-                  <span className="text-[9px] text-foreground/70 truncate max-w-[80px]">{vehicle.manufacturer || 'N/I'}</span>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[7px] text-muted-foreground uppercase font-black">Frota</span>
-                  <span className="text-[9px] text-primary font-bold uppercase">{vehicle.fleet_type || 'Geral'}</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-between pt-2 border-t border-border/20">
-                <div className="font-mono font-black text-lg bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                  {masked ? '••••••' : balanceValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                </div>
-                <GaugeIcon className="w-4 h-4 text-primary" />
-              </div>
+          <div className="absolute inset-0 rounded-[24px] ring-1 ring-border/40 group-hover:ring-primary/40 transition-all duration-700 pointer-events-none z-30" />
+          <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        </Card>
+      </div>
+    );
+  }
+
+  /* =========================================================================
+     2. REDESIGNED CARDS VIEW (Clean, High-Density, Premium Awwwards Style)
+     ========================================================================= */
+  const limit = parseBalance(vehicle.current_limit) || parseBalance(vehicle.next_period_limit) || 1000;
+  const percentRemaining = limit > 0 ? Math.min(100, Math.max(0, (balanceValue / limit) * 100)) : 0;
+
+  const getBalanceColor = () => {
+    if (balanceValue <= 0) return "text-rose-400";
+    if (balanceValue < 150) return "text-amber-400";
+    return "text-foreground group-hover:text-primary transition-colors";
+  };
+
+  const getBarColor = () => {
+    if (balanceValue <= 0) return "bg-rose-500";
+    if (balanceValue < 150) return "bg-amber-400";
+    return "bg-primary";
+  };
+
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        "group relative flex flex-col justify-between h-full w-full",
+        "rounded-xl sm:rounded-2xl border border-white/10 bg-card/90 hover:bg-card hover:border-primary/40",
+        "shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer select-none",
+        "active:scale-[0.99] touch-manipulation"
+      )}
+    >
+      {/* Visual Media Header */}
+      <div className="relative w-full aspect-[16/10] bg-gradient-to-b from-white/[0.04] via-black/10 to-transparent flex items-center justify-center p-2 sm:p-2.5 overflow-hidden border-b border-white/5 shrink-0">
+        {/* Ambient Subtle Vignette */}
+        <div className="absolute inset-0 bg-radial from-white/[0.03] to-transparent pointer-events-none" />
+
+        {/* Coordination Badge (Top-Left) */}
+        {vehicle.coordination && (
+          <div className="absolute left-2 top-2 z-20 max-w-[calc(100%-4.25rem)]">
+            <CoordinationBadge
+              coordination={vehicle.coordination}
+              compact
+              className="shadow-sm truncate text-[9px] px-1.5 py-0.5"
+            />
+          </div>
+        )}
+
+        {/* Action Controls (Top-Right) */}
+        <div className="absolute right-2 top-2 z-20 flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Favoritar veículo"
+            className={cn(
+              "w-6 h-6 sm:w-7 sm:h-7 rounded-md flex items-center justify-center transition-all duration-200 backdrop-blur-md border",
+              isFavorite
+                ? "bg-amber-400/15 border-amber-400/50 text-amber-400"
+                : "bg-black/40 border-white/10 text-muted-foreground hover:text-amber-400 hover:border-amber-400/30 hover:bg-black/60"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFavorite(vehicle.plate);
+            }}
+          >
+            <Star className={cn("w-3 h-3 sm:w-3.5 sm:h-3.5", isFavorite && "fill-current")} />
+          </button>
+
+          {onClick && (
+            <button
+              type="button"
+              aria-label="Ver detalhes do veículo"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-md flex items-center justify-center transition-all duration-200 backdrop-blur-md border bg-black/40 border-white/10 text-muted-foreground hover:text-white hover:bg-black/60 hover:border-white/20"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+              }}
+            >
+              <Info className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Main Vehicle Image */}
+        <div className="relative z-10 w-full h-full flex items-center justify-center p-1 sm:p-1.5">
+          {vehicle.image_url ? (
+            <img
+              src={vehicle.image_url}
+              alt={`Veículo ${vehicle.plate}`}
+              className="max-h-full max-w-full object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] group-hover:scale-105 transition-transform duration-300 ease-out"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-1 text-muted-foreground/30">
+              <Car className="w-8 h-8 sm:w-10 sm:h-10" />
+              <span className="text-[8px] uppercase tracking-widest font-bold">Sem imagem</span>
             </div>
           )}
         </div>
 
-        {/* Highlight Ring */}
-        <div className="absolute inset-0 rounded-[24px] ring-1 ring-border/40 group-hover:ring-primary/40 transition-all duration-700 pointer-events-none z-30" />
+        {/* Maintenance Indicator Badge */}
+        {isInMaintenance && (
+          <button
+            type="button"
+            className="absolute bottom-1.5 left-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500 text-black font-bold text-[8px] sm:text-[9px] shadow-md tracking-wider uppercase"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMaintenanceBadge((v) => !v);
+            }}
+          >
+            <Wrench className="w-2.5 h-2.5 shrink-0" />
+            <span>Manutenção</span>
+          </button>
+        )}
 
-        {/* Subtle Bottom Glow */}
-        <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-      </Card>
+        {/* Maintenance Popover on Toggle */}
+        {isInMaintenance && showMaintenanceBadge && (
+          <div
+            className="absolute inset-x-2 bottom-1.5 z-30 p-2 rounded-lg bg-black/95 border border-amber-400/50 backdrop-blur-md animate-in fade-in zoom-in-95 text-xs text-amber-200 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-1">
+              <span className="font-bold text-[9px] uppercase text-amber-400">Inoperante</span>
+              <span className="text-[9px] text-zinc-300">
+                Há {formatDaysSince(maintenanceEntryDate)}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Information Content Section */}
+      <div className="p-2 sm:p-2.5 md:p-3 flex flex-col flex-1 justify-between gap-2">
+        {/* Identifier Row: Plate Button & Fuel Pill */}
+        <div className="flex items-center justify-between gap-1.5 min-w-0">
+          <button
+            type="button"
+            className={cn(
+              "inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-md",
+              "bg-white/5 border border-white/10 hover:border-primary/40 hover:bg-primary/10",
+              "text-foreground font-mono font-bold tracking-wider text-xs sm:text-[13px] transition-all shrink-0",
+              copied && "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+            )}
+            title="Clique para copiar a placa"
+            onClick={handleCopyPlate}
+          >
+            <span>{vehicle.plate}</span>
+            {copied ? (
+              <Check className="w-2.5 h-2.5 text-emerald-400" />
+            ) : (
+              <Copy className="w-2.5 h-2.5 opacity-40 group-hover:opacity-70" />
+            )}
+          </button>
+
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-medium bg-white/5 border border-white/10 text-muted-foreground truncate">
+            <Fuel className="w-2.5 h-2.5 text-accent-fuel shrink-0" />
+            <span className="truncate">{simplifyFuelType(vehicle.fuel_type)}</span>
+          </span>
+        </div>
+
+        {/* Model & Fleet Metadata */}
+        <div className="min-w-0 space-y-0.5">
+          <h3 className="font-bold text-xs sm:text-sm text-foreground tracking-tight truncate group-hover:text-primary transition-colors">
+            {vehicle.model || 'Modelo não informado'}
+          </h3>
+          <p className="text-[9px] sm:text-[10px] text-muted-foreground truncate uppercase font-medium tracking-wide">
+            {vehicle.manufacturer ? `${vehicle.manufacturer} • ` : ''}{vehicle.fleet_type || 'Geral'}
+          </p>
+        </div>
+
+        {/* Financial Section: Saldo & Health Bar */}
+        <div className="pt-2 border-t border-white/5 flex flex-col gap-1 min-w-0">
+          <div className="flex items-center justify-between text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span>Saldo Atual</span>
+            <span className="font-mono font-medium text-[8px] sm:text-[9px] text-muted-foreground/80">
+              {percentRemaining.toFixed(0)}%
+            </span>
+          </div>
+
+          <div className="flex items-baseline justify-between gap-1">
+            <span className={cn("font-mono font-bold text-xs sm:text-sm md:text-base tracking-tight truncate", getBalanceColor())}>
+              {masked ? '••••••' : balanceValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+            </span>
+            <GaugeIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground/40 shrink-0" />
+          </div>
+
+          {/* Micro Progress Bar */}
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mt-0.5">
+            <div
+              className={cn("h-full rounded-full transition-all duration-500", getBarColor())}
+              style={{ width: `${percentRemaining}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Subtle Bottom Accent Glow on hover */}
+      <div className="absolute bottom-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     </div>
   );
 }

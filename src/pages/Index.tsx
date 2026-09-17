@@ -21,6 +21,7 @@ import { useBalanceUpdateAlert } from '@/hooks/useBalanceUpdateAlert';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { SortControl } from '@/components/frota/SortControl';
+import { Parallax, RevealOnScroll } from '@/components/layout/Parallax';
 import type { FleetTab, VehicleWithDetails, SortOption } from '@/types/vehicle';
 
 function filterBySearch(vehicles: VehicleWithDetails[], search: string): VehicleWithDetails[] {
@@ -267,7 +268,13 @@ const Index = () => {
         return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} maintenanceEntryDates={maintenanceEntryDates} />;
       case 'card':
       default:
-        return <VehicleGrid vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
+        return (
+          <VehicleGrid
+            vehicles={vehicleList}
+            maintenancePlates={maintenancePlates}
+            maintenanceEntryDates={maintenanceEntryDates}
+          />
+        );
     }
   };
 
@@ -318,11 +325,15 @@ const Index = () => {
           </Link>
         </div>
 
-        {/* 2. Statistical Context Cards */}
-        <TotalBalanceStats
-          vehicles={preferences.activeTab === 'fleet' ? filteredVehicles : filteredUndefined}
-          totalFleetBalance={totalFleetBalance}
-        />
+        {/* 2. Statistical Context Cards with Parallax Depth */}
+        <Parallax speed={1.02}>
+          <RevealOnScroll delay={0.05} yOffset={16}>
+            <TotalBalanceStats
+              vehicles={preferences.activeTab === 'fleet' ? filteredVehicles : filteredUndefined}
+              totalFleetBalance={totalFleetBalance}
+            />
+          </RevealOnScroll>
+        </Parallax>
 
         <Tabs
           value={preferences.activeTab}
@@ -427,9 +438,11 @@ const Index = () => {
               preferences.viewMode === 'carousel' ? "space-y-2 mt-1 sm:mt-2" : "space-y-8"
             )}
           >
-            <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
-              {renderVehicleContent(filteredVehicles)}
-            </div>
+            <RevealOnScroll delay={0.08} yOffset={16}>
+              <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
+                {renderVehicleContent(filteredVehicles)}
+              </div>
+            </RevealOnScroll>
           </TabsContent>
 
           <TabsContent
@@ -439,9 +452,11 @@ const Index = () => {
               preferences.viewMode === 'carousel' ? "space-y-2 mt-1 sm:mt-2" : "space-y-8"
             )}
           >
-            <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
-              {renderVehicleContent(filteredUndefined)}
-            </div>
+            <RevealOnScroll delay={0.08} yOffset={16}>
+              <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
+                {renderVehicleContent(filteredUndefined)}
+              </div>
+            </RevealOnScroll>
           </TabsContent>
 
           <TabsContent
@@ -451,9 +466,11 @@ const Index = () => {
               preferences.viewMode === 'carousel' ? "space-y-2 mt-1 sm:mt-2" : "space-y-8"
             )}
           >
-            <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
-              {renderVehicleContent(filteredFavorites)}
-            </div>
+            <RevealOnScroll delay={0.08} yOffset={16}>
+              <div className={preferences.viewMode === 'carousel' ? "" : "min-h-[500px]"}>
+                {renderVehicleContent(filteredFavorites)}
+              </div>
+            </RevealOnScroll>
           </TabsContent>
         </Tabs>
       </div>
