@@ -372,7 +372,6 @@ export function VehicleCard({
             <CoordinationBadge
               coordination={vehicle.coordination}
               compact
-              className="shadow-sm truncate text-[9px] px-1.5 py-0.5"
             />
           </div>
         )}
