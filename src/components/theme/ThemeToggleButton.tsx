@@ -24,17 +24,17 @@ export function ThemeToggleButton({ className, showLabel = false }: ThemeToggleB
           onClick={openThemeSelector}
           className={cn(
             'flex items-center gap-2 h-9 px-2.5 sm:px-3 rounded-xl',
-            'bg-muted/40 border border-border/70 hover:bg-primary/15 hover:border-primary/30',
-            'text-foreground/80 hover:text-primary transition-all duration-200 group',
+            'bg-muted/40 border border-border/70 hover:bg-primary/15 hover:border-primary/40 hover:shadow-[0_0_12px_hsl(var(--primary)/0.2)]',
+            'text-foreground/80 hover:text-primary transition-all duration-300 group',
             'active:scale-95 shadow-sm',
             className
           )}
           aria-label={`Trocar Tema (Atual: ${themeConfig.name})`}
         >
           <div className="relative flex items-center justify-center">
-            <Palette className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <Palette className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-300" />
             <span
-              className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-card shadow-xs"
+              className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-card shadow-xs transition-colors duration-300"
               style={{ backgroundColor: themeConfig.previewColors.primary }}
             />
           </div>

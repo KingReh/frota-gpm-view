@@ -107,6 +107,10 @@ export function VehicleCard({
           {/* Cinematic Header / Image Container */}
           <div className="relative w-full overflow-hidden bg-surface-overlay flex items-center justify-center h-64">
             <div className="absolute inset-0 bg-gradient-to-tr from-background/80 via-transparent to-primary/5 z-0" />
+            <div
+              className="absolute inset-0 pointer-events-none transition-all duration-500 opacity-90 z-0"
+              style={{ background: 'var(--vehicle-contrast-bg)' }}
+            />
 
             {/* Coordination Badge */}
             {vehicle.coordination && (
@@ -159,7 +163,7 @@ export function VehicleCard({
                 <img
                   src={vehicle.image_url}
                   alt={`Veículo ${vehicle.plate}`}
-                  className="max-h-full max-w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+                  className="vehicle-themed-image max-h-full max-w-full object-contain transition-all duration-500 ease-out"
                   loading="lazy"
                   decoding="async"
                 />
@@ -363,8 +367,12 @@ export function VehicleCard({
     >
       {/* Visual Media Header */}
       <div className="relative w-full aspect-[16/10] bg-gradient-to-b from-white/[0.04] via-black/10 to-transparent flex items-center justify-center p-2 sm:p-2.5 overflow-hidden border-b border-white/5 shrink-0">
-        {/* Ambient Subtle Vignette */}
+        {/* Ambient Subtle Vignette & Themed Contrast Aura */}
         <div className="absolute inset-0 bg-radial from-white/[0.03] to-transparent pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none transition-all duration-500 opacity-90"
+          style={{ background: 'var(--vehicle-contrast-bg)' }}
+        />
 
         {/* Coordination Badge (Top-Left) */}
         {vehicle.coordination && (
@@ -416,7 +424,7 @@ export function VehicleCard({
             <img
               src={vehicle.image_url}
               alt={`Veículo ${vehicle.plate}`}
-              className="max-h-full max-w-full object-contain filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] group-hover:scale-105 transition-transform duration-300 ease-out"
+              className="vehicle-themed-image max-h-full max-w-full object-contain filter group-hover:scale-105 transition-all duration-300 ease-out"
               loading="lazy"
               decoding="async"
             />

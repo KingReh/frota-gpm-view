@@ -136,13 +136,17 @@ export function VehicleDetailModal({ vehicle, open, onOpenChange }: VehicleDetai
             </Button>
           </div>
 
-          {/* Background Image/Gradient */}
+          {/* Background Image/Gradient & Themed Contrast Aura */}
           <div className="absolute inset-0 bg-background/50 z-10" />
+          <div
+            className="absolute inset-0 pointer-events-none transition-all duration-500 opacity-80 z-10"
+            style={{ background: 'var(--vehicle-contrast-bg)' }}
+          />
           {vehicle.image_url ? (
             <img
               src={vehicle.image_url}
               alt={`Veículo ${vehicle.plate}`}
-              className="h-full w-full object-cover blur-[2px] scale-105"
+              className="vehicle-themed-image h-full w-full object-cover blur-[2px] scale-105 transition-all duration-500"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-background via-card to-surface-overlay" />

@@ -50,6 +50,11 @@
     --accent-fuel: 25 95% 53%;
     --accent-status: 185 85% 50%;
     --accent-favorite: 45 93% 58%;
+
+    /* Vehicle Themed Contrast Tokens */
+    --vehicle-contrast-color: 207 100% 40%;
+    --vehicle-contrast-filter: drop-shadow(0 0 14px hsl(207 100% 40% / 0.45)) drop-shadow(0 6px 12px hsl(207 100% 35% / 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) contrast(1.05);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(207 100% 40% / 0.22) 0%, hsl(190 100% 50% / 0.05) 50%, transparent 75%);
   }
 
   [data-theme="bloomberg-amber"] {
@@ -95,6 +100,11 @@
     --accent-fuel: 24 95% 53%;
     --accent-status: 38 92% 50%;
     --accent-favorite: 45 93% 58%;
+
+    /* Vehicle Themed Contrast Tokens */
+    --vehicle-contrast-color: 38 92% 50%;
+    --vehicle-contrast-filter: drop-shadow(0 0 14px hsl(38 92% 50% / 0.5)) drop-shadow(0 6px 12px hsl(24 95% 53% / 0.32)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65)) contrast(1.06) brightness(1.02);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(38 92% 50% / 0.22) 0%, hsl(24 95% 53% / 0.06) 48%, transparent 75%);
   }
 
   [data-theme="linear-indigo"] {
@@ -140,6 +150,11 @@
     --accent-fuel: 20 92% 58%;
     --accent-status: 245 80% 65%;
     --accent-favorite: 45 93% 62%;
+
+    /* Vehicle Themed Contrast Tokens */
+    --vehicle-contrast-color: 245 80% 65%;
+    --vehicle-contrast-filter: drop-shadow(0 0 14px hsl(245 80% 65% / 0.48)) drop-shadow(0 6px 12px hsl(272 78% 66% / 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65)) contrast(1.06) brightness(1.02);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(245 80% 65% / 0.22) 0%, hsl(272 78% 66% / 0.06) 48%, transparent 75%);
   }
 
   [data-theme="grafana-emerald"] {
@@ -185,6 +200,11 @@
     --accent-fuel: 25 95% 53%;
     --accent-status: 172 80% 50%;
     --accent-favorite: 45 93% 58%;
+
+    /* Vehicle Themed Contrast Tokens */
+    --vehicle-contrast-color: 158 80% 42%;
+    --vehicle-contrast-filter: drop-shadow(0 0 14px hsl(158 80% 42% / 0.5)) drop-shadow(0 6px 12px hsl(172 80% 50% / 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65)) contrast(1.06) brightness(1.02);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(158 80% 42% / 0.22) 0%, hsl(172 80% 50% / 0.06) 48%, transparent 75%);
   }
 
   [data-theme="stripe-light"] {
@@ -230,6 +250,11 @@
     --accent-fuel: 25 95% 45%;
     --accent-status: 221.2 83.2% 53.3%;
     --accent-favorite: 38 92% 45%;
+
+    /* Vehicle Themed Contrast Tokens */
+    --vehicle-contrast-color: 221.2 83.2% 53.3%;
+    --vehicle-contrast-filter: drop-shadow(0 0 12px hsl(221.2 83.2% 53.3% / 0.28)) drop-shadow(0 6px 10px hsl(221.2 83.2% 53.3% / 0.16)) drop-shadow(0 2px 4px rgba(15, 23, 42, 0.15)) contrast(1.06) brightness(1.02);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(221.2 83.2% 53.3% / 0.12) 0%, hsl(199 89% 48% / 0.04) 48%, transparent 75%);
   }
 
   [data-theme="crimson-titanium"] {
@@ -275,6 +300,11 @@
     --accent-fuel: 18 90% 55%;
     --accent-status: 346 80% 49%;
     --accent-favorite: 45 93% 58%;
+
+    /* Vehicle Themed Contrast Tokens - Clean titanium ruby contour without disfiguring hue distortion */
+    --vehicle-contrast-color: 346 80% 49%;
+    --vehicle-contrast-filter: drop-shadow(0 0 14px hsl(346 80% 49% / 0.45)) drop-shadow(0 6px 12px hsl(340 75% 45% / 0.3)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)) contrast(1.06) brightness(1.02);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(346 80% 49% / 0.22) 0%, hsl(340 75% 45% / 0.06) 48%, transparent 75%);
   }
 
   [data-theme="solaris-cyan"] {
@@ -320,6 +350,11 @@
     --accent-fuel: 25 100% 55%;
     --accent-status: 186 100% 52%;
     --accent-favorite: 45 100% 60%;
+
+    /* Vehicle Themed Contrast Tokens */
+    --vehicle-contrast-color: 186 100% 52%;
+    --vehicle-contrast-filter: drop-shadow(0 0 16px hsl(186 100% 52% / 0.5)) drop-shadow(0 6px 12px hsl(186 100% 52% / 0.32)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.65)) contrast(1.08) brightness(1.02);
+    --vehicle-contrast-bg: radial-gradient(ellipse 85% 70% at 50% 55%, hsl(186 100% 52% / 0.24) 0%, hsl(310 90% 62% / 0.06) 48%, transparent 75%);
   }
 }
 
@@ -400,6 +435,12 @@
   
   .text-glow {
     text-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+  }
+
+  /* Themed Vehicle Contrast Imagery */
+  .vehicle-themed-image {
+    filter: var(--vehicle-contrast-filter);
+    transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
   }
 
   .mesh-bg {

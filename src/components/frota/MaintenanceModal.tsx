@@ -368,11 +368,15 @@ export function MaintenanceModal({
 
                 {/* Vehicle image */}
                 {selectedVehicle?.image_url && (
-                  <div className="flex justify-center">
+                  <div className="relative flex justify-center p-2 rounded-xl overflow-hidden bg-surface-overlay/50 border border-border/40">
+                    <div
+                      className="absolute inset-0 pointer-events-none transition-all duration-500 opacity-80"
+                      style={{ background: 'var(--vehicle-contrast-bg)' }}
+                    />
                     <img
                       src={selectedVehicle.image_url}
                       alt={`Veículo ${selectedVehicle.plate}`}
-                      className="max-h-28 max-w-full object-contain rounded-lg drop-shadow-md"
+                      className="vehicle-themed-image max-h-28 max-w-full object-contain relative z-10 transition-all duration-500"
                     />
                   </div>
                 )}
