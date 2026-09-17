@@ -91,33 +91,55 @@ export function SmoothScrollContainer({
     };
   }, [location.pathname]);
 
-  // Refresh smoother when content changes or route changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 100);
-    return () => clearTimeout(timer);
-  }, [contentKey, location.pathname]);
+  // Unified debounced refresh scheduler to eliminate layout thrashing
+  const scheduleRefresh = useCallback((delay = 150) => {
+    if (typeof window === 'undefined') return;
+    if (refreshTimeoutRef.current) {
+      clearTimeout(refreshTimeoutRef.current);
+    }
+    refreshTimeoutRef.current = setTimeout(() => {
+      // Execute in requestAnimationFrame to align with display refresh cycle
+      requestAnimationFrame(() => {
+        if (contentRef.current) {
+          ScrollTrigger.refresh();
+        }
+      });
+    }, delay);
+  }, []);
 
-  // ResizeObserver for dynamic content height adjustments without reflow thrashing
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Synchronize route changes: wait 350ms for PageTransition (300ms) to complete
+  // so GSAP measures geometry only when the DOM tree is at absolute resting state.
+  useEffect(() => {
+    scheduleRefresh(350);
+    return () => {
+      if (refreshTimeoutRef.current) clearTimeout(refreshTimeoutRef.current);
+    };
+  }, [location.pathname, scheduleRefresh]);
+
+  // Refresh on contentKey changes (tab switch, filter changes) with unified debounce
+  useEffect(() => {
+    if (contentKey !== undefined) {
+      scheduleRefresh(120);
+    }
+  }, [contentKey, scheduleRefresh]);
+
+  // ResizeObserver for dynamic content height adjustments using the unified debouncer
   useEffect(() => {
     if (!contentRef.current) return;
 
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const ro = new ResizeObserver(() => {
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 150);
+      scheduleRefresh(150);
     });
 
     ro.observe(contentRef.current);
 
     return () => {
       ro.disconnect();
-      if (timeoutId) clearTimeout(timeoutId);
+      if (refreshTimeoutRef.current) clearTimeout(refreshTimeoutRef.current);
     };
-  }, []);
+  }, [scheduleRefresh]);
 
   const scrollTo = useCallback((target: string | number | HTMLElement, smooth = true, position = 'top top') => {
     const sm = ScrollSmoother.get();
@@ -136,8 +158,8 @@ export function SmoothScrollContainer({
   }, []);
 
   const refresh = useCallback(() => {
-    ScrollTrigger.refresh();
-  }, []);
+    scheduleRefresh(0);
+  }, [scheduleRefresh]);
 
   const pause = useCallback((isPaused: boolean) => {
     const sm = ScrollSmoother.get();

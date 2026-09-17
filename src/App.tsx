@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { PageTransition } from "./components/layout/PageTransition";
+import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import Index from "./pages/Index";
 import DashboardPage from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -15,7 +17,16 @@ import OneSignalInit from "./components/pwa/OneSignalInit";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ThemeSelectorModal } from "./components/theme/ThemeSelectorModal";
 
-const queryClient = new QueryClient();
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5,
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -32,22 +43,28 @@ function AnimatedRoutes() {
   );
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <ThemeSelectorModal />
-        <InstallPrompt />
-        <UpdatePrompt />
-        <OneSignalInit />
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AnimatedRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [queryClient] = useState(createQueryClient);
+
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <ThemeSelectorModal />
+            <InstallPrompt />
+            <UpdatePrompt />
+            <OneSignalInit />
+            <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <AnimatedRoutes />
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
