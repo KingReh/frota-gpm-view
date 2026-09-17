@@ -1,5 +1,14 @@
 import * as React from 'react';
 import { Car, Info, Gauge as GaugeIcon, Fuel, Zap, Star, Wrench, Copy, Check } from 'lucide-react';
+import {
+  differenceInYears,
+  differenceInMonths,
+  differenceInDays,
+  addYears,
+  addMonths,
+  parseISO,
+  isValid,
+} from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -37,7 +46,39 @@ export function VehicleCard({
   const { preferences, toggleFavorite } = useUserPreferences();
   const { toast } = useToast();
   const [showMaintenanceBadge, setShowMaintenanceBadge] = React.useState(false);
+  const maintenanceButtonRef = React.useRef<HTMLButtonElement>(null);
+  const maintenancePopoverRef = React.useRef<HTMLDivElement>(null);
   const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!showMaintenanceBadge) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      const clickedInsideButton = maintenanceButtonRef.current?.contains(target);
+      const clickedInsidePopover = maintenancePopoverRef.current?.contains(target);
+
+      if (!clickedInsideButton && !clickedInsidePopover) {
+        setShowMaintenanceBadge(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowMaintenanceBadge(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showMaintenanceBadge]);
   const isLarge = size === 'large';
   const balanceValue = parseBalance(vehicle.balance);
   const isFavorite = preferences.favoritePlates?.includes(vehicle.plate);
@@ -134,6 +175,7 @@ export function VehicleCard({
             {isInMaintenance && (
               <>
                 <button
+                  ref={maintenanceButtonRef}
                   type="button"
                   aria-label="Ver status de manutenção"
                   className="absolute inset-0 z-20 animate-[pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite] cursor-pointer focus:outline-none"
@@ -150,6 +192,7 @@ export function VehicleCard({
                 </button>
                 {showMaintenanceBadge && (
                   <div
+                    ref={maintenancePopoverRef}
                     className="absolute left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 animate-in fade-in zoom-in-95 duration-200"
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -389,8 +432,9 @@ export function VehicleCard({
         {/* Maintenance Indicator Badge */}
         {isInMaintenance && (
           <button
+            ref={maintenanceButtonRef}
             type="button"
-            className="absolute bottom-1.5 left-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500 text-black font-bold text-[8px] sm:text-[9px] shadow-md tracking-wider uppercase"
+            className="absolute bottom-1.5 left-2 z-20 flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500 text-black font-bold text-[8px] sm:text-[9px] shadow-md tracking-wider uppercase cursor-pointer hover:bg-amber-400 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               setShowMaintenanceBadge((v) => !v);
@@ -404,6 +448,7 @@ export function VehicleCard({
         {/* Maintenance Popover on Toggle */}
         {isInMaintenance && showMaintenanceBadge && (
           <div
+            ref={maintenancePopoverRef}
             className="absolute inset-x-2 bottom-1.5 z-30 p-2 rounded-lg bg-black/95 border border-amber-400/50 backdrop-blur-md animate-in fade-in zoom-in-95 text-xs text-amber-200 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
@@ -490,12 +535,37 @@ export function VehicleCard({
 
 function formatDaysSince(iso: string | null | undefined): string {
   if (!iso) return 'data indisponível';
-  const entry = new Date(iso);
-  if (isNaN(entry.getTime())) return 'data indisponível';
+
+  let entry: Date;
+  if (iso instanceof Date) {
+    entry = iso;
+  } else if (typeof iso === 'string') {
+    entry = parseISO(iso);
+    if (!isValid(entry)) entry = new Date(iso);
+  } else {
+    entry = new Date(iso);
+  }
+
+  if (!isValid(entry) || isNaN(entry.getTime())) return 'data indisponível';
+
   const now = new Date();
-  const ms = now.getTime() - entry.getTime();
-  const days = Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
-  if (days === 0) return 'menos de 1 dia';
-  if (days === 1) return '1 dia';
-  return `${days} dias`;
+  if (entry > now) return 'menos de 1 dia';
+
+  const years = differenceInYears(now, entry);
+  const afterYears = addYears(entry, years);
+
+  const months = differenceInMonths(now, afterYears);
+  const afterMonths = addMonths(afterYears, months);
+
+  const days = differenceInDays(now, afterMonths);
+
+  const parts: string[] = [];
+  if (years > 0) parts.push(`${years} ${years === 1 ? 'ano' : 'anos'}`);
+  if (months > 0) parts.push(`${months} ${months === 1 ? 'mês' : 'meses'}`);
+  if (days > 0) parts.push(`${days} ${days === 1 ? 'dia' : 'dias'}`);
+
+  if (parts.length === 0) return 'menos de 1 dia';
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return `${parts[0]} e ${parts[1]}`;
+  return `${parts[0]}, ${parts[1]} e ${parts[2]}`;
 }

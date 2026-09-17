@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { format, differenceInDays, differenceInYears, addYears, parseISO } from 'date-fns';
+import { format, differenceInDays, differenceInYears, differenceInMonths, addYears, addMonths, parseISO, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon, Plus, Wrench, ClipboardList, Info, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import {
@@ -238,18 +238,28 @@ export function MaintenanceModal({
   const getWorkshopDurationLabel = (entryDate: string | null): string | null => {
     if (!entryDate) return null;
     const start = parseISO(entryDate);
+    if (!isValid(start) || isNaN(start.getTime())) return null;
     const now = new Date();
     const totalDays = differenceInDays(now, start);
     if (totalDays < 1) return 'Em oficina/quebrado';
 
     const years = differenceInYears(now, start);
-    const remainingDays = differenceInDays(now, addYears(start, years));
+    const afterYears = addYears(start, years);
+
+    const months = differenceInMonths(now, afterYears);
+    const afterMonths = addMonths(afterYears, months);
+
+    const days = differenceInDays(now, afterMonths);
 
     const parts: string[] = [];
     if (years > 0) parts.push(`${years} ${years === 1 ? 'ano' : 'anos'}`);
-    if (remainingDays > 0) parts.push(`${remainingDays} ${remainingDays === 1 ? 'dia' : 'dias'}`);
+    if (months > 0) parts.push(`${months} ${months === 1 ? 'mês' : 'meses'}`);
+    if (days > 0) parts.push(`${days} ${days === 1 ? 'dia' : 'dias'}`);
 
-    return `Em oficina/quebrado há ${parts.join(' e ')}`;
+    if (parts.length === 0) return 'Em oficina/quebrado';
+    if (parts.length === 1) return `Em oficina/quebrado há ${parts[0]}`;
+    if (parts.length === 2) return `Em oficina/quebrado há ${parts[0]} e ${parts[1]}`;
+    return `Em oficina/quebrado há ${parts[0]}, ${parts[1]} e ${parts[2]}`;
   };
 
   return (
