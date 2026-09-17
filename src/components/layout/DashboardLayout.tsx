@@ -40,8 +40,9 @@ export const DashboardLayout = ({
                 />
                 {/* Subtle technical depth grid overlay */}
                 <div
+                    id="background-grid-overlay"
                     data-speed="0.85"
-                    className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none will-change-transform"
+                    className="absolute inset-0 opacity-[0.16] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none will-change-transform"
                 />
             </div>
 
