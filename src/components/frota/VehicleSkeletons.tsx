@@ -22,10 +22,32 @@ export function VehicleGridSkeleton() {
 
 export function VehicleTableSkeleton() {
   return (
-    <div className="glass-panel rounded-xl overflow-hidden p-4 space-y-3 border border-white/5">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <Skeleton key={i} className="h-12 w-full bg-white/5" />
-      ))}
+    <div className="glass-panel rounded-2xl overflow-hidden border border-border/70 shadow-2xl bg-card/85 mx-0">
+      <div className="p-4 border-b border-border/60 flex items-center justify-between gap-4 bg-muted/20">
+        <Skeleton className="h-6 w-36 bg-muted/60 rounded-md" />
+        <Skeleton className="h-6 w-24 bg-muted/60 rounded-md" />
+      </div>
+      <div className="p-4 space-y-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between gap-4 py-2 border-b border-border/30 last:border-0">
+            <div className="flex items-center gap-3 sm:gap-4 flex-1">
+              <Skeleton className="w-16 h-10 rounded-lg bg-muted/60 shrink-0" />
+              <div className="space-y-1.5 flex-1 max-w-[240px]">
+                <Skeleton className="h-4 w-20 bg-muted/60 rounded" />
+                <Skeleton className="h-3.5 w-40 bg-muted/50 rounded" />
+              </div>
+            </div>
+            <Skeleton className="hidden md:block h-6 w-24 bg-muted/50 rounded" />
+            <Skeleton className="hidden lg:block h-6 w-20 bg-muted/50 rounded" />
+            <Skeleton className="hidden sm:block h-6 w-24 bg-muted/50 rounded-full" />
+            <div className="flex flex-col items-end gap-1">
+              <Skeleton className="h-5 w-24 bg-muted/60 rounded" />
+              <Skeleton className="h-1 w-20 bg-muted/50 rounded-full" />
+            </div>
+            <Skeleton className="hidden md:block h-8 w-8 rounded-lg bg-muted/50 shrink-0" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

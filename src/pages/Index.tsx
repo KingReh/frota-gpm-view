@@ -263,7 +263,13 @@ const Index = () => {
 
     switch (preferences.viewMode) {
       case 'table':
-        return <VehicleTable vehicles={vehicleList} maintenancePlates={maintenancePlates} />;
+        return (
+          <VehicleTable
+            vehicles={vehicleList}
+            maintenancePlates={maintenancePlates}
+            maintenanceEntryDates={maintenanceEntryDates}
+          />
+        );
       case 'carousel':
         return <VehicleCarousel vehicles={vehicleList} maintenancePlates={maintenancePlates} maintenanceEntryDates={maintenanceEntryDates} />;
       case 'card':
@@ -389,22 +395,23 @@ const Index = () => {
 
               {/* View Selection & Sort */}
               <div className="flex flex-row items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
-                <div className="flex items-center justify-center md:justify-start gap-1 md:gap-2 bg-white/5 p-1 rounded-lg border border-white/5 shadow-inner w-auto shrink-0">
+                <div className="flex items-center justify-center md:justify-start gap-2 bg-white/5 p-1 rounded-xl border border-white/10 shadow-inner w-auto shrink-0">
                   {[
                     { mode: 'table', icon: LayoutList, title: 'Visualização em tabela' },
-                    { mode: 'card', icon: Grid, title: 'visualização em cards' },
-                    { mode: 'carousel', icon: MonitorPlay, title: 'visualização em carrossel' }
+                    { mode: 'card', icon: Grid, title: 'Visualização em cards' },
+                    { mode: 'carousel', icon: MonitorPlay, title: 'Visualização em carrossel' }
                   ].map((item) => (
                     <button
                       key={item.mode}
                       onClick={() => setViewMode(item.mode as any)}
                       className={cn(
-                        "p-1.5 md:p-2 rounded-md transition-all duration-300 flex-none flex justify-center",
+                        "p-2 rounded-lg transition-all duration-300 flex items-center justify-center min-h-[40px] min-w-[40px]",
                         preferences.viewMode === item.mode
                           ? "bg-primary text-white shadow-lg shadow-primary/20"
-                          : "text-zinc-500 hover:text-white hover:bg-white/5"
+                          : "text-zinc-400 hover:text-white hover:bg-white/5"
                       )}
                       title={item.title}
+                      aria-label={item.title}
                     >
                       <item.icon className="w-4 h-4" />
                     </button>

@@ -22,7 +22,23 @@ function getContrastColor(hexColor?: string): string {
 }
 
 export function CoordinationBadge({ coordination, className, compact = false }: CoordinationBadgeProps) {
-  const textColor = coordination.font_color?.trim() || getContrastColor(coordination.color);
+  if (!coordination) return null;
+
+  const coordName = typeof coordination === 'object' && coordination !== null
+    ? (typeof coordination.name === 'string' ? coordination.name : '')
+    : typeof coordination === 'string'
+    ? coordination
+    : '';
+
+  const coordColor = typeof coordination === 'object' && coordination !== null && typeof coordination.color === 'string'
+    ? coordination.color
+    : '#3b82f6';
+
+  const fontColor = typeof coordination === 'object' && coordination !== null && typeof coordination.font_color === 'string'
+    ? coordination.font_color.trim()
+    : '';
+
+  const textColor = fontColor || getContrastColor(coordColor);
   const isDarkText = textColor === '#000000' || textColor === '#09090b' || textColor.toLowerCase() === 'black';
 
   return (
@@ -36,7 +52,7 @@ export function CoordinationBadge({ coordination, className, compact = false }: 
         className
       )}
       style={{
-        backgroundColor: coordination.color,
+        backgroundColor: coordColor,
         color: textColor,
         boxShadow: `0 2px 6px -1px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.25), inset 0 1px 0 ${
           isDarkText ? 'rgba(255, 255, 255, 0.45)' : 'rgba(255, 255, 255, 0.28)'
@@ -45,7 +61,7 @@ export function CoordinationBadge({ coordination, className, compact = false }: 
         textShadow: isDarkText ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.5)',
       }}
     >
-      <span className="truncate max-w-full">{coordination.name}</span>
+      <span className="truncate max-w-full">{coordName}</span>
     </span>
   );
 }
